@@ -1,0 +1,2 @@
+# littlesis-docker
+Littlesis Dockerfile
