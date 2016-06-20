@@ -106,46 +106,10 @@ RUN usermod -u 1000 www-data
 # install crontab from app repos
 RUN (wget -qO- https://raw.githubusercontent.com/littlesis-org/littlesis/master/config/sample-crontab ; wget -qO- https://raw.githubusercontent.com/skomputer/lilsis/master/config/sample-crontab) | crontab -
 
-# create db script
-RUN touch ~/install-db.sh
-RUN chmod u+x ~/install-db.sh
-RUN echo "wget http://s3.amazonaws.com/pai-littlesis/public-data/littlesis-dev.sql -O /var/www/littlesis/littlesis-dev.sql" >> ~/install-db.sh
-RUN echo "service mysql restart" >> ~/install-db.sh
-RUN echo "echo \"create database littlesis; grant all privileges on littlesis.* to 'littlesis'@'localhost' identified by 'themanbehindthemanbehindthethrone';\" | mysql -u root -proot" >> ~/install-db.sh
-RUN echo "mysql -u littlesis -pthemanbehindthemanbehindthethrone littlesis < /var/www/littlesis/littlesis-dev.sql" >> ~/install-db.sh
+# copy the database
+COPY littlesis_db.sql /data/
 
-# create rails script
-RUN touch ~/setup-rails.sh
-RUN chmod u+x ~/setup-rails.sh
-RUN echo "cd /var/www/littlesis/rails && bundle install" >> ~/setup-rails.sh
-RUN echo "cd /var/www/littlesis/rails && bundle exec rake users:create_all_from_profiles" >> ~/install-db.sh
+# copy scripts
+COPY scripts/ /scripts/
 
-# create create indexes script
-RUN echo "service mysql restart" > ~/create-indexes.sh
-RUN echo "indexer --config /var/www/littlesis/symfony/config/sphinx.conf entities entities_delta lists lists_delta notes notes_delta" >> ~/create-indexes.sh
-RUN echo "cd /var/www/littlesis/rails && bundle exec rake ts:clear" >> ~/create-indexes.sh
-RUN echo "cd /var/www/littlesis/rails && bundle exec rake ts:configure" >> ~/create-indexes.sh
-RUN echo "cd /var/www/littlesis/rails && bundle exec rake ts:rebuild" >> ~/create-indexes.sh
-RUN echo "cd /var/www/littlesis/rails && bundle exec rake ts:restart" >> ~/create-indexes.sh
-RUN chmod u+x ~/create-indexes.sh
-
-# create restart script
-RUN touch ~/restart-all.sh
-RUN chmod u+x ~/restart-all.sh
-RUN echo "#! /bin/bash" >> ~/restart-all.sh
-RUN echo "cd /var/www/littlesis/rails && bin/delayed_job restart" >> ~/restart-all.sh
-RUN echo "cd /var/www/littlesis/rails && bundle exec rake ts:restart" >> ~/restart-all.sh
-RUN echo "service apache2 restart" >> ~/restart-all.sh
-RUN echo "service mysql restart" >> ~/restart-all.sh
-RUN echo "service memcached restart" >> ~/restart-all.sh
-RUN echo "searchd --config /var/www/littlesis/symfony/config/sphinx.conf" >> ~/restart-all.sh
-
-# create setup script
-RUN touch ~/setup.sh
-RUN chmod u+x ~/setup.sh
-RUN echo "~/install-db.sh" >> ~/setup.sh
-RUN echo "~/setup-rails.sh" >> ~/setup.sh
-RUN echo "~/create-indexes.sh" >> ~/setup.sh
-RUN echo "~/restart-all.sh" >> ~/setup.sh
-
-WOKDIR ~/
+WORKDIR ~/
