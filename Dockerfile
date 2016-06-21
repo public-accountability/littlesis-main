@@ -112,4 +112,7 @@ COPY littlesis_db.sql /data/
 # copy scripts
 COPY scripts/ /scripts/
 
+# Install DB
+RUN /bin/bash -l /scripts/install-db.sh
+
 WORKDIR ~/
