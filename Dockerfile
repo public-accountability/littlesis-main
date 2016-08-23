@@ -26,11 +26,17 @@ RUN echo "postfix postfix/main_mailer_type string Internet site" | debconf-set-s
 RUN echo "postfix postfix/mailname string localhost" | debconf-set-selections
 RUN apt-get -qqy install postfix
 
+# curl
+RUN apt-get install -y curl
+
 # nodejs
 RUN apt-get install -y software-properties-common
-RUN add-apt-repository -y ppa:chris-lea/node.js
-RUN apt-get update
+RUN curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
 RUN apt-get install -y nodejs
+
+# RUN add-apt-repository -y ppa:chris-lea/node.js
+# RUN apt-get update
+# RUN apt-get install -y nodejs
 
 # imagemagick
 RUN apt-get install -y imagemagick libmagickwand-dev
@@ -46,15 +52,12 @@ RUN apt-get install -y libapache2-mod-passenger
 RUN apt-get install -y memcached
 
 # sphinx
-RUN apt-get install -y sphinxsearch
+RUN add-apt-repository ppa:builds/sphinxsearch-rel22 && apt-get update && apt-get install -y sphinxsearch
 
 # php5 extensions
 RUN apt-get install -y php5-gd
 RUN apt-get install -y php5-curl
 RUN apt-get install -y php5-memcache
-
-# curl
-RUN apt-get install -y curl
 
 # symfony
 RUN curl -sS https://getcomposer.org/installer | php
@@ -72,7 +75,7 @@ RUN apt-get install -y wget
 RUN apt-get install -y nano
 
 # apache virtualhost config
-RUN wget https://raw.githubusercontent.com/skomputer/lilsis/master/config/littlesis-rails.conf -O /etc/apache2/sites-available/littlesis-rails.conf
+RUN wget https://raw.githubusercontent.com/skomputer/lilsis/master/config/littlesis-rails.conf -O /etc/apache2/sites-availanble/littlesis-rails.conf
 RUN wget https://raw.githubusercontent.com/littlesis-org/littlesis/master/config/littlesis-symfony.conf -O /etc/apache2/sites-available/littlesis-symfony.conf
 RUN cd /etc/apache2/sites-enabled && ln -s ../sites-available/littlesis-rails.conf
 RUN cd /etc/apache2/sites-enabled && ln -s ../sites-available/littlesis-symfony.conf
@@ -106,13 +109,16 @@ RUN usermod -u 1000 www-data
 # install crontab from app repos
 RUN (wget -qO- https://raw.githubusercontent.com/littlesis-org/littlesis/master/config/sample-crontab ; wget -qO- https://raw.githubusercontent.com/skomputer/lilsis/master/config/sample-crontab) | crontab -
 
-# copy the database
-COPY littlesis_db.sql /data/
-
 # copy scripts
 COPY scripts/ /scripts/
 
+# copy the database
+# COPY littlesis-backup-full-081516.sql /data/
+
 # Install DB
-RUN /bin/bash -l /scripts/install-db.sh
+# RUN /bin/bash -l /scripts/install-db.sh
+# RUN /bin/bash /scripts/setup-rails.sh
+# RUN /bin/bash /scripts/create-indexes.sh
+# RUN /bin/bash /scripts/restart-all.sh
 
 WORKDIR ~/
