@@ -34,10 +34,6 @@ RUN apt-get install -y software-properties-common
 RUN curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
 RUN apt-get install -y nodejs
 
-# RUN add-apt-repository -y ppa:chris-lea/node.js
-# RUN apt-get update
-# RUN apt-get install -y nodejs
-
 # imagemagick
 RUN apt-get install -y imagemagick libmagickwand-dev
 
@@ -111,14 +107,5 @@ RUN (wget -qO- https://raw.githubusercontent.com/littlesis-org/littlesis/master/
 
 # copy scripts
 COPY scripts/ /scripts/
-
-# copy the database
-# COPY littlesis-backup-full-081516.sql /data/
-
-# Install DB
-# RUN /bin/bash -l /scripts/install-db.sh
-# RUN /bin/bash /scripts/setup-rails.sh
-# RUN /bin/bash /scripts/create-indexes.sh
-# RUN /bin/bash /scripts/restart-all.sh
 
 WORKDIR ~/

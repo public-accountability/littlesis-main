@@ -35,7 +35,7 @@ Afterwards change the bind-address in my.conf to be that ip address. On Debian t
 bind-address		= 172.17.0.1
 ```
 
-Aftewrards restart mysql: sudo service mysql restart
+Afterwards restart mysql: sudo service mysql restart
 
 If you use mysql with other apps they might have problems connecting to it. 
 
@@ -52,7 +52,7 @@ GRANT ALL PRIVILEGES ON littlesis.* To 'littlesis'@'xxx.xx.xx' identified by 'pa
 
 ```
 
-Installs gems and creates sphnix indexes. Inside the container run:
+Install gems and create sphnix indexes. Run this *inside* the container:
 
 ``` bash
 /scripts/setup.sh
