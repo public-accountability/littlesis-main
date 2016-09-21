@@ -1,22 +1,16 @@
 FROM ubuntu:14.04
 MAINTAINER LittleSis Dev <dev@littlesis.org>
-
+# UPDATE & UPGRADE
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 RUN apt-get update
-
-# LAMP stack
-RUN echo "mysql-server mysql-server/root_password password root" | debconf-set-selections
-RUN echo "mysql-server mysql-server/root_password_again password root" | debconf-set-selections
-RUN apt-get install -y lamp-server^
-RUN apt-get install -y php-apc
-RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
-RUN echo "Listen 81" >> /etc/apache2/ports.conf
-RUN a2enmod headers
-RUN a2enmod rewrite
-RUN a2enmod proxy
-RUN a2enmod proxy_http
-
-# php mail
+RUN apt-get -y upgrade
+# UTILITIES
+RUN apt-get install -y emacs nano curl wget git screen htop gnupg build-essential imagemagick libmagickwand-dev qt5-default libqt5webkit5-dev g++ libcurl4-gnutls-dev libgdbm-dev libncurses5-dev automake libtool bison libffi-dev
+# MYSQL CLIENT
+RUN apt-get install -y mysql-client libmysqlclient-dev
+# PHP
+RUN apt-get install -y php5-fpm php-apc php5-mysql php5-gd php5-curl php5-memcache
+# PHP MAIL
 RUN apt-get install -y php-pear
 RUN pear install mail
 RUN pear install Net_SMTP
@@ -25,36 +19,20 @@ RUN pear install mail_mime
 RUN echo "postfix postfix/main_mailer_type string Internet site" | debconf-set-selections
 RUN echo "postfix postfix/mailname string localhost" | debconf-set-selections
 RUN apt-get -qqy install postfix
-
-# curl
-RUN apt-get install -y curl
-
-# nodejs
-RUN apt-get install -y software-properties-common
-RUN curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
-RUN apt-get install -y nodejs
-
-# imagemagick
-RUN apt-get install -y imagemagick libmagickwand-dev
-
-# phusion passenger
-RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 561F9B9CAC40B2F7
-RUN apt-get install -y apt-transport-https ca-certificates
-RUN echo "deb https://oss-binaries.phusionpassenger.com/apt/passenger trusty main" > /etc/apt/sources.list.d/passenger.list
+# NODEJS
+RUN curl -sL https://deb.nodesource.com/setup_4.x | bash -
 RUN apt-get update
-RUN apt-get install -y libapache2-mod-passenger
-
-# memcached
+RUN apt-get install -y nodejs
+RUN ln -sf /usr/bin/nodejs /usr/local/bin/node
+# get add-apt-repository    
+RUN apt-get install -y software-properties-common python-software-properties    
+# SPHNIX
+RUN add-apt-repository ppa:builds/sphinxsearch-rel22
+RUN apt-get update
+RUN apt-get install -y sphinxsearch
+# REDIS & MEMACHE
 RUN apt-get install -y memcached
-
-# sphinx
-RUN add-apt-repository ppa:builds/sphinxsearch-rel22 && apt-get update && apt-get install -y sphinxsearch
-
-# php5 extensions
-RUN apt-get install -y php5-gd
-RUN apt-get install -y php5-curl
-RUN apt-get install -y php5-memcache
-
+RUN apt-get install -y redis-server
 # symfony
 RUN curl -sS https://getcomposer.org/installer | php
 RUN mv composer.phar /usr/local/bin/composer
@@ -65,47 +43,34 @@ RUN mv /usr/share/symfony/vendor/symfony/symfony1 /usr/share/symfony-1.1.9
 RUN rm -rf /usr/share/symfony
 RUN cp /usr/share/symfony-1.1.9/data/bin/symfony /usr/bin/
 RUN chmod a+x /usr/bin/symfony
-
-# misc
-RUN apt-get install -y wget
-RUN apt-get install -y nano
-
-# apache virtualhost config
-RUN wget https://raw.githubusercontent.com/skomputer/lilsis/master/config/littlesis-rails.conf -O /etc/apache2/sites-availanble/littlesis-rails.conf
-RUN wget https://raw.githubusercontent.com/littlesis-org/littlesis/master/config/littlesis-symfony.conf -O /etc/apache2/sites-available/littlesis-symfony.conf
-RUN cd /etc/apache2/sites-enabled && ln -s ../sites-available/littlesis-rails.conf
-RUN cd /etc/apache2/sites-enabled && ln -s ../sites-available/littlesis-symfony.conf
-
-# more stuff
-RUN apt-get install -y qt5-default libqt5webkit5-dev g++
-RUN apt-get install -y git
-RUN apt-get install -y mysql-client libmysqlclient-dev
-
-# ruby with rvm
-RUN apt-get install -y libgdbm-dev libncurses5-dev automake libtool bison libffi-dev
+# NGINX
+RUN apt-get install -y nginx
+# PASSENGER
+RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 561F9B9CAC40B2F7
+RUN apt-get install -y apt-transport-https ca-certificates
+RUN sh -c 'echo deb https://oss-binaries.phusionpassenger.com/apt/passenger trusty main > /etc/apt/sources.list.d/passenger.list'
+RUN apt-get update
+RUN apt-get install -y passenger
+# RVM
 RUN gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
-RUN curl -L https://get.rvm.io | bash -s stable
+RUN curl -sSL https://get.rvm.io | bash -s stable
 RUN source /etc/profile.d/rvm.sh
 RUN /bin/bash -l -c "rvm requirements"
-RUN /bin/bash -l -c "rvm install 2.2.2"
+RUN /bin/bash -l -c "rvm install 2.3.1"
 RUN /bin/bash -l -c "gem install bundler --no-ri --no-rdoc"
-RUN /bin/bash -l -c "rvm use 2.2.2 --default"
+RUN /bin/bash -l -c "rvm use 2.3.1 --default"
 RUN echo "gem: --no-ri --no-rdoc" > ~/.gemrc
 RUN gem install bundler --no-ri --no-rdoc
 RUN echo "source /etc/profile.d/rvm.sh" >> ~/.bashrc
+# bashrc
 RUN echo "export RAILS_ENV=development" >> ~/.bashrc
-RUN source ~/.bashrc
-
-# rails
-RUN /bin/bash -l -c "rvm use 2.2.2 && gem install rails -v 4.1.10"
-
+RUN echo "export XTERM=xterm" >> ~/.bashrc
+RUN source ~/.bashrc   
+# RAILS
+RUN /bin/bash -l -c "rvm use 2.3.1 && gem install rails -v 4.1.8"
 # change www-data UID so it can write to mounted volume
 RUN usermod -u 1000 www-data
-
-# install crontab from app repos
-RUN (wget -qO- https://raw.githubusercontent.com/littlesis-org/littlesis/master/config/sample-crontab ; wget -qO- https://raw.githubusercontent.com/skomputer/lilsis/master/config/sample-crontab) | crontab -
-
 # copy scripts
 COPY scripts/ /scripts/
-
 WORKDIR ~/
+        
