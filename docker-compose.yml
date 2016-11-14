@@ -1,0 +1,20 @@
+web:
+    image: littlesis-rails:v0.0.2
+    ports:
+        - "8080:80"
+    volumes:
+        - ./littlesis-apps/symfony:/var/www/littlesis/symfony
+        - ./littlesis-apps/rails:/home/app/lilsis
+        - ./ls_dev.conf:/etc/nginx/conf.d/site.conf
+    links:
+        - php
+php:
+    image: ls-php-fpm:v0.0.1
+    volumes:
+        - ./littlesis-apps/symfony:/var/www/littlesis/symfony
+    links:
+       - memcached
+memcached:
+    image: memcached:latest
+    ports:
+        - '11211:11211'

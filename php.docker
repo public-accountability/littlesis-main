@@ -1,0 +1,22 @@
+FROM php:5-fpm
+RUN apt-get update && apt-get install -y \
+        mysql-client \
+        libmysqlclient-dev \ 
+        libz-dev \
+        libpng12-dev \
+        libmemcached-dev \
+    && docker-php-ext-install -j$(nproc) gd mysql pdo pdo_mysql \ 
+    && pecl install memcache \
+    && docker-php-ext-enable memcache
+
+RUN apt-get install -y curl zip unzip
+
+RUN curl -sS https://getcomposer.org/installer | php
+RUN mv composer.phar /usr/local/bin/composer
+RUN mkdir /usr/share/symfony
+RUN echo "{ \"require\": { \"symfony/symfony1\": \"1.1.9\" } }" > /usr/share/symfony/composer.json
+RUN cd /usr/share/symfony && composer install
+RUN mv /usr/share/symfony/vendor/symfony/symfony1 /usr/share/symfony-1.1.9
+RUN rm -rf /usr/share/symfony
+RUN cp /usr/share/symfony-1.1.9/data/bin/symfony /usr/bin/
+RUN chmod a+x /usr/bin/symfony

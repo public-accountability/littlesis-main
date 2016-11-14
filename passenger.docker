@@ -1,0 +1,60 @@
+FROM phusion/passenger-customizable:0.9.19
+
+# Set correct environment variables.
+ENV HOME /root
+
+# Use baseimage-docker's init process.
+CMD ["/sbin/my_init"]
+
+# If you're using the 'customizable' variant, you need to explicitly opt-in
+# for features. Uncomment the features you want:
+#
+#   Build system and git.
+RUN /pd_build/utilities.sh
+#   Ruby support.
+RUN /pd_build/ruby-2.3.*.sh
+#   Node.js and Meteor support.
+RUN /pd_build/nodejs.sh
+# Opt-in for Redis if you're using the 'customizable' image.
+RUN /pd_build/redis.sh
+# ...put your own build instructions here...
+RUN rm -f /etc/service/nginx/down  # enable nginx
+RUN rm -f /etc/service/redis/down  # enable redis
+
+RUN apt-get update && apt-get -y install \
+    curl \
+    libcurl4-gnutls-dev \
+    gnupg \ 
+    imagemagick libmagickwand-dev \
+    qt5-default libqt5webkit5-dev g++ \
+    libgdbm-dev \
+    libncurses5-dev \
+    automake \ 
+    libtool \ 
+    bison \ 
+    libffi-dev \ 
+    software-properties-common \ 
+    python-software-properties \ 
+    mysql-client libmysqlclient-dev 
+  
+RUN add-apt-repository ppa:builds/sphinxsearch-rel22 && apt-get update && apt-get install -y sphinxsearch
+
+RUN /bin/bash -l -c "gem install bundler --no-ri --no-rdoc"
+
+RUN mkdir /home/app/lilsis
+RUN /bin/bash -c "curl -sSL https://raw.githubusercontent.com/skomputer/lilsis/master/Gemfile > /home/app/lilsis/Gemfile"
+RUN /bin/bash -c "curl -sSL https://raw.githubusercontent.com/skomputer/lilsis/master/Gemfile.lock > /home/app/lilsis/Gemfile.lock"
+RUN chown app:app /home/app/lilsis
+RUN su - app -c "cd /home/app/lilsis && bundle install"
+
+RUN rm /etc/nginx/sites-enabled/default
+ADD ls_dev.conf /etc/nginx/sites-enabled/ls_dev.conf
+
+RUN usermod -u 1000 app
+
+#
+# running chown -R app:app /home/app/lilsis
+# after running the docker file seems to clear up some permission issues that happe
+# 
+# Clean up APT when done.
+RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
