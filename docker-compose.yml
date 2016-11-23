@@ -1,5 +1,5 @@
 web:
-    image: littlesis-rails:v0.0.2
+    image: ls-rails:v0.0.2
     ports:
         - "8080:80"
     volumes:
@@ -8,13 +8,23 @@ web:
         - ./ls_dev.conf:/etc/nginx/conf.d/site.conf
     links:
         - php
+        - mysql
 php:
-    image: ls-php-fpm:v0.0.1
+    image: ls-php:v0.0.3
     volumes:
         - ./apps/symfony:/var/www/littlesis/symfony
     links:
        - memcached
+       - mysql
 memcached:
     image: memcached:latest
-    ports:
-        - '11211:11211'
+mysql:
+  image: mysql:5.5
+  volumes:
+    - /home/zy/littlesis/db/mysql-data:/var/lib/mysql
+  ports:
+    - '9200:3306'
+  environment:
+    - MYSQL_ROOT_PASSWORD=rentistheft
+    - MYSQL_USER=littlesis
+    - MYSQL_PASSWORD=themanbehindthemanbehindthethrone

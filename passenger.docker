@@ -47,6 +47,11 @@ RUN /bin/bash -c "curl -sSL https://raw.githubusercontent.com/skomputer/lilsis/m
 RUN chown app:app /home/app/lilsis
 RUN su - app -c "cd /home/app/lilsis && bundle install"
 
+RUN mkdir -p /home/app/scripts
+ADD index_sphinx.sh /home/app/scripts/index_sphinx.sh
+ADD start_sphinx.sh /home/app/scripts/start_sphinx.sh
+RUN chmod +x /home/app/scripts/*
+
 RUN rm /etc/nginx/sites-enabled/default
 ADD ls_dev.conf /etc/nginx/sites-enabled/ls_dev.conf
 

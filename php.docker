@@ -9,6 +9,8 @@ RUN apt-get update && apt-get install -y \
     && pecl install memcache \
     && docker-php-ext-enable memcache
 
+RUN echo "date.timezone = America/New_York" > /usr/local/etc/php/conf.d/date.ini
+
 RUN apt-get install -y curl zip unzip
 
 RUN curl -sS https://getcomposer.org/installer | php
