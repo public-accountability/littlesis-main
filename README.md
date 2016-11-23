@@ -1,10 +1,19 @@
 # littlesis-docker
 
-## Installation instructions
+Pull down the repos: ``` ./apps.sh ```
 
-Using the most recent docker version, the mysql-server is running on the _host_ not inside the docker. 
+Edit the configuration files.
 
-To install the littlesis database:
+Build the docker images: ``` ./build-docker.sh ```
+
+Modify paths in docker-compose.yml as needed. 
+
+run app: ``` docker-compose up ```
+
+----------------------------------------------------------
+**Old Instructions**
+
+to install the littlesis database:
 
 ``` bash
 mysql "create database littlesis;"

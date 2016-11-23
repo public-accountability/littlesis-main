@@ -23,8 +23,8 @@ mysql:
   volumes:
     - /home/zy/littlesis/db/mysql-data:/var/lib/mysql
   ports:
-    - '9200:3306'
+    - '3306:3306'
   environment:
-    - MYSQL_ROOT_PASSWORD=rentistheft
+    - MYSQL_ROOT_PASSWORD=root
     - MYSQL_USER=littlesis
     - MYSQL_PASSWORD=themanbehindthemanbehindthethrone
