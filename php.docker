@@ -5,13 +5,18 @@ RUN apt-get update && apt-get install -y \
         libz-dev \
         libpng12-dev \
         libmemcached-dev \
+	unixodbc \  
+	libpq5 \
+	libexpat1 \ 
+	wget \
+	curl \
+	zip \
+	unzip \
     && docker-php-ext-install -j$(nproc) gd mysql pdo pdo_mysql \ 
     && pecl install memcache \
     && docker-php-ext-enable memcache
 
 RUN echo "date.timezone = America/New_York" > /usr/local/etc/php/conf.d/date.ini
-
-RUN apt-get install -y curl zip unzip
 
 RUN curl -sS https://getcomposer.org/installer | php
 RUN mv composer.phar /usr/local/bin/composer
@@ -22,3 +27,12 @@ RUN mv /usr/share/symfony/vendor/symfony/symfony1 /usr/share/symfony-1.1.9
 RUN rm -rf /usr/share/symfony
 RUN cp /usr/share/symfony-1.1.9/data/bin/symfony /usr/bin/
 RUN chmod a+x /usr/bin/symfony
+
+RUN wget --quiet -O /tmp/sphinx.deb http://sphinxsearch.com/files/sphinxsearch_2.2.11-release-1~jessie_amd64.deb 
+RUN dpkg -i /tmp/sphinx.deb
+RUN rm /tmp/sphinx.deb
+
+RUN mkdir /scripts
+ADD index_php_sphinx.sh /scripts/index_php_sphinx.sh 
+ADD start_php_sphinx.sh /scripts/start_php_sphinx.sh
+RUN chmod +x /scripts/*

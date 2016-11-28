@@ -10,7 +10,7 @@ web:
         - php
         - mysql
 php:
-    image: ls-php:v0.0.3
+    image: ls-php:v0.0.5
     volumes:
         - ./apps/symfony:/var/www/littlesis/symfony
     links:
@@ -21,7 +21,7 @@ memcached:
 mysql:
   image: mysql:5.5
   volumes:
-    - /home/zy/littlesis/db/mysql-data:/var/lib/mysql
+    - ./mysql-data:/var/lib/mysql
   ports:
     - '3306:3306'
   environment:
