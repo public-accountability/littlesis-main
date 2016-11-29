@@ -1,5 +1,3 @@
 #!/bin/bash
 
-su - app
-cd /home/app/lilsis
-bundle exec rake ts:rebuild
+su - app -c "cd /home/app/lilsis && bundle exec rake ts:rebuild"

@@ -1,5 +1,5 @@
 web:
-    image: ls-rails:v0.0.2
+    image: ls-rails:v0.0.3
     ports:
         - "8080:80"
     volumes:
