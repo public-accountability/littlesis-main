@@ -10,6 +10,19 @@ Modify paths in docker-compose.yml as needed.
 
 run app: ``` docker-compose up ```
 
+## javascript tests
+
+make symlinks:
+
+``` bash
+# in docker container:
+cd /home/app/lilsis
+ln -s $(realpath vendor) ./test/vendor
+ln -s $(realpath app/assets) ./test/assets
+```
+
+View test at _ls.dev:8080/test/runner.html_
+
 ----------------------------------------------------------
 **Old Instructions**
 
