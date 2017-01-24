@@ -3,3 +3,4 @@ littlesis-apps
 apps/
 config/
 mysql-data/
+chat/

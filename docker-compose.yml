@@ -1,30 +1,67 @@
-web:
-    image: ls-rails:v0.0.3
+version: '2'
+
+services:
+  web:
+    image: ls-rails:v0.0.4
     ports:
         - "8080:80"
     volumes:
         - ./apps/symfony:/var/www/littlesis/symfony
         - ./apps/rails:/home/app/lilsis
         - ./ls_dev.conf:/etc/nginx/conf.d/site.conf
-    links:
+    depends_on:
         - php
         - mysql
-php:
+        - mongo
+        - rocketchat
+
+  php:
     image: ls-php:v0.0.5
     volumes:
         - ./apps/symfony:/var/www/littlesis/symfony
-    links:
-       - memcached
-       - mysql
-memcached:
+    depends_on:
+      - mysql
+      - memcached
+
+  memcached:
     image: memcached:latest
-mysql:
-  image: mysql:5.5
-  volumes:
-    - ./mysql-data:/var/lib/mysql
-  ports:
-    - '3306:3306'
-  environment:
-    - MYSQL_ROOT_PASSWORD=root
-    - MYSQL_USER=littlesis
-    - MYSQL_PASSWORD=themanbehindthemanbehindthethrone
+
+  mysql:
+    image: mysql:5.5
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+    ports:
+      - '3306:3306'
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_USER=littlesis
+      - MYSQL_PASSWORD=themanbehindthemanbehindthethrone
+
+  rocketchat:
+    image: rocketchat/rocket.chat:latest
+    restart: unless-stopped
+    volumes:
+      - ./chat/uploads:/app/uploads
+    environment:
+      - PORT=3000
+      - ROOT_URL=http://localhost:3000
+      - MONGO_URL=mongodb://mongo:27017/rocketchat
+      - MAIL_URL=smtp://smtp.email
+      - HTTP_PROXY=http://localhost
+      - HTTPS_PROXY=http://localhost
+    depends_on:
+      - mongo
+    ports:
+      - 3000:3000
+
+  mongo:
+    image: mongo:3.2
+    restart: unless-stopped
+    volumes:
+     - ./chat/db:/data/db
+     - ./chat/dump:/dump
+    command: mongod --smallfiles
+    ports:
+      - 27017:27017
+
+    
