@@ -11,6 +11,7 @@ services:
         - ./ls_dev.conf:/etc/nginx/conf.d/site.conf
     depends_on:
         - php
+        - memcached
         - mysql
         - mongo
         - rocketchat
