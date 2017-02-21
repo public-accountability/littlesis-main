@@ -30,13 +30,14 @@ services:
   mysql:
     image: mysql:5.5
     volumes:
-      - ./mysql-data:/var/lib/mysql
+      - ./mysql-data-development:/var/lib/mysql
     ports:
       - '3306:3306'
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_USER=littlesis
       - MYSQL_PASSWORD=themanbehindthemanbehindthethrone
+      - MYSQL_DATABASE=littlesis
 
   rocketchat:
     image: rocketchat/rocket.chat:latest
