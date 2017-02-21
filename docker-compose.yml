@@ -2,7 +2,7 @@ version: '2'
 
 services:
   web:
-    image: ls-rails:v0.0.4
+    image: aepyornis/ls-rails:v0.0.5
     ports:
         - "8080:80"
     volumes:
@@ -17,7 +17,7 @@ services:
         - rocketchat
 
   php:
-    image: ls-php:v0.0.5
+    image: aepyornis/ls-php:v0.0.5
     volumes:
         - ./apps/symfony:/var/www/littlesis/symfony
     depends_on:
@@ -30,7 +30,7 @@ services:
   mysql:
     image: mysql:5.5
     volumes:
-      - ./mysql-data-development:/var/lib/mysql
+      - ./mysql-data:/var/lib/mysql
     ports:
       - '3306:3306'
     environment:
