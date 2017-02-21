@@ -8,7 +8,7 @@ Oligrapher: https://github.com/skomputer/oligrapher
 
 Steps for a fully functional LittleSis Development environment:
 
-* Initial setup: download repos, configure files, pull docker images, launch container
+* Initial setup: download repos, configure files, pull docker images, launch the containers
 * Load database
 * Setup test database and rails tests
 * Setup and start Sphinx
@@ -25,11 +25,12 @@ Steps for a fully functional LittleSis Development environment:
 4) run app: ``` docker-compose up ```
 
 To enter the Rails container use: ``` ./docker_login rails ```
-tTo enter the Symfony container use: ``` ./docker_login php ``` 
+
+To enter the Symfony container use: ``` ./docker_login php ``` 
 
 ## Load MYSQL database
 
-If you have an existing copy of LittleSis's database, load it into mysql. 
+If you have an existing copy of LittleSis's database, load it into mysql.: 
 
 ``` bash
 mysql -u littlesis -pthemanbehindthemanbehindthethrone -h 127.0.0.1 littlesis < path/to/littlesis_db.sql
@@ -37,11 +38,11 @@ mysql -u littlesis -pthemanbehindthemanbehindthethrone -h 127.0.0.1 littlesis < 
 
 This can take anywhere from 30mins to 3 hours depending on the size of the database dump.
 
-## Setup Rails Tests
+## Setup Rails tests
 
-Outside docker login into mysql root shell: ```  mysql -u root -proot -h 127.0.0.1 ```
+Login into mysql root shell: ```  mysql -u root -proot -h 127.0.0.1 ```. Run this comand from _outside_ docker although you will access the mysql that is running inside the container. 
 
-Create test database and give the littlesis db user access
+Create a the littlesis_test database and give the littlesis db user access to it:
 
 ``` sql
 create database littlesis_test;
@@ -49,9 +50,7 @@ grant all privileges on littlesis_test.* to 'littlesis'@'%' identified by 'thema
 flush privileges;
 ```
 
-Enter the rails container: ``` ./docker_login rails ```
-
-and then run the tests:
+Enter the rails container: ``` ./docker_login rails ``` and then run the tests:
 
 ``` bash
 su - app
@@ -67,7 +66,7 @@ spec
 
 ## Setup and start Sphinx
 
-Both rails and PHP have use their own version of sphinx. The first time you create the container (and anytime you rebuild the container) you'll have to re-index both versions of Sphinx. _Everytime_ you start the docker app, you will have to start sphinx. If you get the error page on a symfony profile, make sure that sphinx is started.
+Both Rails and Symfony use their own version of Sphinx. The first time you create the containers (and anytime you rebuild a container) you'll have to re-index both versions of Sphinx. _Everytime_ you start the docker app, you will have to start sphinx. If you get the error page on a profile page, make sure that sphinx is started.
 
 To start and index PHP's sphinx:
 
@@ -92,7 +91,6 @@ cd ~/lilsis
 # index and start sphinx
 bundle exec rake ts:rebuild
 # If the indexes already exists you don't have to 
-
 # rebuild them, you can just run:
 bundle exec rake ts:restart
 ```
@@ -102,6 +100,8 @@ bundle exec rake ts:restart
 Make symlinks and install javascript libraries:
 
 ``` bash
+# log into rails docker
+./docker_login rails
 # in docker container:
 cd /home/app/lilsis
 ln -s $(realpath vendor) ./test/vendor
@@ -113,10 +113,11 @@ npm install
 
 View tests at _ls.dev:8080/test/runner.html_
 
-
 ### Docker images
 
-The php images is php.docker and the rails images is passenger.docker. To build the docker images: ``` ./build-docker.sh ```
+The php dockerfile is php.docker and the Rails dockerfile is passenger.docker.
+
+After updating the dockerfiles or after adding a new gem, change the tags in build-docker and then build the docker images: ``` ./build-docker.sh ``` and upload the new images to Docker Hub. See [here for dockerhub instructions](https://docs.docker.com/engine/getstarted/step_six/). 
 
 ### Linked Docker Volumes
 
