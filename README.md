@@ -42,7 +42,7 @@ This can take anywhere from 30mins to 3 hours depending on the size of the datab
 
 Login into mysql root shell: ```  mysql -u root -proot -h 127.0.0.1 ```. Run this comand from _outside_ docker although you will access the mysql that is running inside the container. 
 
-Create a the littlesis_test database and give the littlesis db user access to it:
+Create the littlesis_test database and give the littlesis db user access to it:
 
 ``` sql
 create database littlesis_test;
