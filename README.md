@@ -122,9 +122,13 @@ After updating the dockerfiles or after adding a new gem, change the tags in bui
 ### Linked Docker Volumes
 
 ./apps/rails -> rails code + repo
+
 ./apps/symfony -> symfony code + repo
+
 ./mysql-data -> mysql database data
+
 ./chat/uploads -> rocket chat uploads
+
 ./chat/db -> rocket chat mongo db data
 
 
