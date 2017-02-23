@@ -1,0 +1,82 @@
+#!/bin/bash
+
+show_help() {
+cat << EOF
+Usage: littlesis rails|php
+Helpful shortcuts to LittleSis Development Environment.
+
+login to container:
+littlesis rails login
+littlesis php login
+
+run all rails tests:
+littlesis rails spec
+or run one test file. example:
+littlesis rails spec spec/models/relationship_spec.rb
+
+EOF
+}
+
+
+docker_login() {
+    if [ "$1" == rails ]; then
+	docker exec -t -i littlesisdocker_web_1 /bin/bash -l
+    elif [ "$1" == php ]; then
+	docker exec -t -i littlesisdocker_php_1 /bin/bash -l
+    fi
+}
+
+spec() {
+    local CMD="cd /home/app/lilsis && RAILS_ENV=test bundle exec spring rspec ${@}"
+    docker exec --user app -it littlesisdocker_web_1 /bin/sh -c "${CMD}"
+}
+
+
+rails() {
+    case $1 in
+	spec)
+	    shift
+	    spec "$@"
+	    ;;
+	login)
+	    docker_login rails
+	    ;;
+	*)
+	    echo 'Invalid option. Available options: spec, login'
+    esac
+}
+
+
+php() {
+    case $1 in
+	login)
+	    docker_login php
+	    ;;
+    esac
+}
+
+while :; do
+    case $1 in
+	rails)
+	    shift
+	    rails "$@"
+	    exit
+	    ;;
+        symfony|php)
+	    shift
+	    php  "$@"
+	    exit
+	    ;;
+	-h|help|--help)
+	    show_help
+	    exit
+	    ;;
+	?*) # End of all options.
+            echo 'first arg must be rails or php or symfony'
+            exit 1
+	    ;;
+	*)
+	    break
+	    ;;
+    esac
+done
