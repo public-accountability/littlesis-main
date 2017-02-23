@@ -34,6 +34,8 @@ Rails console: littlesis rails c
 
 Rails logs: littlesis rails logs
 
+Restart rails: littlesis rails restart
+
 Execute arbitrary rake command: littlesis rails rake [...]
 
 For instance, to restart sphinx: littlesis rails rake ts:restart
@@ -68,6 +70,10 @@ rails_logs() {
     docker-compose exec web /bin/bash -c 'tail -f /home/app/lilsis/log/development.log'
 }
 
+rails_restart() {
+    docker-compose exec web /bin/bash -c 'passenger-config restart-app /home/app/lilsis'
+}
+
 rails() {
     case $1 in
 	spec)
@@ -86,6 +92,9 @@ rails() {
 	rake)
 	    shift
 	    rails_rake "$@"
+	    ;;
+	restart)
+	    rails_restart
 	    ;;
 	*)
 	    echo 'Invalid option. Available options: spec, login, console, logs, rake'
