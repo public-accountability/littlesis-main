@@ -2,17 +2,41 @@
 
 show_help() {
 cat << EOF
-Usage: littlesis rails|php
-Helpful shortcuts to LittleSis Development Environment.
+Usage: ./littlesis rails|php
+Helpful shortcuts to the LittleSis development environment
 
-login to container:
+Start app:
+littlesis up or littlesis up -d
+
+Stop app:
+littlesis down
+
+Information:
+littlesis ps
+littlesis logs
+
+Login to the containers:
 littlesis rails login
 littlesis php login
 
-run all rails tests:
+Run all rails tests:
 littlesis rails spec
 or run one test file. example:
 littlesis rails spec spec/models/relationship_spec.rb
+
+PHP sphinx functions:
+littlesis sphinx status
+littlesis sphinx start
+littlesis sphinx stop
+littlesis sphinx index
+
+Rails console: littlesis rails c
+
+Rails logs: littlesis rails logs
+
+Execute arbitrary rake command: littlesis rails rake [...]
+
+For instance, to restart sphinx: littlesis rails rake ts:restart
 
 EOF
 }
@@ -31,6 +55,18 @@ spec() {
     docker exec --user app -it littlesisdocker_web_1 /bin/sh -c "${CMD}"
 }
 
+rails_console() {
+    docker-compose exec web su app -c 'cd /home/app/lilsis; RAILS_ENV=development bin/rails c'
+}
+
+rails_rake() {
+    local CMD="cd /home/app/lilsis && RAILS_ENV=test bundle exec rake RAILS_ENV=development ${@}"
+    docker-compose exec web su app -c "${CMD}"
+}
+
+rails_logs() {
+    docker-compose exec web /bin/bash -c 'tail -f /home/app/lilsis/log/development.log'
+}
 
 rails() {
     case $1 in
@@ -41,8 +77,36 @@ rails() {
 	login)
 	    docker_login rails
 	    ;;
+	console|c)
+	    rails_console
+	    ;;
+	logs)
+	    rails_logs
+	    ;;
+	rake)
+	    shift
+	    rails_rake "$@"
+	    ;;
 	*)
-	    echo 'Invalid option. Available options: spec, login'
+	    echo 'Invalid option. Available options: spec, login, console, logs, rake'
+    esac
+}
+
+
+php_sphinx() {
+    case $1 in
+	start)
+	    docker-compose exec php /bin/bash -c 'searchd --config /var/www/littlesis/symfony/config/sphinx.conf'
+	    ;;
+	index)
+	    docker-compose exec php /scripts/index_php_sphinx.sh
+	    ;;
+	stop)
+	    docker-compose exec php /bin/bash -c 'searchd --config /var/www/littlesis/symfony/config/sphinx.conf --stop'
+	    ;;
+        *)
+	    docker-compose exec php /bin/bash -c 'searchd --config /var/www/littlesis/symfony/config/sphinx.conf --status'
+	    ;;
     esac
 }
 
@@ -51,6 +115,9 @@ php() {
     case $1 in
 	login)
 	    docker_login php
+	    ;;
+	sphinx)
+	    php_sphinx $2
 	    ;;
     esac
 }
@@ -65,6 +132,18 @@ while :; do
         symfony|php)
 	    shift
 	    php  "$@"
+	    exit
+	    ;;
+	up)
+	    if [ "$2" == -d ]; then
+		docker-compose up -d
+	    else
+		docker-compose up
+	    fi
+	    exit
+	    ;;
+	down|ps|logs)
+	    docker-compose "$1"
 	    exit
 	    ;;
 	-h|help|--help)
