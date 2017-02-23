@@ -14,6 +14,12 @@ Steps for a fully functional LittleSis Development environment:
 * Setup and start Sphinx
 * Setup javascript tests
 
+## Helper program: ./littlesis
+
+There's a helper bash program that will let you easily interact with the docker containers to do common tasks such as running rails console, running tests, starting sphinx, and viewing logs without having to remember esoteric docker & bash commands.
+
+To see the script's features run: ``` ./littlesis help ```
+
 ## Initial setup
 
 1) Pull down the repos: ``` ./apps.sh ```
