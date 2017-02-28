@@ -1,4 +1,4 @@
-FROM phusion/passenger-customizable:0.9.19
+FROM phusion/passenger-customizable:0.9.20
 
 # Set correct environment variables.
 ENV HOME /root
@@ -44,14 +44,14 @@ RUN add-apt-repository ppa:builds/sphinxsearch-rel22 && apt-get update && apt-ge
 RUN /bin/bash -l -c "gem install bundler --no-ri --no-rdoc"
 
 RUN mkdir /home/app/lilsis
-RUN /bin/bash -c "curl -sSL https://raw.githubusercontent.com/skomputer/lilsis/master/Gemfile > /home/app/lilsis/Gemfile"
-RUN /bin/bash -c "curl -sSL https://raw.githubusercontent.com/skomputer/lilsis/master/Gemfile.lock > /home/app/lilsis/Gemfile.lock"
+RUN /bin/bash -c "curl -sSL https://raw.githubusercontent.com/public-accountability/littlesis-rails/master/Gemfile > /home/app/lilsis/Gemfile"
+RUN /bin/bash -c "curl -sSL https://raw.githubusercontent.com/public-accountability/littlesis-rails/master/Gemfile.lock > /home/app/lilsis/Gemfile.lock"
 RUN chown app:app /home/app/lilsis
 RUN su - app -c "cd /home/app/lilsis && bundle install"
 
 RUN mkdir -p /home/app/bin
-RUN curl -sSL https://github.com/mozilla/geckodriver/releases/download/v0.11.1/geckodriver-v0.11.1-linux64.tar.gz > /tmp/geckodriver-v0.11.1-linux64.tar.gz
-RUN tar xzf /tmp/geckodriver-v0.11.1-linux64.tar.gz -C /home/app/bin
+RUN curl -sSL https://github.com/mozilla/geckodriver/releases/download/v0.14.0/geckodriver-v0.14.0-linux64.tar.gz > /tmp/geckodriver.tar.gz
+RUN tar xzf /tmp/geckodriver.tar.gz -C /home/app/bin
 
 RUN mkdir -p /home/app/scripts
 ADD index_sphinx.sh /home/app/scripts/index_sphinx.sh
@@ -64,10 +64,8 @@ ADD ls_dev.conf /etc/nginx/sites-enabled/ls_dev.conf
 RUN usermod -u 1000 app
 RUN chown -R app:app /home/app/lilsis
 
-
-#
 # running chown -R app:app /home/app/lilsis
 # after running the docker file seems to clear up some permission issues that happe
-# 
+ 
 # Clean up APT when done.
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
