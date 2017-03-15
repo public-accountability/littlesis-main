@@ -11,6 +11,9 @@ littlesis up or littlesis up -d
 Stop app:
 littlesis down
 
+Enter mysql shell: 
+littlesis mysql
+
 Information:
 littlesis ps
 littlesis logs
@@ -155,6 +158,10 @@ while :; do
 	    docker-compose "$1"
 	    exit
 	    ;;
+	mysql)
+	     mysql -u littlesis -pthemanbehindthemanbehindthethrone -h 127.0.0.1 littlesis
+	     exit
+	     ;;
 	-h|help|--help)
 	    show_help
 	    exit
