@@ -1,6 +1,6 @@
 # littlesis-docker
 
-Rails Code: https://github.com/skomputer/lilsis
+Rails Code: https://github.com/public-accountability/littlesis-rails
 
 Symfony Code: https://github.com/littlesis-org/littlesis
 
