@@ -50,7 +50,7 @@ RUN chown app:app /home/app/lilsis
 RUN su - app -c "cd /home/app/lilsis && bundle install"
 
 RUN mkdir -p /home/app/bin
-RUN curl -sSL https://github.com/mozilla/geckodriver/releases/download/v0.14.0/geckodriver-v0.14.0-linux64.tar.gz > /tmp/geckodriver.tar.gz
+RUN curl -sSL https://github.com/mozilla/geckodriver/releases/download/v0.15.0/geckodriver-v0.15.0-linux64.tar.gz > /tmp/geckodriver.tar.gz
 RUN tar xzf /tmp/geckodriver.tar.gz -C /home/app/bin
 
 RUN mkdir -p /home/app/scripts
