@@ -37,6 +37,8 @@ Rails console: littlesis rails c
 
 Rails logs: littlesis rails logs
 
+Nginx logs: littlesis nginx access|error
+
 Restart rails: littlesis rails restart
 
 Execute arbitrary rake command: littlesis rails rake [...]
@@ -75,6 +77,16 @@ rails_logs() {
 
 rails_restart() {
     docker-compose exec web /bin/bash -c 'passenger-config restart-app /home/app/lilsis'
+}
+
+nginx_logs() {
+    if [[ "$1" == access || "$1" == error ]]; then
+	local log_file="/var/log/nginx/${1}.log"
+	docker-compose exec web /bin/bash -c "tail -f ${log_file}"
+    else
+	echo 'There are only two nginx logs available: access and error'
+	exit 1
+    fi
 }
 
 rails() {
@@ -158,6 +170,11 @@ while :; do
 	    docker-compose "$1"
 	    exit
 	    ;;
+	nginx)
+	    shift
+	    nginx_logs "$@"
+	    exit
+	    ;;
 	mysql)
 	     mysql -u littlesis -pthemanbehindthemanbehindthethrone -h 127.0.0.1 littlesis
 	     exit
@@ -167,7 +184,7 @@ while :; do
 	    exit
 	    ;;
 	?*) # End of all options.
-            echo 'first arg must be rails or php or symfony'
+            echo 'first arg must one of these options: rails, php, up, down, ps, logs, mysql, help, nginx'
             exit 1
 	    ;;
 	*)
