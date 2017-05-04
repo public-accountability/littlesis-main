@@ -34,9 +34,16 @@ To enter the Rails container use: ``` ./docker_login rails ```
 
 To enter the Symfony container use: ``` ./docker_login php ``` 
 
-## Load MYSQL database
+## Setup the database
 
-If you have an existing copy of LittleSis's database, load it into mysql.: 
+``` mysql_setup.sql ``` creates the databases littlesis and littlesis_test and creates the user 'littlesis'
+
+``` bash
+mysql -h 127.0.0.1 -u root -proot < ./mysql_setup.sql
+
+```
+
+If you have an existing copy of LittleSis's database, populate the database now:
 
 ``` bash
 mysql -u littlesis -pthemanbehindthemanbehindthethrone -h 127.0.0.1 littlesis < path/to/littlesis_db.sql
@@ -46,24 +53,16 @@ This can take anywhere from 30mins to 3 hours depending on the size of the datab
 
 ## Setup Rails tests
 
-Login into mysql root shell: ```  mysql -u root -proot -h 127.0.0.1 ```. Run this comand from _outside_ docker although you will access the mysql that is running inside the container. 
-
-Create the littlesis_test database and give the littlesis db user access to it:
-
-``` sql
-create database littlesis_test;
-grant all privileges on littlesis_test.* to 'littlesis'@'%' identified by 'themanbehindthemanbehindthethrone';
-flush privileges;
-```
-
 Enter the rails container: ``` ./docker_login rails ``` and then run the tests:
 
 ``` bash
 su - app
 cd ~/lilsis
-RAILS_ENV=test bundle exec rake rspec
-# The first time you run the tests it might ask you to run the migrations. 
-# There is a helper bash function -- spec -- located at spec/spec_bash_helper.sh. 
+# setup the test database
+RAILS_ENV=test bundle exec rake db:structure:load
+# run the tests
+RAILS_ENV=test bundle exec rspec
+# There is a helper bash function -- spec -- located at spec/spec_bash_helper.sh
 # source this file in order to use the helper function
 source ./spec/spec_bash_helper.sh
 # now to run the tests you can use the shortcut:

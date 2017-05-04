@@ -36,9 +36,6 @@ services:
       - '3306:3306'
     environment:
       - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_USER=littlesis
-      - MYSQL_PASSWORD=themanbehindthemanbehindthethrone
-      - MYSQL_DATABASE=littlesis
 
   rocketchat:
     image: rocketchat/rocket.chat:latest

@@ -1,5 +1,4 @@
 littlesis-apps
-*.sql
 apps/
 config/
 mysql-data/
