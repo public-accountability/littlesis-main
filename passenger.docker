@@ -23,6 +23,8 @@ RUN rm -f /etc/service/redis/down  # enable redis
 
 RUN apt-get update && apt-get -y install \
     curl \
+    lsof \
+    nano \
     libcurl4-gnutls-dev \
     gnupg \ 
     imagemagick libmagickwand-dev \

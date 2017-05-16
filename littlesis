@@ -27,6 +27,10 @@ littlesis rails spec
 or run one test file. example:
 littlesis rails spec spec/models/relationship_spec.rb
 
+
+Start javascript tests:
+littlesis rails jasmine
+
 PHP sphinx functions:
 littlesis sphinx status
 littlesis sphinx start
@@ -58,8 +62,8 @@ docker_login() {
 }
 
 spec() {
-    local CMD="cd /home/app/lilsis && RAILS_ENV=test bundle exec spring rspec ${@}"
-    docker exec --user app -it littlesisdocker_web_1 /bin/sh -c "${CMD}"
+    local CMD="cd /home/app/lilsis && RAILS_ENV=test bundle exec rspec ${@}"
+    docker-compose exec web su app -c "${CMD}"
 }
 
 rails_console() {
@@ -67,7 +71,7 @@ rails_console() {
 }
 
 rails_rake() {
-    local CMD="cd /home/app/lilsis && RAILS_ENV=test bundle exec rake RAILS_ENV=development ${@}"
+    local CMD="cd /home/app/lilsis && RAILS_ENV=development bundle exec rake ${@}"
     docker-compose exec web su app -c "${CMD}"
 }
 
@@ -77,6 +81,11 @@ rails_logs() {
 
 rails_restart() {
     docker-compose exec web /bin/bash -c 'passenger-config restart-app /home/app/lilsis'
+}
+
+rails_jasmine() {
+    local CMD="cd /home/app/lilsis && RAILS_ENV=test bundle exec rake jasmine"
+    docker-compose exec web su app -c "${CMD}"
 }
 
 nginx_logs() {
@@ -110,6 +119,9 @@ rails() {
 	    ;;
 	restart)
 	    rails_restart
+	    ;;
+	jasmine)
+	    rails_jasmine
 	    ;;
 	*)
 	    echo 'Invalid option. Available options: spec, login, console, logs, rake'
