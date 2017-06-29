@@ -23,10 +23,12 @@ littlesis rails login
 littlesis php login
 
 Run all rails tests:
-littlesis rails spec
+littlesis rails rspec
 or run one test file. example:
-littlesis rails spec spec/models/relationship_spec.rb
+littlesis rails rspec spec/models/relationship_spec.rb
 
+Run tests and login:
+littlesis rails spec
 
 Start javascript tests:
 littlesis rails jasmine
@@ -61,9 +63,13 @@ docker_login() {
     fi
 }
 
-spec() {
+rspec() {
     local CMD="cd /home/app/lilsis && RAILS_ENV=test bundle exec rspec ${@}"
     docker-compose exec web su app -c "${CMD}"
+}
+
+rails_spec() {
+    docker-compose exec web su app -c "cd /home/app/lilsis && source spec/spec_bash_helper.sh && bash"
 }
 
 rails_console() {
@@ -100,9 +106,12 @@ nginx_logs() {
 
 rails() {
     case $1 in
-	spec)
+	rspec)
 	    shift
-	    spec "$@"
+	    rspec "$@"
+	    ;;
+	spec)
+	    rails_spec
 	    ;;
 	login)
 	    docker_login rails
