@@ -104,6 +104,15 @@ nginx_logs() {
     fi
 }
 
+rails_search() {
+    local grep_opts='-H --color -i -n'
+    cd apps/rails
+    grep $grep_opts -r 'app' -e "${1}"
+    grep $grep_opts -r 'lib' -e "${1}"
+    grep $grep_opts -r 'Gemfile' -e "${1}"
+    #grep $grep_opts -r 'config' -e "${1}"
+}
+
 rails() {
     case $1 in
 	rspec)
@@ -132,8 +141,12 @@ rails() {
 	jasmine)
 	    rails_jasmine
 	    ;;
+	search)
+	    shift
+	    rails_search "$@"
+	    ;;
 	*)
-	    echo 'Invalid option. Available options: spec, login, console, logs, rake'
+	    echo 'Invalid option. Available options: spec, login, console, logs, rake, search'
     esac
 }
 
