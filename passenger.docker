@@ -1,4 +1,4 @@
-FROM phusion/passenger-customizable:0.9.20
+FROM phusion/passenger-customizable:0.9.22
 
 # Set correct environment variables.
 ENV HOME /root
@@ -68,6 +68,15 @@ RUN chown -R app:app /home/app/lilsis
 
 # running chown -R app:app /home/app/lilsis
 # after running the docker file seems to clear up some permission issues that happe
- 
+
+# set time
+ENV TZ America/New_York
+
+RUN echo $TZ > /etc/timezone && \
+    apt-get update && apt-get install -y tzdata && \
+    rm /etc/localtime && \
+    ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
+    dpkg-reconfigure -f noninteractive tzdata
+    
 # Clean up APT when done.
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
