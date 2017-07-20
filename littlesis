@@ -113,6 +113,11 @@ rails_search() {
     #grep $grep_opts -r 'config' -e "${1}"
 }
 
+rails_spec_search() {
+    cd apps/rails/spec
+    grep $grep_opts -r -H --color -i -n "${1}"
+}
+
 rails() {
     case $1 in
 	rspec)
@@ -144,6 +149,10 @@ rails() {
 	search)
 	    shift
 	    rails_search "$@"
+	    ;;
+	spec-search)
+	    shift
+	    rails_spec_search "$@"
 	    ;;
 	*)
 	    echo 'Invalid option. Available options: spec, login, console, logs, rake, search'
