@@ -57,6 +57,10 @@ littlesis rails search <TERM>
 Search test files:
 littlesis rails spec-search <TERM>
 
+View rails coverage:
+littlesis rails coverage
+
+
 EOF
 }
 
@@ -130,6 +134,19 @@ rails_spec_search() {
     grep $grep_opts -r -H --color -i -n "${1}"
 }
 
+rails_coverage() {
+    local cov_file=apps/rails/coverage/index.html
+
+    if [ -x "$(command -v firefox)" ];then
+	firefox --new-window $cov_file > /dev/null 2>&1
+    elif [ -x "$(command -v chromium)" ];then
+	 chromium $cov_file > /dev/null 2>&1
+    else
+	echo 'Could not find firefox or chromium'
+	exit 1
+    fi
+}
+
 rails() {
     case $1 in
 	rspec)
@@ -166,8 +183,12 @@ rails() {
 	    shift
 	    rails_spec_search "$@"
 	    ;;
+	cov|coverage)
+	    rails_coverage
+	    ;;
 	*)
-	    echo 'Invalid option. Available options: spec, login, console, logs, rake, search'
+	    echo 'Invalid option'
+	    echo '  Available options: spec, login, console, logs, rake, search, coverage'
     esac
 }
 
