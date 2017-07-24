@@ -97,6 +97,11 @@ rails_rake() {
     docker-compose exec web su app -c "${CMD}"
 }
 
+rails_cmd() {
+    local CMD="cd /home/app/lilsis && ${@}"
+    docker-compose exec web su app -c "${CMD}"
+}
+
 rails_logs() {
     docker-compose exec web /bin/bash -c 'tail -f /home/app/lilsis/log/development.log'
 }
@@ -159,6 +164,10 @@ rails() {
 	login)
 	    docker_login rails
 	    ;;
+        cmd|command)
+	    shift
+	    rails_cmd "$@"
+	    ;;
 	console|c)
 	    rails_console
 	    ;;
@@ -188,7 +197,7 @@ rails() {
 	    ;;
 	*)
 	    echo 'Invalid option'
-	    echo '  Available options: spec, login, console, logs, rake, search, coverage'
+	    echo '  Available options: spec, login, console, logs, rake, search, coverage, cmd'
     esac
 }
 
