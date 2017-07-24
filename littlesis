@@ -24,11 +24,15 @@ littlesis php login
 
 Run all rails tests:
 littlesis rails rspec
+
 or run one test file. example:
 littlesis rails rspec spec/models/relationship_spec.rb
 
 Open bash console for easy test running:
 littlesis rails spec
+
+Run rspec w/ spring
+littlesis rails spring-spec
 
 Start javascript tests:
 littlesis rails jasmine
@@ -81,6 +85,11 @@ docker_login() {
 
 rspec() {
     local CMD="cd /home/app/lilsis && RAILS_ENV=test COVERAGE=true bundle exec rspec ${@}"
+    docker-compose exec web su app -c "${CMD}"
+}
+
+rails_spring_rspec() {
+    local CMD="cd /home/app/lilsis && RAILS_ENV=test bin/spring rspec ${@}"
     docker-compose exec web su app -c "${CMD}"
 }
 
@@ -157,6 +166,10 @@ rails() {
 	rspec)
 	    shift
 	    rspec "$@"
+	    ;;
+	spring-rspec|s)
+	    shift
+	    rails_spring_rspec "$@"
 	    ;;
 	spec)
 	    rails_spec
