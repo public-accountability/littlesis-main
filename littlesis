@@ -80,7 +80,7 @@ docker_login() {
 }
 
 rspec() {
-    local CMD="cd /home/app/lilsis && RAILS_ENV=test bundle exec rspec ${@}"
+    local CMD="cd /home/app/lilsis && RAILS_ENV=test COVERAGE=true bundle exec rspec ${@}"
     docker-compose exec web su app -c "${CMD}"
 }
 
