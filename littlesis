@@ -27,7 +27,7 @@ littlesis rails rspec
 or run one test file. example:
 littlesis rails rspec spec/models/relationship_spec.rb
 
-Run tests and login:
+Open bash console for easy test running:
 littlesis rails spec
 
 Start javascript tests:
@@ -51,7 +51,19 @@ Execute arbitrary rake command: littlesis rails rake [...]
 
 For instance, to restart sphinx: littlesis rails rake ts:restart
 
+Search rails app:
+littlesis rails search <TERM>
+
+Search test files:
+littlesis rails spec-search <TERM>
+
 EOF
+}
+
+short_help() {
+    echo "Usage: ./littlesis rails|php"
+    echo "Helpful shortcuts to the LittleSis development environment"
+    echo "More information: littlesis help"
 }
 
 
@@ -231,7 +243,8 @@ while :; do
             exit 1
 	    ;;
 	*)
-	    break
+	    short_help
+	    exit
 	    ;;
     esac
 done
