@@ -34,5 +34,4 @@ RUN rm /tmp/sphinx.deb
 
 RUN mkdir /scripts
 ADD index_php_sphinx.sh /scripts/index_php_sphinx.sh 
-ADD start_php_sphinx.sh /scripts/start_php_sphinx.sh
 RUN chmod +x /scripts/*

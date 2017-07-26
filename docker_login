@@ -1,7 +1,0 @@
-#!/bin/bash
-
-if [ "$1" == rails ]; then
-    docker exec -t -i littlesisdocker_web_1 /bin/bash -l
-elif [ "$1" == php ]; then
-    docker exec -t -i littlesisdocker_php_1 /bin/bash -l
-fi

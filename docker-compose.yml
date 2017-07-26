@@ -2,7 +2,7 @@ version: '2'
 
 services:
   web:
-    image: aepyornis/ls-rails:0.1.4
+    image: aepyornis/ls-rails:0.1.5
     ports:
         - "8080:80"
         - "8888:8888"
@@ -18,7 +18,7 @@ services:
         - rocketchat
 
   php:
-    image: aepyornis/ls-php:v0.0.5
+    image: aepyornis/ls-php:v0.0.6
     volumes:
         - ./apps/symfony:/var/www/littlesis/symfony
     depends_on:

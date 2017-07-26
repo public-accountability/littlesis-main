@@ -1,5 +1,5 @@
 RAILS_DOCKER_VERSION := 0.1.5
-PHP_DOCKER_VERSION := 0.0.5
+PHP_DOCKER_VERSION := 0.0.6
 
 help:
 	@echo "Welcome to the LittleSis Dev Environment"
@@ -26,6 +26,6 @@ build-rails-docker:
 	docker build --no-cache -t aepyornis/ls-rails:$(RAILS_DOCKER_VERSION) -f passenger.docker .
 
 build-php-docker:
-	docker build -t ls-php:v$(RAILS_DOCKER_VERSION) -f php.docker .
+	docker build -t aepyornis/ls-php:v$(PHP_DOCKER_VERSION) -f php.docker .
 
 .PHONY: help config
