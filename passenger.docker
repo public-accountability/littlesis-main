@@ -22,28 +22,22 @@ RUN rm -f /etc/service/nginx/down  # enable nginx
 RUN rm -f /etc/service/redis/down  # enable redis
 
 RUN apt-get update && apt-get -y install \
+    build-essential \
     curl \
     lsof \
     nano \
-    libcurl4-gnutls-dev \
     gnupg \ 
+    libcurl4-gnutls-dev \
     imagemagick libmagickwand-dev \
-    qt5-default libqt5webkit5-dev g++ \
-    libgdbm-dev \
-    libncurses5-dev \
-    automake \ 
-    libtool \ 
-    bison \ 
-    libffi-dev \ 
-    software-properties-common \ 
-    python-software-properties \ 
+#   Dependencies for capybara-webkit    
+    qt5-default libqt5webkit5-dev gstreamer1.0-plugins-base gstreamer1.0-tools gstreamer1.0-x \ 
+    automake \
+    libffi-dev \
     mysql-client libmysqlclient-dev \
     firefox \
     xvfb
-  
-RUN add-apt-repository ppa:builds/sphinxsearch-rel22 && apt-get update && apt-get install -y sphinxsearch
 
-RUN /bin/bash -l -c "gem install bundler --no-ri --no-rdoc"
+RUN add-apt-repository ppa:builds/sphinxsearch-rel22 && apt-get update && apt-get install -y sphinxsearch
 
 RUN mkdir /home/app/lilsis
 RUN /bin/bash -c "curl -sSL https://raw.githubusercontent.com/public-accountability/littlesis-rails/master/Gemfile > /home/app/lilsis/Gemfile"
@@ -55,19 +49,11 @@ RUN mkdir -p /home/app/bin
 RUN curl -sSL https://github.com/mozilla/geckodriver/releases/download/v0.15.0/geckodriver-v0.15.0-linux64.tar.gz > /tmp/geckodriver.tar.gz
 RUN tar xzf /tmp/geckodriver.tar.gz -C /home/app/bin
 
-RUN mkdir -p /home/app/scripts
-ADD index_sphinx.sh /home/app/scripts/index_sphinx.sh
-ADD start_sphinx.sh /home/app/scripts/start_sphinx.sh
-RUN chmod +x /home/app/scripts/*
-
 RUN rm /etc/nginx/sites-enabled/default
 ADD ls_dev.conf /etc/nginx/sites-enabled/ls_dev.conf
 
 RUN usermod -u 1000 app
 RUN chown -R app:app /home/app/lilsis
-
-# running chown -R app:app /home/app/lilsis
-# after running the docker file seems to clear up some permission issues that happe
 
 # set time
 ENV TZ America/New_York
@@ -80,3 +66,7 @@ RUN echo $TZ > /etc/timezone && \
     
 # Clean up APT when done.
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+
+# running chown -R app:app /home/app/lilsis
+# after building the image seems to clear up some permission issues that occasionally happen
