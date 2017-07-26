@@ -9,7 +9,6 @@ apps:
 	cd apps && mkdir symfony && cd symfony && git clone git@github.com:littlesis-org/littlesis.git . && ./setup.sh
 	cd apps && mkdir rails && cd rails && git clone git@github.com:public-accountability/littlesis-rails.git . && ./setup.sh
 
-
 config:
 #       rails config files
 	cp config/rails/database.yml apps/rails/config/database.yml
@@ -21,6 +20,12 @@ config:
 #       symfony sphinx
 	cp config/symfony/sphinx.conf apps/symfony/config/sphinx.conf
 
+db-setup:
+	mysql -h 127.0.0.1 -u root -proot < ./mysql_setup.sql
+	echo "select now()" | mysql -u littlesis -pthemanbehindthemanbehindthethrone -h 127.0.0.1 littlesis
+
+docker-pull:
+	cat docker-compose.yml | grep "image:" | sed 's/image://g' | xargs -l docker pull
 
 build-rails-docker:
 	docker build --no-cache -t aepyornis/ls-rails:$(RAILS_DOCKER_VERSION) -f passenger.docker .
@@ -28,4 +33,5 @@ build-rails-docker:
 build-php-docker:
 	docker build -t aepyornis/ls-php:v$(PHP_DOCKER_VERSION) -f php.docker .
 
-.PHONY: help config
+.PHONY: help config build-rails-docker build-php-docker docker-pull
+.PHONY: db-setup
