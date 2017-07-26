@@ -1,0 +1,84 @@
+# default values
+all:
+  rails:
+    enabled: on
+
+  netmap:
+    api_key: freeapiforlittlesisdevs
+    default_width: 960
+    default_height: 550
+    
+  carousel:
+    list_id: 404
+
+  images:
+    file_type: png
+    mime_type: png
+    square_file_type: jpg
+    profile_type: profile
+
+  imagemagick:
+    binary_path: /usr/bin/convert
+
+  login_enabled: on
+
+  sf_guard_plugin:
+    remember_key_expiration_age:  2592000   # 30 days in seconds
+    remember_cookie_name:         LittleSisRememberMe
+    success_signout_url:          @homepage
+    
+  versioning:
+    track_modifications:  on
+
+  logging:
+    views:                off
+
+  accounts:
+    auto_approve:         on
+    
+  mail:
+    join_sender_address:        accounts@littlesis.org
+    join_sender_name:           LittleSis
+
+    password_sender_address:    accounts@littlesis.org
+    password_sender_name:       LittleSis
+    
+    contact_sender_address:     admin@littlesis.org
+    contact_sender_name:        LittleSis
+    contact_recipient_address:  admin@littlesis.org
+
+    alert_sender_address:       admin@littlesis.org
+    alert_sender_name:          LittleSis
+    alert_recipient_address:    admin@littlesis.org
+
+    notes_sender_name:          LittleSis
+    notes_sender_address:       noreply@littlesis.org
+        
+  cache:
+    partials_enabled:     off
+    query_enabled:        off
+    result_enabled:       off
+    driver:               Apc
+
+  login:
+    admin_only:           off
+
+  search:
+    engine:               sphinx
+
+  amazon:
+    enable_s3:            true
+    enable_s3_assets:     true
+    s3_base:              "//s3.amazonaws.com"
+    s3_bucket:            pai-littlesis
+    s3_folder:            images
+    access_key:           AMAZON_ACCESS_KEY
+    secret_key:           AMAZON_SECRET_KEY
+
+  google:
+    search_key:           GOOGLE_CUSTOM_SEARCH_KEY
+    search_engine_id:     GOOGLE_CUSTOM_SEARCH_ENGINE_ID
+    
+  recaptcha:
+    public_key:           RECAPTCHA_PUBLIC_KEY
+    private_key:          RECAPTCHA_PRIVATE_KEY
