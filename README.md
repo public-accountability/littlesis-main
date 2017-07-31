@@ -21,7 +21,7 @@ When complete you should have a folder structure that looks like this:
 	chat/ -> rocket.chat configuration and mongo data
 	apps/
 		rails/ -> root of the rails repo
-		symfony/ -> root of the symfony 
+		symfony/ -> root of the symfony
 
 ```
 
@@ -61,7 +61,7 @@ Steps for a fully functional LittleSis Development environment:
 3) Edit the configuration files in ./config (optionally) and run ``` make config ```
 
 4) Modify paths in docker-compose.yml if needed [otherwise skip this step]
-   
+
 5) run app: ``` littlesis up ``` or ``` littlesis up -d ```
 
 ## Setup the database
@@ -126,11 +126,11 @@ and go to _localhost:8888_
 
 The php dockerfile is php.docker and the Rails dockerfile is passenger.docker.
 
-After updating the dockerfiles or after adding a new gem, change the version in the top of the Makfile and then build the docker images: ``` make build-rails-docker build-php-docker ``` and upload the new images to Docker Hub. See [here for dockerhub instructions](https://docs.docker.com/engine/getstarted/step_six/). 
+After updating the dockerfiles or after adding a new gem, change the version in the top of the Makfile and then build the docker images: ``` make build-rails-docker build-php-docker ``` and upload the new images to Docker Hub. See [here for dockerhub instructions](https://docs.docker.com/engine/getstarted/step_six/).
 
 ### Nginx configuration
 
-The file _ls_dev.conf_ contains the nginx configuration. 
+The file _ls_dev.conf_ contains the nginx configuration.
 The app is accessible at ``` localhost:8080 ``` and, additionally, if you add these two lines to  ``` /etc/hosts ``` :
 
 ```
@@ -149,4 +149,19 @@ you can access the site at ``` ls.dev:8080 ```
 *Rails logs*:
    - /home/app/lilsis/log/development.log
 
+## Subsequent Runs
 
+1. Start the app:
+
+```
+cd /path/to/littlesis-docker
+./littlesis up -d
+./littlesis rails rake ts:start
+```
+
+2. Point your favorite browser to `localhost:8008`
+
+3. If desired, login with:
+
+* username: `user1@email.com`
+* password: `password`
