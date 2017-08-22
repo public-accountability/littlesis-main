@@ -42,6 +42,8 @@ RUN add-apt-repository ppa:builds/sphinxsearch-rel22 && apt-get update && apt-ge
 RUN mkdir /home/app/lilsis
 RUN /bin/bash -c "curl -sSL https://raw.githubusercontent.com/public-accountability/littlesis-rails/master/Gemfile > /home/app/lilsis/Gemfile"
 RUN /bin/bash -c "curl -sSL https://raw.githubusercontent.com/public-accountability/littlesis-rails/master/Gemfile.lock > /home/app/lilsis/Gemfile.lock"
+RUN /bin/bash -c "curl -sSL https://raw.githubusercontent.com/public-accountability/littlesis-rails/master/.ruby-version > /home/app/lilsis/.ruby-version"
+RUN /bin/bash -c "curl -sSL https://raw.githubusercontent.com/public-accountability/littlesis-rails/master/.ruby-gemset > /home/app/lilsis/.ruby-gemset"
 RUN chown app:app /home/app/lilsis
 RUN su - app -c "cd /home/app/lilsis && bundle install"
 
