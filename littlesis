@@ -68,6 +68,8 @@ littlesis rails coverage
 EOF
 }
 
+web_app_exec="docker-compose exec web su app -l -c"
+
 short_help() {
     echo "Usage: ./littlesis rails|php"
     echo "Helpful shortcuts to the LittleSis development environment"
@@ -85,30 +87,30 @@ docker_login() {
 
 rspec() {
     local CMD="cd /home/app/lilsis && RAILS_ENV=test COVERAGE=true bundle exec rspec ${@}"
-    docker-compose exec web su app -c "${CMD}"
+    $web_app_exec "${CMD}"
 }
 
 rails_spring_rspec() {
     local CMD="cd /home/app/lilsis && RAILS_ENV=test bin/spring rspec ${@}"
-    docker-compose exec web su app -c "${CMD}"
+    $web_app_exec "${CMD}"
 }
 
 rails_spec() {
-    docker-compose exec web su app -c "cd /home/app/lilsis && source spec/spec_bash_helper.sh && bash"
+    $web_app_exec "cd /home/app/lilsis && source spec/spec_bash_helper.sh && bash"
 }
 
 rails_console() {
-    docker-compose exec web su app -c 'cd /home/app/lilsis; RAILS_ENV=development bin/rails c'
+    $web_app_exec 'cd /home/app/lilsis; RAILS_ENV=development bin/rails c'
 }
 
 rails_rake() {
     local CMD="cd /home/app/lilsis && RAILS_ENV=development bundle exec rake ${@}"
-    docker-compose exec web su app -c "${CMD}"
+    $web_app_exec "${CMD}"
 }
 
 rails_cmd() {
     local CMD="cd /home/app/lilsis && ${@}"
-    docker-compose exec web su app -c "${CMD}"
+    $web_app_exec "${CMD}"
 }
 
 rails_logs() {
@@ -121,7 +123,7 @@ rails_restart() {
 
 rails_jasmine() {
     local CMD="cd /home/app/lilsis && RAILS_ENV=test bundle exec rake jasmine"
-    docker-compose exec web su app -c "${CMD}"
+    $web_app_exec "${CMD}"
 }
 
 nginx_logs() {
