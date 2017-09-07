@@ -53,7 +53,10 @@ defaults: &defaults
     api_url: "http://rocketchat:3000"
     admin_username: "admin"
     admin_password: "admin"
-  
+  recaptcha:
+    site_key: 'your-recaptcha-site-key-here'
+    secret_key: 'your-recaptcha-secret-key-here'
+
 test:
   <<: *defaults
 
