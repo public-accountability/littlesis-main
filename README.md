@@ -86,6 +86,7 @@ Setup the testing database:
 
 ``` bash
 littlesis rails cmd RAILS_ENV=test bundle exec rake db:structure:load
+littlesis rails cmd RAILS_ENV=test bundle exec rake db:seed
 ```
 
 Run the tests:
