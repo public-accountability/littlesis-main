@@ -169,7 +169,7 @@ rails() {
 	    shift
 	    rspec "$@"
 	    ;;
-	spring-rspec|s)
+	spring-rspec|spring-spec|s)
 	    shift
 	    rails_spring_rspec "$@"
 	    ;;
