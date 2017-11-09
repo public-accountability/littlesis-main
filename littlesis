@@ -31,6 +31,9 @@ littlesis rails rspec spec/models/relationship_spec.rb
 Open bash console for easy test running:
 littlesis rails spec
 
+Reset the test database (littlesis_test)
+littlesis rails reset-test-db
+
 Run rspec w/ spring
 littlesis rails spring-spec
 
@@ -111,6 +114,11 @@ rails_rake() {
 rails_cmd() {
     local CMD="cd /home/app/lilsis && ${@}"
     $web_app_exec "${CMD}"
+}
+
+rails_reset_test_db() {
+    $web_app_exec 'cd /home/app/lilsis; RAILS_ENV=test bundle exec rake db:structure:load'
+    $web_app_exec 'cd /home/app/lilsis; RAILS_ENV=test bundle exec rake db:seed'
 }
 
 rails_logs() {
@@ -198,6 +206,9 @@ rails() {
 	    ;;
 	jasmine)
 	    rails_jasmine
+	    ;;
+	reset-test-db)
+	    rails_reset_test_db
 	    ;;
 	search)
 	    shift
