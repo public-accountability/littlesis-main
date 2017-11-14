@@ -25,7 +25,7 @@ db-setup:
 	echo "select now()" | mysql -u littlesis -pthemanbehindthemanbehindthethrone -h 127.0.0.1 littlesis
 
 docker-pull:
-	cat docker-compose.yml | grep "image:" | sed 's/image://g' | xargs -l docker pull
+	cat docker-compose.yml | grep "image:" | sed 's/image://g' | xargs -I image docker pull image
 
 build-rails-docker:
 	docker build --no-cache -t aepyornis/ls-rails:$(RAILS_DOCKER_VERSION) -f passenger.docker .
