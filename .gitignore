@@ -2,3 +2,4 @@ littlesis-apps
 apps/
 mysql-data/
 chat/
+*.sql
