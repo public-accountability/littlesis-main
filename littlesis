@@ -149,6 +149,7 @@ rails_search() {
     cd apps/rails
     grep $grep_opts -r 'app' -e "${1}"
     grep $grep_opts -r 'lib' -e "${1}"
+    grep $grep_opts -r 'config' -e "${1}"
     grep $grep_opts -r 'Gemfile' -e "${1}"
     #grep $grep_opts -r 'config' -e "${1}"
 }
