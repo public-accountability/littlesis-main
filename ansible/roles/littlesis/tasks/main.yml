@@ -1,0 +1,4 @@
+---
+- name: testing
+  debug:
+    msg: 'This works!'
