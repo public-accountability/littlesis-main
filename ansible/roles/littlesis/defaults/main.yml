@@ -1,0 +1,23 @@
+---
+littlesis_packages:
+  - curl
+  - build-essential
+  - git
+  - software-properties-common
+  - gnupg
+  - htop
+  - lsof
+  - tmux
+  - libcurl4-gnutls-dev
+  - imagemagick
+  - libmagickwand-dev
+  - automake 
+  - libffi-dev
+  - firefox
+  - xvfb
+  - fail2ban
+
+# ssh
+kex_algorithms: "diffie-hellman-group-exchange-sha256"
+ciphers: "aes256-ctr,aes192-ctr,aes128-ctr"
+macs: "hmac-sha2-512,hmac-sha2-256,hmac-ripemd160"

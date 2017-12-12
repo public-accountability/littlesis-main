@@ -1,4 +1,9 @@
 ---
+- import_tasks: packages.yml
+- import_tasks: security.yml
+- import_tasks: app_user.yml
+
+
 - name: testing
   debug:
     msg: 'This works!'

@@ -1,0 +1,21 @@
+---
+- name: Install required packages
+  apt:
+    update_cache: yes
+    name: "{{ item }}"
+  with_items: "{{ littlesis_packages }}"
+
+- name: Add mariadb key
+  apt_key:
+    keyserver: 'hkp://keyserver.ubuntu.com:80'
+    id: F1656F24C74CD1D8
+
+- name: Add Mariadb repo
+  apt_repository:
+    repo: 'deb [arch=amd64,i386,ppc64el] http://nyc2.mirrors.digitalocean.com/mariadb/repo/10.1/ubuntu xenial main'
+    state: present
+    update_cache: yes
+
+- name: Install Mariadb-client
+  apt:
+    name: mariadb-client
