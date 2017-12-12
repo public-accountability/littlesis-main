@@ -21,7 +21,3 @@
   shell: "~/.rvm/bin/rvm {{ ruby_version }} do bundle install --deployment --jobs 2 --without development test"
   args:
     chdir: /var/www/littlesis
-
-
-
-

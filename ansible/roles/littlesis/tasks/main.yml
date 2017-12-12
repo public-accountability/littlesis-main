@@ -3,11 +3,14 @@
   tags: packages
 - import_tasks: security.yml
 - import_tasks: app_user.yml
+- import_tasks: redis.yml
+  tags: redis
 - import_tasks: rvm.yml
   tags: ruby
 - import_tasks: app.yml
   tags: app
 - import_tasks: passenger.yml
+  
 
 
   
