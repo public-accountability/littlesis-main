@@ -4,3 +4,6 @@
 
 - name: restart ssh
   service: name=ssh state=restarted
+
+- name: restart nginx
+  service: name=nginx state=restarted

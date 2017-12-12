@@ -16,3 +16,20 @@
   with_items:
     - nginx-extras
     - passenger
+
+
+- name: Enable passenger in nginx.conf
+  lineinfile:
+    regexp: 'include /etc/nginx/passenger.conf;'
+    line: '  include /etc/nginx/passenger.conf;'
+    path: /etc/nginx/nginx.conf
+  notify: restart nginx
+
+
+- name: Validate install
+  shell: /usr/bin/passenger-config validate-install --auto
+  register: passenger_validate_install
+  changed_when: false
+  tags: passenger-validate
+- debug: msg="{{ passenger_validate_install.stdout_lines }}"
+  tags: passenger-validate

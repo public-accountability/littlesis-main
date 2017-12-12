@@ -12,6 +12,7 @@
 - import_tasks: app.yml
   tags: app
 - import_tasks: passenger.yml
+  tags: passenger
   
 
 
