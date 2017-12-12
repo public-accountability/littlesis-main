@@ -5,6 +5,8 @@
 - import_tasks: app_user.yml
 - import_tasks: redis.yml
   tags: redis
+- import_tasks: sphinx.yml
+  tags: sphinx
 - import_tasks: rvm.yml
   tags: ruby
 - import_tasks: app.yml

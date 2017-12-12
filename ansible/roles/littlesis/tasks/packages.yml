@@ -23,3 +23,8 @@
   with_items: 
       - mariadb-client
       - libmariadbclient-dev
+
+- name: Install geckodriver
+  shell: "curl -sSL {{ geckodriver_url }} | tar -C /usr/local/bin/ -xzf - geckodriver"
+  args:
+    creates: /usr/local/bin/geckodriver
