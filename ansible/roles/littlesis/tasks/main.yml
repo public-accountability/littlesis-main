@@ -2,8 +2,7 @@
 - import_tasks: packages.yml
 - import_tasks: security.yml
 - import_tasks: app_user.yml
+- import_tasks: rvm.yml
+- import_tasks: passenger.yml
 
 
-- name: testing
-  debug:
-    msg: 'This works!'

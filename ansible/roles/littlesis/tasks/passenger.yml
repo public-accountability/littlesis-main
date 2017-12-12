@@ -1,0 +1,18 @@
+---
+- name: Add Passenger key
+  apt_key:
+    keyserver: 'hkp://keyserver.ubuntu.com:80'
+    id: 561F9B9CAC40B2F7
+
+- name: Add passenger Repo
+  apt_repository:
+    repo: 'deb https://oss-binaries.phusionpassenger.com/apt/passenger xenial main'
+    state: present
+    update_cache: yes
+
+- name: Install Passenger & Nginx
+  apt:
+    name: "{{ item }}"
+  with_items:
+    - nginx-extras
+    - passenger

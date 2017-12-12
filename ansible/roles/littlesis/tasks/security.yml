@@ -8,7 +8,7 @@
 - name: Ensure fail2ban is started
   service: name=fail2ban state=started
 
-- name: Update sshd config for PFS and more secure defaults
+- name: Update sshd config
   template:
     src: sshd_config.j2
     dest: /etc/ssh/sshd_config

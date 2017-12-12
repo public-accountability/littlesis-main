@@ -4,7 +4,10 @@ littlesis_packages:
   - build-essential
   - git
   - software-properties-common
+  - apt-transport-https
+  - ca-certificates
   - gnupg
+  - dirmngr
   - htop
   - lsof
   - tmux
@@ -21,3 +24,6 @@ littlesis_packages:
 kex_algorithms: "diffie-hellman-group-exchange-sha256"
 ciphers: "aes256-ctr,aes192-ctr,aes128-ctr"
 macs: "hmac-sha2-512,hmac-sha2-256,hmac-ripemd160"
+
+# ruby
+ruby_versions: [ 'ruby-2.3.3' ]
