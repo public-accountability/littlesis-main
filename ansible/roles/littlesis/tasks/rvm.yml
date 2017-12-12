@@ -25,7 +25,8 @@
   include_role:
     name: rvm_io.ruby
   vars:
-    rvm1_rubies: "{{ ruby_versions }}"
+    rvm1_rubies:
+      - "{{ ruby_version }}"
     rvm1_user: 'littlesis'
     rvm1_install_path: '/home/littlesis/.rvm'
     rvm1_ruby_install_flags: --autolibs=read-fail

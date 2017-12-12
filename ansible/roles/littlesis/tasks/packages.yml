@@ -18,4 +18,8 @@
 
 - name: Install Mariadb-client
   apt:
-    name: mariadb-client
+    update_cache: yes
+    name: "{{ item }}"
+  with_items: 
+      - mariadb-client
+      - libmariadbclient-dev

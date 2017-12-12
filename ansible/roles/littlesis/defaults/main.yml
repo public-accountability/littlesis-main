@@ -20,10 +20,13 @@ littlesis_packages:
   - xvfb
   - fail2ban
 
+  # - libhiredis-dev
+  # - redis-server 
+
 # ssh
 kex_algorithms: "diffie-hellman-group-exchange-sha256"
 ciphers: "aes256-ctr,aes192-ctr,aes128-ctr"
 macs: "hmac-sha2-512,hmac-sha2-256,hmac-ripemd160"
 
 # ruby
-ruby_versions: [ 'ruby-2.3.3' ]
+ruby_version: 'ruby-2.3.3'

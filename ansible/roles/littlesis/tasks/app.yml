@@ -1,0 +1,27 @@
+---
+- name: Create /var/www/littlesis
+  file:
+    path: /var/www/littlesis
+    state: directory
+    owner: littlesis
+    group: littlesis
+    mode: 0755
+
+- name: Clone rails code from github
+  become: yes
+  become_user: littlesis
+  git:
+    repo: https://github.com/public-accountability/littlesis-rails.git
+    dest: /var/www/littlesis
+    recursive: yes
+
+- name: Install gems
+  become: yes
+  become_user: littlesis
+  shell: "~/.rvm/bin/rvm {{ ruby_version }} do bundle install --deployment --jobs 2 --without development test"
+  args:
+    chdir: /var/www/littlesis
+
+
+
+
