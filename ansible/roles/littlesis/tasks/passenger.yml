@@ -74,3 +74,24 @@
     group: root
     mode: 0644
   no_log: true
+
+
+- name: Copy littlesis.org nginx configuration
+  template:
+    src: littlesis.org.j2
+    dest: /etc/nginx/sites-enabled/littlesis.org
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart nginx
+  tags: passenger-configure
+
+- name: Copy passenger and nginx HTTP settings
+  template:
+    src: http.conf.j2
+    dest: /etc/nginx/conf.d/http.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart nginx
+  tags: passenger-configure

@@ -2,7 +2,6 @@ server {
     listen 443 ssl http2;
     listen [::]:443 ssl http2;
 
-    # certs sent to the client in SERVER HELLO are concatenated in ssl_certificate
     ssl_certificate         /etc/nginx/certs/certificate.pem;
     ssl_certificate_key     /etc/nginx/certs/key.pem;
     
@@ -23,7 +22,7 @@ server {
 
     # Turn on Passenger
     passenger_enabled on;
-    passenger_ruby {{ ruby_command }};
+    passenger_ruby {{ ruby_command.stdout }};
     passenger_user littlesis;
     
 
