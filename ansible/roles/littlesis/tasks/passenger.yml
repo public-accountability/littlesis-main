@@ -17,6 +17,25 @@
     - nginx-extras
     - passenger
 
+
+- name: Copy static files
+  synchronize:
+    src: ../static/
+    dest: /var/www/static
+    delete: yes
+    recursive: yes
+  tags: static
+
+- name: Set permissions on static files
+  file:
+    path: /var/www/static
+    state: directory
+    owner: root
+    group: root
+    mode: 0644
+    recurse: yes
+  tags: static
+    
 - name: Enable passenger in nginx.conf
   lineinfile:
     regexp: 'include /etc/nginx/passenger.conf;'
