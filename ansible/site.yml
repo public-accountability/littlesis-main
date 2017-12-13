@@ -3,6 +3,11 @@
   remote_user: ubuntu
   become: yes
 
+  pre_tasks:
+    - name: load secret vars from ~/littlesis.yml
+      include_vars:
+        file: ~/littlesis.yml
+      tags: passenger
+
   roles:
     - littlesis
-    

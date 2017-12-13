@@ -57,3 +57,20 @@
   args:
     creates: "{{ dhparam_file }}"
 
+- name: Copy TLS Cert
+  copy:
+    content: "{{ tls_certificate }}"
+    dest: /etc/nginx/certs/certificate.pem
+    owner: root
+    group: root
+    mode: 0644
+  no_log: true
+
+- name: Copy TLS Key
+  copy:
+    content: "{{ tls_key }}"
+    dest: /etc/nginx/certs/key.pem
+    owner: root
+    group: root
+    mode: 0644
+  no_log: true
