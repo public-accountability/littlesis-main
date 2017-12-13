@@ -21,3 +21,12 @@
   shell: "~/.rvm/bin/rvm {{ ruby_version }} do bundle install --deployment --jobs 2 --without development test"
   args:
     chdir: /var/www/littlesis
+
+- name: Setup lilsis.yml configuration
+  template:
+    src: lilsis.yml.j2
+    dest: /var/www/littlesis/config/lilsis.yml
+    mode: 0600
+    owner: littlesis
+    group: littlesis
+  
