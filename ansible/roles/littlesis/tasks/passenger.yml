@@ -17,7 +17,6 @@
     - nginx-extras
     - passenger
 
-
 - name: Enable passenger in nginx.conf
   lineinfile:
     regexp: 'include /etc/nginx/passenger.conf;'
@@ -33,3 +32,28 @@
   tags: passenger-validate
 - debug: msg="{{ passenger_validate_install.stdout_lines }}"
   tags: passenger-validate
+
+- name: Find ruby correct ruby command
+  shell: "sudo -H -u littlesis bash -l -c 'cd /var/www/littlesis && rvm {{ ruby_version }} do passenger-config about ruby-command' | grep 'Command:' | sed 's/Command://' | xargs"
+  changed_when: false
+  register: ruby_command
+  tags: passenger-configure
+
+- name: print ruby_command
+  debug:
+    msg: "Using Ruby Command: {{ ruby_command.stdout }}"
+  tags: passenger-configure
+
+- name: Create /etc/nginx/certs folder
+  file:
+    path: /etc/nginx/certs
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Generate Diffie-Hellman parameter file
+  command: "openssl dhparam -dsaparam -out '{{ dhparam_file }}' 4096"
+  args:
+    creates: "{{ dhparam_file }}"
+
