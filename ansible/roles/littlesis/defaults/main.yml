@@ -22,20 +22,13 @@ littlesis_packages:
   - python3-pip
   - fail2ban
   
-
 # ssh
 kex_algorithms: "diffie-hellman-group-exchange-sha256"
 ciphers: "aes256-ctr,aes192-ctr,aes128-ctr"
 macs: "hmac-sha2-512,hmac-sha2-256,hmac-ripemd160"
 
-# ruby
-ruby_version: 'ruby-2.3.3'
-
 # firefox 
 geckodriver_url: "https://github.com/mozilla/geckodriver/releases/download/v0.19.1/geckodriver-v0.19.1-linux64.tar.gz"
-
-# server
-server_name: littlesis.org
 
 # Swap
 swapfile_size: 1G

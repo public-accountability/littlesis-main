@@ -7,7 +7,3 @@
     redis_version: 4.0.6
     redis_verify_checksum: true
     redis_checksum: "sha256:769b5d69ec237c3e0481a262ff5306ce30db9b5c8ceb14d1023491ca7be5f6fa"
-    redis_maxmemory: 1gb
-    redis_maxmemory_policy: allkeys-lru
-    redis_save:
-      - 900 1

@@ -30,3 +30,11 @@
     owner: littlesis
     group: littlesis
   
+- name: Setup database.yml configuration
+  template:
+    src: database.yml.j2
+    dest: /var/www/littlesis/config/database.yml
+    mode: 0600
+    owner: littlesis
+    group: littlesis
+  

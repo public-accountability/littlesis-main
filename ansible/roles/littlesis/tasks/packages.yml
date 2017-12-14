@@ -29,7 +29,11 @@
   args:
     creates: /usr/local/bin/geckodriver
 
-- name: Instal awscli
+- name: Install nodejs
+  include_role:
+    name: geerlingguy.nodejs
+
+- name: Install awscli
   pip:
     name: awscli
     executable: /usr/bin/pip3  
@@ -44,4 +48,3 @@
     owner: ubuntu
     group: ubuntu
     mode: 0600
-    
