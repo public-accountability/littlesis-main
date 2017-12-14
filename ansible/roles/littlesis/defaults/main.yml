@@ -18,7 +18,10 @@ littlesis_packages:
   - libffi-dev
   - firefox
   - xvfb
+  - python3
+  - python3-pip
   - fail2ban
+  
 
 # ssh
 kex_algorithms: "diffie-hellman-group-exchange-sha256"
@@ -38,6 +41,8 @@ server_name: littlesis.org
 swapfile_size: 1G
 swapfile_location: /swapfile
 
+# awscli
+awscli_region: us-east-1
 
 # nginx
 dhparam_file: /etc/nginx/certs/dhparam.pem

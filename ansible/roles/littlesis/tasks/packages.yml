@@ -28,3 +28,20 @@
   shell: "curl -sSL {{ geckodriver_url }} | tar -C /usr/local/bin/ -xzf - geckodriver"
   args:
     creates: /usr/local/bin/geckodriver
+
+- name: Instal awscli
+  pip:
+    name: awscli
+    executable: /usr/bin/pip3  
+
+- name: create ~/.aws dir
+  file: path=/home/ubuntu/.aws state=directory owner=ubuntu group=ubuntu mode=0760
+
+- name: Configure awscli
+  template:
+    src: awscli.j2
+    dest: /home/ubuntu/.aws/config
+    owner: ubuntu
+    group: ubuntu
+    mode: 0600
+    
