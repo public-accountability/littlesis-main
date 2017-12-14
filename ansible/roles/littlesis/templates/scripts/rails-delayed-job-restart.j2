@@ -1,0 +1,3 @@
+#!/bin/bash
+
+sudo -H -i -u littlesis bash -l -c 'cd /var/www/littlesis && rvm use && bin/delayed_job restart RAILS_ENV=production'

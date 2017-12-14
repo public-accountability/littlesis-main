@@ -1,0 +1,3 @@
+#!/bin/bash
+
+mysql -u {{ database_username }} -p{{ database_password}} -h {{ database_host }} --column-names --batch {{ database_name }} -e "${1}"

@@ -34,7 +34,7 @@ build-php-docker:
 	docker build -t aepyornis/ls-php:v$(PHP_DOCKER_VERSION) -f php.docker .
 
 ansible-galaxy-roles:
-	ansible-galaxy install rvm_io.ruby DavidWittman.redis 
+	ansible-galaxy install rvm_io.ruby DavidWittman.redis geerlingguy.nodejs
 
 .PHONY: help config build-rails-docker build-php-docker docker-pull
 .PHONY: db-setup
