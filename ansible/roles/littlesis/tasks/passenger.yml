@@ -71,11 +71,6 @@
     group: root
     mode: 0755
 
-- name: Generate Diffie-Hellman parameter file
-  command: "openssl dhparam -dsaparam -out '{{ dhparam_file }}' 4096"
-  args:
-    creates: "{{ dhparam_file }}"
-
 - name: Copy TLS Cert
   copy:
     content: "{{ tls_certificate }}"
