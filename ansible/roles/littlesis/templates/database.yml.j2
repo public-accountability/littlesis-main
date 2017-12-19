@@ -1,0 +1,29 @@
+production:
+  adapter: mysql2
+  encoding: utf8
+  database: {{ database_name }}
+  pool: {{ database_pool }}
+  username: {{ database_username }}
+  password: {{ database_password }}
+  host: {{ database_host }}
+  reconnect: true
+
+development:
+  adapter: mysql2
+  encoding: utf8
+  database: {{ database_name }}
+  pool: {{ database_pool }}
+  username: {{ database_username }}
+  password: {{ database_password }}
+  host: {{ database_host }}
+  reconnect: true
+
+test:
+  adapter: mysql2
+  encoding: utf8
+  database: littlesis_test
+  pool: 5
+  username: littlesis
+  password: password
+  socket: /var/run/mysqld/mysqld.sock
+

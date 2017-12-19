@@ -1,0 +1,4 @@
+#!/bin/bash
+
+sudo -i -u littlesis bash -l -c 'cd /var/www/littlesis && rvm use && bundle exec rake assets:precompile RAILS_ENV=production'
+

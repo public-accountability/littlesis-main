@@ -1,0 +1,20 @@
+---
+- hosts: littlesis
+  remote_user: ubuntu
+  become: yes
+
+  vars:
+    server_name: dev.littlesis.org
+
+  pre_tasks:
+    - name: load secret vars from ~/littlesis.yml
+      include_vars:
+        file: ~/littlesis.yml
+      tags:
+        - passenger
+        - app
+        - packages
+        - scripts
+
+  roles:
+    - littlesis

@@ -1,0 +1,12 @@
+---
+- name: create littlesis group
+  group:
+    name: littlesis
+    state: present
+
+- name: create littlesis user
+  user:
+    name: littlesis
+    group: littlesis
+    shell: /bin/bash
+    

@@ -1,0 +1,54 @@
+---
+- name: Create /var/www/littlesis
+  file:
+    path: /var/www/littlesis
+    state: directory
+    owner: littlesis
+    group: littlesis
+    mode: 0755
+
+- name: Clone rails code from github
+  become: yes
+  become_user: littlesis
+  git:
+    repo: https://github.com/public-accountability/littlesis-rails.git
+    dest: /var/www/littlesis
+    recursive: yes
+
+- name: Install gems
+  become: yes
+  become_user: littlesis
+  shell: "~/.rvm/bin/rvm {{ ruby_version }} do bundle install --deployment --jobs 2 --without development test"
+  args:
+    chdir: /var/www/littlesis
+
+- name: Setup lilsis.yml configuration
+  template:
+    src: lilsis.yml.j2
+    dest: /var/www/littlesis/config/lilsis.yml
+    mode: 0600
+    owner: littlesis
+    group: littlesis
+  
+- name: Setup database.yml configuration
+  template:
+    src: database.yml.j2
+    dest: /var/www/littlesis/config/database.yml
+    mode: 0600
+    owner: littlesis
+    group: littlesis
+
+- name: create ~/scripts dir
+  file: path=/home/ubuntu/scripts state=directory owner=ubuntu group=ubuntu mode=0700
+  tags: scripts
+
+- name: Copy helper scripts
+  template:
+    src: "{{ item }}"
+    dest: /home/ubuntu/scripts/{{ item | basename | regex_replace('\.j2','') }}
+    owner: ubuntu
+    group: ubuntu
+    mode: 0500
+  with_fileglob:
+    - ../templates/scripts/*.j2
+  tags: scripts

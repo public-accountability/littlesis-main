@@ -1,0 +1,32 @@
+# if the step after this fails, note the missing package
+# and adjust this list.
+# reference: https://github.com/rvm/rvm1-ansible/issues/127
+
+- name: Install required packages for RVM
+  apt:
+    update_cache: yes
+    name: "{{ item }}"
+    state: installed
+  with_items: 
+    - libyaml-dev
+    - libsqlite3-dev
+    - sqlite3
+    - libgmp-dev 
+    - libgdbm-dev
+    - libncurses5-dev 
+    - bison
+    - libgmp-dev
+    - libreadline6-dev
+    - libssl-dev
+
+# rvm_io.ruby role can be downloaded like this:
+# ansible-galaxy install rvm_io.ruby
+- name: Install RVM
+  include_role:
+    name: rvm_io.ruby
+  vars:
+    rvm1_rubies:
+      - "{{ ruby_version }}"
+    rvm1_user: 'littlesis'
+    rvm1_install_path: '/home/littlesis/.rvm'
+    rvm1_ruby_install_flags: --autolibs=read-fail

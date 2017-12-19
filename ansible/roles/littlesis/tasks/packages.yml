@@ -1,0 +1,50 @@
+---
+- name: Install required packages
+  apt:
+    update_cache: yes
+    name: "{{ item }}"
+  with_items: "{{ littlesis_packages }}"
+
+- name: Add mariadb key
+  apt_key:
+    keyserver: 'hkp://keyserver.ubuntu.com:80'
+    id: F1656F24C74CD1D8
+
+- name: Add Mariadb repo
+  apt_repository:
+    repo: 'deb [arch=amd64,i386,ppc64el] http://nyc2.mirrors.digitalocean.com/mariadb/repo/10.1/ubuntu xenial main'
+    state: present
+    update_cache: yes
+
+- name: Install Mariadb-client
+  apt:
+    update_cache: yes
+    name: "{{ item }}"
+  with_items: 
+      - mariadb-client
+      - libmariadbclient-dev
+
+- name: Install geckodriver
+  shell: "curl -sSL {{ geckodriver_url }} | tar -C /usr/local/bin/ -xzf - geckodriver"
+  args:
+    creates: /usr/local/bin/geckodriver
+
+- name: Install nodejs
+  include_role:
+    name: geerlingguy.nodejs
+
+- name: Install awscli
+  pip:
+    name: awscli
+    executable: /usr/bin/pip3  
+
+- name: create ~/.aws dir
+  file: path=/home/ubuntu/.aws state=directory owner=ubuntu group=ubuntu mode=0760
+
+- name: Configure awscli
+  template:
+    src: awscli.j2
+    dest: /home/ubuntu/.aws/config
+    owner: ubuntu
+    group: ubuntu
+    mode: 0600

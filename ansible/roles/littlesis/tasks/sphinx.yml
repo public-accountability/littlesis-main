@@ -1,0 +1,16 @@
+- name: Add sphinx ppa key
+  apt_key:
+    keyserver: 'hkp://keyserver.ubuntu.com:80'
+    id: 2FE7BA61B28B34B7A2B749A2B9D8946B16932B16
+
+- name: Add sphinx repo
+  apt_repository:
+    repo: 'deb http://ppa.launchpad.net/builds/sphinxsearch-rel22/ubuntu xenial main'
+    state: present
+    update_cache: yes
+
+- name: Install Sphinxsearch 2.2
+  apt:
+    name: sphinxsearch
+    cache_valid_time: 3600
+

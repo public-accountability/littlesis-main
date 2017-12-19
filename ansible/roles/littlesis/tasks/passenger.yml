@@ -1,0 +1,111 @@
+---
+- name: Add Passenger key
+  apt_key:
+    keyserver: 'hkp://keyserver.ubuntu.com:80'
+    id: 561F9B9CAC40B2F7
+
+- name: Add passenger Repo
+  apt_repository:
+    repo: 'deb https://oss-binaries.phusionpassenger.com/apt/passenger xenial main'
+    state: present
+    update_cache: yes
+
+- name: Install Passenger & Nginx
+  apt:
+    name: "{{ item }}"
+  with_items:
+    - nginx-extras
+    - passenger
+
+
+- name: Copy static files
+  synchronize:
+    src: ../static/
+    dest: /var/www/static
+    delete: yes
+    recursive: yes
+  tags: static
+
+- name: Set permissions on static files
+  file:
+    path: /var/www/static
+    state: directory
+    owner: root
+    group: root
+    mode: 0644
+    recurse: yes
+  tags: static
+    
+- name: Enable passenger in nginx.conf
+  lineinfile:
+    regexp: 'include /etc/nginx/passenger.conf;'
+    line: '  include /etc/nginx/passenger.conf;'
+    path: /etc/nginx/nginx.conf
+  notify: restart nginx
+
+
+- name: Validate install
+  shell: /usr/bin/passenger-config validate-install --auto
+  register: passenger_validate_install
+  changed_when: false
+  tags: passenger-validate
+- debug: msg="{{ passenger_validate_install.stdout_lines }}"
+  tags: passenger-validate
+
+- name: Find ruby correct ruby command
+  shell: "sudo -H -u littlesis bash -l -c 'cd /var/www/littlesis && rvm {{ ruby_version }} do passenger-config about ruby-command' | grep 'Command:' | sed 's/Command://' | xargs"
+  changed_when: false
+  register: ruby_command
+  tags: passenger-configure
+
+- name: print ruby_command
+  debug:
+    msg: "Using Ruby Command: {{ ruby_command.stdout }}"
+  tags: passenger-configure
+
+- name: Create /etc/nginx/certs folder
+  file:
+    path: /etc/nginx/certs
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Copy TLS Cert
+  copy:
+    content: "{{ tls_certificate }}"
+    dest: /etc/nginx/certs/certificate.pem
+    owner: root
+    group: root
+    mode: 0644
+  no_log: true
+
+- name: Copy TLS Key
+  copy:
+    content: "{{ tls_key }}"
+    dest: /etc/nginx/certs/key.pem
+    owner: root
+    group: root
+    mode: 0644
+  no_log: true
+
+
+- name: Copy littlesis.org nginx configuration
+  template:
+    src: littlesis.org.j2
+    dest: /etc/nginx/sites-enabled/littlesis.org
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart nginx
+  tags: passenger-configure
+
+- name: Copy passenger and nginx HTTP settings
+  template:
+    src: http.conf.j2
+    dest: /etc/nginx/conf.d/http.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart nginx
+  tags: passenger-configure

@@ -3,3 +3,4 @@ apps/
 mysql-data/
 chat/
 *.sql
+ansible/*.retry

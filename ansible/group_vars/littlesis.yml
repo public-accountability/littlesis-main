@@ -1,0 +1,21 @@
+---
+# ruby
+ruby_version: 'ruby-2.3.3'
+
+# node
+nodejs_version: '8.x'
+
+# redis config
+redis_maxmemory: 1gb
+redis_maxmemory_policy: allkeys-lru
+redis_save:
+  - 900 1
+
+# server
+server_name: littlesis.org
+
+# database
+database_host: localhost
+database_name: littlesis
+database_username: littlesis
+database_pool: 10
