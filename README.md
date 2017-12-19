@@ -1,10 +1,6 @@
 # littlesis-docker
 
-LittleSis's code is divided across 3 repos:
-
 Rails Code: https://github.com/public-accountability/littlesis-rails
-
-Symfony Code: https://github.com/littlesis-org/littlesis
 
 Oligrapher: https://github.com/skomputer/oligrapher
 
@@ -21,7 +17,6 @@ When complete you should have a folder structure that looks like this:
 	chat/ -> rocket.chat configuration and mongo data
 	apps/
 		rails/ -> root of the rails repo
-		symfony/ -> root of the symfony
 
 ```
 
@@ -96,15 +91,7 @@ littlesis rails rspec
 
 ### Setup and start Sphinx
 
-Both Rails and Symfony use their own version of Sphinx. The first time you create the containers (and anytime you rebuild a container) you'll have to re-index both versions of Sphinx. _Everytime_ you start the docker app, you will have to start sphinx. If you get a sphinx error page on a profile page, make sure that sphinx is started.
-
-To start and index PHP's sphinx:
-
-```
-littlesis php sphinx index
-littlesis php sphinx start
-
-```
+The first time you create the containers (and anytime you rebuild a container) you'll have to re-index Sphinx. _Everytime_ you start the docker app, you will have to start sphinx. If you get a sphinx error page on a profile page, make sure that sphinx is started.
 
 To start and index Rail's sphinx:
 
@@ -125,18 +112,17 @@ and go to _localhost:8888_
 
 ### Docker images
 
-The php dockerfile is php.docker and the Rails dockerfile is passenger.docker.
+The dockerfile is named 'littlesis.docker'
 
 After updating the dockerfiles or after adding a new gem, change the version in the top of the Makfile and then build the docker images: ``` make build-rails-docker build-php-docker ``` and upload the new images to Docker Hub. See [here for dockerhub instructions](https://docs.docker.com/engine/getstarted/step_six/).
 
 ### Nginx configuration
 
 The file _ls_dev.conf_ contains the nginx configuration.
-The app is accessible at ``` localhost:8080 ``` and, additionally, if you add these two lines to  ``` /etc/hosts ``` :
+The app is accessible at ``` localhost:8080 ``` and, additionally, if you add this lines to  ``` /etc/hosts ``` :
 
 ```
 127.0.0.1	ls.dev
-127.0.0.1	lsapi.dev
 ```
 
 you can access the site at ``` ls.dev:8080 ```
