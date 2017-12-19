@@ -1,6 +1,6 @@
 ---
 # ruby
-ruby_version: 'ruby-2.3.3'
+ruby_version: 'ruby-2.3.6'
 
 # node
 nodejs_version: '8.x'

@@ -5,3 +5,5 @@ mysql-data*
 chat
 wordpress
 *.sql
+ansible
+static

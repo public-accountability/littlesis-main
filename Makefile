@@ -1,4 +1,4 @@
-RAILS_DOCKER_VERSION := 0.2.3
+RAILS_DOCKER_VERSION := 0.3.0-beta
 PHP_DOCKER_VERSION := 0.0.6
 
 help:
@@ -28,7 +28,7 @@ docker-pull:
 	cat docker-compose.yml | grep "image:" | sed 's/image://g' | xargs -I image docker pull image
 
 build-rails-docker:
-	docker build --no-cache -t aepyornis/ls-rails:$(RAILS_DOCKER_VERSION) -f passenger.docker .
+	docker build --no-cache -t aepyornis/ls-rails:$(RAILS_DOCKER_VERSION) -f littlesis.docker .
 
 build-php-docker:
 	docker build -t aepyornis/ls-php:v$(PHP_DOCKER_VERSION) -f php.docker .

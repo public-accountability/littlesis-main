@@ -1,0 +1,74 @@
+FROM phusion/passenger-customizable:0.9.22
+
+# Use baseimage-docker's init system.
+CMD ["/sbin/my_init"]
+
+RUN /pd_build/utilities.sh
+RUN rm -f /etc/service/nginx/down  # enable nginx
+
+RUN apt-get update && apt-get upgrade -y && apt-get -y install \
+    git \
+    locales \
+    build-essential \
+    software-properties-common \
+    curl \
+    lsof \
+    nano \
+    gnupg \
+    libcurl4-gnutls-dev \
+    imagemagick libmagickwand-dev \
+    qt5-default libqt5webkit5-dev gstreamer1.0-plugins-base gstreamer1.0-tools gstreamer1.0-x \
+    automake \
+    libffi-dev \
+    firefox \
+    xvfb
+
+# Locales
+RUN locale-gen en_US.UTF-8
+ENV LANG en_US.UTF-8 
+ENV LANGUAGE en_US:en 
+ENV LC_ALL en_US.UTF-8
+
+# set time
+ENV TZ America/New_York
+RUN echo $TZ > /etc/timezone && \
+    apt-get update && apt-get install -y tzdata && \
+    rm /etc/localtime && \
+    ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
+    dpkg-reconfigure -f noninteractive tzdata
+
+# Mariadb 10.1 client
+RUN apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xF1656F24C74CD1D8
+RUN add-apt-repository 'deb [arch=amd64,i386,ppc64el] http://nyc2.mirrors.digitalocean.com/mariadb/repo/10.1/ubuntu xenial main'
+RUN apt-get update && apt-get -y install mariadb-client libmariadbclient-dev
+
+# SPHINX
+RUN add-apt-repository ppa:builds/sphinxsearch-rel22 && apt-get update && apt-get install -y sphinxsearch
+
+# NODE
+RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
+RUN apt-get install -y nodejs
+
+# Geckodriver
+RUN curl -sSL https://github.com/mozilla/geckodriver/releases/download/v0.19.1/geckodriver-v0.19.1-linux64.tar.gz | tar -C /usr/local/bin/ -xzf - geckodriver
+
+## APP
+RUN mkdir -p /home/app
+RUN /bin/bash -c "curl -sSL https://raw.githubusercontent.com/public-accountability/littlesis-rails/update/Gemfile > /home/app/Gemfile"
+RUN /bin/bash -c "curl -sSL https://raw.githubusercontent.com/public-accountability/littlesis-rails/update/Gemfile.lock > /home/app/Gemfile.lock"
+RUN /bin/bash -c "curl -sSL https://raw.githubusercontent.com/public-accountability/littlesis-rails/update/.ruby-version > /home/app/.ruby-version"
+RUN chown -R app:app /home/app
+
+# Ensure correct version of ruby is installed and set as default
+RUN bash -lc 'rvm install $(cat /home/app/.ruby-version)'
+RUN bash -lc 'rvm --default use $(cat /home/app/.ruby-version)'
+
+# Install Gems
+RUN su - app -l -c "cd /home/app && rvm use && gem install --no-rdoc --no-ri bundler"
+RUN su - app -l -c "cd /home/app && rvm use && bundle install"
+
+# some weird usermod thing
+RUN usermod -u 1000 app
+
+# Clean up APT when done.
+RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
