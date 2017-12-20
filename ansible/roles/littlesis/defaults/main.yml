@@ -44,3 +44,5 @@ nginx_ssl_ciphers: "'ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:E
 passenger_max_pool_size: 5
 passenger_max_requests: 50000
 passenger_min_instances: 1
+
+ubuntu_ssh_keys: []

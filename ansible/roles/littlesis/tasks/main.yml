@@ -2,6 +2,7 @@
 - import_tasks: packages.yml
   tags: packages
 - import_tasks: security.yml
+  tags: security
 - import_tasks: swap.yml
 - import_tasks: app_user.yml
 - import_tasks: redis.yml
