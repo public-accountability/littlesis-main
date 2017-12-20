@@ -1,0 +1,33 @@
+version: '3.1'
+
+services:
+  wordpress:
+    image: wordpress:4.9.1-php7.1-apache
+    restart: always
+    ports:
+      - "8081:80"
+    # environment:
+    #   WORDPRESS_DB_PASSWORD: password
+    #   WORDPRESS_DB_HOST: mysql
+    links:
+      - mysql
+    volumes:
+      - ./wordpress/wp-content:/var/www/html/wp-content
+      - ./wp-config.php:/var/www/html/wp-config.php
+    # depends_on:
+    #   - mysql
+    
+    
+
+  mysql:
+    image: mariadb:10.1
+    restart: always
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: eyes_on_the_ties
+      MYSQL_USER: wp_blog
+      MYSQL_PASSWORD: password
+    volumes:
+      - ./mysql-data:/var/lib/mysql
