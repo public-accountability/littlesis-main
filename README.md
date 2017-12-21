@@ -2,13 +2,10 @@
 
 This repo contains instructions and configurations for running littlesis in development mode with docker and an ansible playbook for running littlesis in production on an ubuntu server.
 
-Littlesis's code can be found here: 
+Littlesis's code can be found here: [github.com/public-accountability/littlesis-rails](github.com/public-accountability/littlesis-rails)
 
-https://github.com/public-accountability/littlesis-rails
+Our javascript interactive mapping tool: [Oligrapher](https://github.com/skomputer/oligrapher)
 
-Our javascript interactive mapping tool, Oligrapher:
-
-https://github.com/skomputer/oligrapher
 
 ## Installation
 
@@ -21,7 +18,7 @@ When complete you should have a folder structure that looks like this:
 	config/ -> rails configuration
 	mysql-data/ -> mysql server data
 	chat/ -> rocket.chat configuration and mongo data
-    rails/ -> root of the rails repo
+	rails/ -> root of the rails repo
 	ansible -> ansible playbook. ignore this unless running littlesis on prod
 
 ```
@@ -77,11 +74,7 @@ This can take anywhere from 30mins to 3 hours depending on the size of the datab
 
 ### Setup rails tests
 
-Setup the testing database:
-
-``` bash
-littlesis reset-test-db
-```
+Setup the testing database: ` littlesis reset-test-db `
 
 Run the tests: ` littlesis rspec `
 
@@ -89,19 +82,11 @@ Run the tests: ` littlesis rspec `
 
 The first time you create the containers (and anytime you rebuild a container) you'll have to re-index Sphinx. _Everytime_ you start the docker app, you will have to start sphinx. If you get a sphinx error page on a profile page, make sure that sphinx is started.
 
-To start and index Rail's sphinx:
-
-``` bash
-littlesis rake ts:rebuild
-```
+To start and index sphinx: ` littlesis rake ts:rebuild `
 
 ### View Javascript tests:
 
-Start Jasmine server:
-
-``` bash
-littlesis jasmine
-```
+Start Jasmine server: ` littlesis jasmine `
 
 and go to _localhost:8888_
 
@@ -110,7 +95,7 @@ and go to _localhost:8888_
 
 The dockerfile is named 'littlesis.docker'
 
-After updating the dockerfiles or after adding a new gem, change the version in the top of the Makfile and then build the docker images: ``` make build-rails-docker build-php-docker ``` and upload the new images to Docker Hub. See [here for dockerhub instructions](https://docs.docker.com/engine/getstarted/step_six/).
+After updating the dockerfile or after adding a new gem, change the version in the top of the Makefile and then build the docker images: ` make build-rails-docker ` and upload the new images to Docker Hub. See [here for dockerhub instructions](https://docs.docker.com/engine/getstarted/step_six/).
 
 ### Nginx configuration
 
@@ -194,6 +179,9 @@ out the lines in docker-compose.yml so they don't run.
 comment out all lines below the ` rocketchat: ` service and comment out the two lines in the depends_on section of web: 
 
 ``` yml
-- mongo
-- rocketchat
+depends_on:
+  - redis
+  - mysql
+  # - mongo
+  # - rocketchat
 ```

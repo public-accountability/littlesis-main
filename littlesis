@@ -60,7 +60,6 @@ littlesis spec-search <TERM>
 View rails coverage:
 littlesis coverage
 
-
 EOF
 }
 
@@ -135,7 +134,7 @@ nginx_logs() {
 
 rails_search() {
     local grep_opts='-H --color -i -n'
-    cd apps/rails
+    cd rails
     grep $grep_opts -r 'app' -e "${1}"
     grep $grep_opts -r 'lib' -e "${1}"
     grep $grep_opts -r 'config' -e "${1}"
@@ -144,12 +143,12 @@ rails_search() {
 }
 
 rails_spec_search() {
-    cd apps/rails/spec
+    cd rails/spec
     grep $grep_opts -r -H --color -i -n "${1}"
 }
 
 rails_coverage() {
-    local cov_file=apps/rails/coverage/index.html
+    local cov_file=rails/coverage/index.html
 
     if [ -x "$(command -v firefox)" ];then
 	firefox --new-window $cov_file > /dev/null 2>&1
