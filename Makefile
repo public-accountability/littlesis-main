@@ -1,4 +1,4 @@
-RAILS_DOCKER_VERSION := 0.3.0-beta
+RAILS_DOCKER_VERSION := 0.3.0
 PHP_DOCKER_VERSION := 0.0.6
 
 help:
@@ -8,7 +8,7 @@ setup: rails config
 
 rails:
 	mkdir -p rails
-	cd rails && git clone git@github.com:public-accountability/littlesis-rails.git .
+	cd rails && git clone git@github.com:public-accountability/littlesis-rails.git . && ./setup.sh
 
 config:
 	cp config/rails/database.yml rails/config/database.yml

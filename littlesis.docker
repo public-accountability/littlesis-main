@@ -1,4 +1,5 @@
 FROM phusion/passenger-customizable:0.9.22
+LABEL maintainer="ziggy@littlesis.org"
 
 # Use baseimage-docker's init system.
 CMD ["/sbin/my_init"]
@@ -54,9 +55,9 @@ RUN curl -sSL https://github.com/mozilla/geckodriver/releases/download/v0.19.1/g
 
 ## APP
 RUN mkdir -p /home/app
-RUN /bin/bash -c "curl -sSL https://raw.githubusercontent.com/public-accountability/littlesis-rails/update/Gemfile > /home/app/Gemfile"
-RUN /bin/bash -c "curl -sSL https://raw.githubusercontent.com/public-accountability/littlesis-rails/update/Gemfile.lock > /home/app/Gemfile.lock"
-RUN /bin/bash -c "curl -sSL https://raw.githubusercontent.com/public-accountability/littlesis-rails/update/.ruby-version > /home/app/.ruby-version"
+COPY ./rails/Gemfile /home/app/Gemfile
+COPY ./rails/Gemfile.lock /home/app/Gemfile.lock
+COPY ./rails/.ruby-version /home/app/.ruby-version
 RUN chown -R app:app /home/app
 
 # Ensure correct version of ruby is installed and set as default
