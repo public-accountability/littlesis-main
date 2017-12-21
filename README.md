@@ -1,22 +1,28 @@
-# littlesis-docker
+# littlesis-main
 
-Rails Code: https://github.com/public-accountability/littlesis-rails
+This repo contains instructions and configurations for running littlesis in development mode with docker and an ansible playbook for running littlesis in production on an ubuntu server.
 
-Oligrapher: https://github.com/skomputer/oligrapher
+Littlesis's code can be found here: 
+
+https://github.com/public-accountability/littlesis-rails
+
+Our javascript interactive mapping tool, Oligrapher:
+
+https://github.com/skomputer/oligrapher
 
 ## Installation
 
 When complete you should have a folder structure that looks like this:
 
 ```
-/littlesis-docker/
+/littlesis-main/
 	littlesis -> littlesis helper program
 	ls_dev.conf -> nginx configuration
-	config/ -> rails and symfony configurations
+	config/ -> rails configuration
 	mysql-data/ -> mysql server data
 	chat/ -> rocket.chat configuration and mongo data
-	apps/
-		rails/ -> root of the rails repo
+    rails/ -> root of the rails repo
+	ansible -> ansible playbook. ignore this unless running littlesis on prod
 
 ```
 
@@ -24,11 +30,11 @@ When complete you should have a folder structure that looks like this:
 
 * [Docker](https://www.docker.com/community-edition) and [docker-compose](https://docs.docker.com/compose/install/)
 
-* mysql client. on debian get this via: ``` sudo apt install mysql-client ```
+* mysql/mariadb client. on debian get this via: ` sudo apt install mariadb-client `
 
 * A few common tools such as make, bash, and sed
 
-* A substantial amount of free disk space (~ 10gb is safe)
+* A substantial amount of free disk space (> 20gb)
 
 ### Helper program: ./littlesis
 
@@ -49,23 +55,17 @@ Steps for a fully functional LittleSis Development environment:
 
 ## Initial setup
 
-1) Pull down the repos: ``` make apps ```
+1) Pull down the rails repo and configure it: ``` make setup```
 
 2) Pull down the containers: ``` make docker-pull ```
 
-3) Edit the configuration files in ./config (optionally) and run ``` make config ```
+3) [optional] Edit the configuration files in ./config and run: ``` make config ```
 
-4) Modify paths in docker-compose.yml if needed [otherwise skip this step]
+4) run app: ` ./littlesis up ` or ` ./littlesis up -d `
 
-5) run app: ``` littlesis up ``` or ``` littlesis up -d ```
+4) Setup the database:  ` make db-setup `
 
-## Setup the database
-
-creates the databases littlesis and littlesis_test and creates the user 'littlesis'
-
-``` bash
-make db-setup
-```
+## Load the development database
 
 If you have an existing copy of LittleSis's database, populate the database now:
 
@@ -80,14 +80,10 @@ This can take anywhere from 30mins to 3 hours depending on the size of the datab
 Setup the testing database:
 
 ``` bash
-littlesis rails cmd RAILS_ENV=test bundle exec rake db:structure:load
-littlesis rails cmd RAILS_ENV=test bundle exec rake db:seed
+littlesis reset-test-db
 ```
 
-Run the tests:
-``` bash
-littlesis rails rspec
-```
+Run the tests: ` littlesis rspec `
 
 ### Setup and start Sphinx
 
@@ -96,7 +92,7 @@ The first time you create the containers (and anytime you rebuild a container) y
 To start and index Rail's sphinx:
 
 ``` bash
-littlesis rails rake ts:rebuild
+littlesis rake ts:rebuild
 ```
 
 ### View Javascript tests:
@@ -104,7 +100,7 @@ littlesis rails rake ts:rebuild
 Start Jasmine server:
 
 ``` bash
-littlesis rails jasmine
+littlesis jasmine
 ```
 
 and go to _localhost:8888_
@@ -122,10 +118,10 @@ The file _ls_dev.conf_ contains the nginx configuration.
 The app is accessible at ``` localhost:8080 ``` and, additionally, if you add this lines to  ``` /etc/hosts ``` :
 
 ```
-127.0.0.1	ls.dev
+127.0.0.1	littlesis.local
 ```
 
-you can access the site at ``` ls.dev:8080 ```
+you can access the site at ``` littlesis.local:8080 ```
 
 ### Useful logs
 
@@ -135,15 +131,16 @@ you can access the site at ``` ls.dev:8080 ```
 
 *Rails logs*:
    - /home/app/lilsis/log/development.log
+   - /home/app/lilsis/log/test.log
 
 ## Subsequent Runs
 
 1. Start the app:
 
 ```
-cd /path/to/littlesis-docker
+cd /path/to/littlesis-main
 ./littlesis up -d
-./littlesis rails rake ts:start
+./littlesis rake ts:start
 ```
 
 2. Point your favorite browser to `localhost:8008`
@@ -152,3 +149,51 @@ cd /path/to/littlesis-docker
 
 * username: `user1@email.com`
 * password: `password`
+
+### Bonus Tips! 
+
+#### Running rspec/rubocop outside of docker
+
+It's possible to run rspec *outside* of the docker if you install ruby, bundler and all the development gems on your computer.
+
+add this line to /etc/hosts to allow rspec to discover the docker database:
+
+```
+127.0.0.1	mysql
+```
+
+#### use the helper program from anywhere
+
+Add this function to your bash configuration:
+
+``` bash
+littlesis() {
+    local PWD=$(pwd)
+    cd /path/to/this/repo
+    ./littlesis "$@"
+    cd $PWD
+}
+```
+
+or this fish function if you use 🐟:
+
+``` fish
+function littlesis
+	pushd (pwd)
+	cd /path/to/this/repo
+	./littlesis $argv
+	popd
+end
+```
+
+#### Don't run rocket.chat
+
+If you are not working on the chat integration you find might it useful to comment
+out the lines in docker-compose.yml so they don't run.
+
+comment out all lines below the ` rocketchat: ` service and comment out the two lines in the depends_on section of web: 
+
+``` yml
+- mongo
+- rocketchat
+```
