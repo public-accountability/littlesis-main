@@ -2,14 +2,14 @@ version: '2'
 
 services:
   web:
-    image: aepyornis/ls-rails:0.2.3
+    image: aepyornis/ls-rails:0.3.0-beta
     ports:
         - "8080:80"
         - "8888:8888"
     volumes:
-        - ./apps/symfony:/var/www/littlesis/symfony
-        - ./apps/rails:/home/app/lilsis
-        - ./ls_dev.conf:/etc/nginx/conf.d/site.conf
+        - ./apps/rails:/home/app
+        - ./ls_dev.conf:/etc/nginx/sites-enabled/default
+        #- ./ls_dev.conf:/etc/nginx/sites-enabled/littlesis.conf
     depends_on:
         - redis
         - mysql

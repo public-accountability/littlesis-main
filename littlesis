@@ -2,7 +2,7 @@
 
 show_help() {
 cat << EOF
-Usage: ./littlesis rails|php
+Usage: ./littlesis <command>
 Helpful shortcuts to the LittleSis development environment
 
 Start app:
@@ -19,53 +19,46 @@ littlesis ps
 littlesis logs
 
 Login to the containers:
-littlesis rails login
-littlesis php login
+littlesis login
 
 Run all rails tests:
-littlesis rails rspec
+littlesis rspec
 
 or run one test file. example:
-littlesis rails rspec spec/models/relationship_spec.rb
+littlesis rspec spec/models/relationship_spec.rb
 
 Open bash console for easy test running:
-littlesis rails spec
+littlesis spec
 
 Reset the test database (littlesis_test)
-littlesis rails reset-test-db
+littlesis reset-test-db
 
 Run rspec w/ spring
-littlesis rails spring-spec
+littlesis spring-spec
 
 Start javascript tests:
-littlesis rails jasmine
+littlesis jasmine
 
-PHP sphinx functions:
-littlesis sphinx status
-littlesis sphinx start
-littlesis sphinx stop
-littlesis sphinx index
+Rails console: littlesis c
 
-Rails console: littlesis rails c
-
-Rails logs: littlesis rails logs
+Rails logs: littlesis rails-logs
 
 Nginx logs: littlesis nginx access|error
 
-Restart rails: littlesis rails restart
+Restart rails: littlesis restart-rails
 
-Execute arbitrary rake command: littlesis rails rake [...]
+Execute arbitrary rake command: littlesis rake [...]
 
-For instance, to restart sphinx: littlesis rails rake ts:restart
+For instance, to restart sphinx: littlesis rake ts:restart
 
 Search rails app:
-littlesis rails search <TERM>
+littlesis search <TERM>
 
 Search test files:
-littlesis rails spec-search <TERM>
+littlesis spec-search <TERM>
 
 View rails coverage:
-littlesis rails coverage
+littlesis coverage
 
 
 EOF
@@ -81,56 +74,52 @@ short_help() {
 
 
 docker_login() {
-    if [ "$1" == rails ]; then
-	docker exec -t -i littlesisdocker_web_1 /bin/bash -l
-    elif [ "$1" == php ]; then
-	docker exec -t -i littlesisdocker_php_1 /bin/bash -l
-    fi
+    docker exec -t -i littlesisdocker_web_1 /bin/bash -l
 }
 
 rspec() {
-    local CMD="cd /home/app/lilsis && RAILS_ENV=test COVERAGE=true bundle exec rspec ${@}"
+    local CMD="cd /home/app && RAILS_ENV=test COVERAGE=true bundle exec rspec ${@}"
     $web_app_exec "${CMD}"
 }
 
 rails_spring_rspec() {
-    local CMD="cd /home/app/lilsis && RAILS_ENV=test bin/spring rspec ${@}"
+    local CMD="cd /home/app && RAILS_ENV=test bin/spring rspec ${@}"
     $web_app_exec "${CMD}"
 }
 
 rails_spec() {
-    $web_app_exec "cd /home/app/lilsis && source spec/spec_bash_helper.sh && bash"
+    $web_app_exec "cd /home/app && source spec/spec_bash_helper.sh && bash"
 }
 
 rails_console() {
-    $web_app_exec 'cd /home/app/lilsis; RAILS_ENV=development bin/rails c'
+    $web_app_exec 'cd /home/app; RAILS_ENV=development bin/rails c'
 }
 
 rails_rake() {
-    local CMD="cd /home/app/lilsis && RAILS_ENV=development bundle exec rake ${@}"
+    local CMD="cd /home/app && RAILS_ENV=development bundle exec rake ${@}"
     $web_app_exec "${CMD}"
 }
 
 rails_cmd() {
-    local CMD="cd /home/app/lilsis && ${@}"
+    local CMD="cd /home/app && ${@}"
     $web_app_exec "${CMD}"
 }
 
 rails_reset_test_db() {
-    $web_app_exec 'cd /home/app/lilsis; RAILS_ENV=test bundle exec rake db:structure:load'
-    $web_app_exec 'cd /home/app/lilsis; RAILS_ENV=test bundle exec rake db:seed'
+    $web_app_exec 'cd /home/app; RAILS_ENV=test bundle exec rake db:structure:load'
+    $web_app_exec 'cd /home/app; RAILS_ENV=test bundle exec rake db:seed'
 }
 
 rails_logs() {
-    docker-compose exec web /bin/bash -c 'tail -f /home/app/lilsis/log/development.log'
+    docker-compose exec web /bin/bash -c 'tail -f /home/app/log/development.log'
 }
 
 rails_restart() {
-    docker-compose exec web /bin/bash -c 'passenger-config restart-app /home/app/lilsis'
+    docker-compose exec web /bin/bash -c 'passenger-config restart-app /home/app'
 }
 
 rails_jasmine() {
-    local CMD="cd /home/app/lilsis && RAILS_ENV=test JASMINE=true bundle exec rake jasmine"
+    local CMD="cd /home/app && RAILS_ENV=test JASMINE=true bundle exec rake jasmine"
     $web_app_exec "${CMD}"
 }
 
@@ -172,104 +161,8 @@ rails_coverage() {
     fi
 }
 
-rails() {
-    case $1 in
-	rspec)
-	    shift
-	    rspec "$@"
-	    ;;
-	spring-rspec|spring-spec|s)
-	    shift
-	    rails_spring_rspec "$@"
-	    ;;
-	spec)
-	    rails_spec
-	    ;;
-	login)
-	    docker_login rails
-	    ;;
-        cmd|command)
-	    shift
-	    rails_cmd "$@"
-	    ;;
-	console|c)
-	    rails_console
-	    ;;
-	logs)
-	    rails_logs
-	    ;;
-	rake)
-	    shift
-	    rails_rake "$@"
-	    ;;
-	restart)
-	    rails_restart
-	    ;;
-	jasmine)
-	    rails_jasmine
-	    ;;
-	reset-test-db)
-	    rails_reset_test_db
-	    ;;
-	search)
-	    shift
-	    rails_search "$@"
-	    ;;
-	spec-search)
-	    shift
-	    rails_spec_search "$@"
-	    ;;
-	cov|coverage)
-	    rails_coverage
-	    ;;
-	*)
-	    echo 'Invalid option'
-	    echo '  Available options: spec, login, console, logs, rake, search, coverage, cmd'
-    esac
-}
-
-
-php_sphinx() {
-    case $1 in
-	start)
-	    docker-compose exec php /bin/bash -c 'searchd --config /var/www/littlesis/symfony/config/sphinx.conf'
-	    ;;
-	index)
-	    docker-compose exec php /scripts/index_php_sphinx.sh
-	    ;;
-	stop)
-	    docker-compose exec php /bin/bash -c 'searchd --config /var/www/littlesis/symfony/config/sphinx.conf --stop'
-	    ;;
-        *)
-	    docker-compose exec php /bin/bash -c 'searchd --config /var/www/littlesis/symfony/config/sphinx.conf --status'
-	    ;;
-    esac
-}
-
-
-php() {
-    case $1 in
-	login)
-	    docker_login php
-	    ;;
-	sphinx)
-	    php_sphinx $2
-	    ;;
-    esac
-}
-
 while :; do
     case $1 in
-	rails)
-	    shift
-	    rails "$@"
-	    exit
-	    ;;
-        symfony|php)
-	    shift
-	    php  "$@"
-	    exit
-	    ;;
 	up)
 	    if [ "$2" == -d ]; then
 		docker-compose up -d
@@ -291,12 +184,74 @@ while :; do
 	     mysql -u littlesis -pthemanbehindthemanbehindthethrone -h 127.0.0.1 littlesis
 	     exit
 	     ;;
+	login)
+	    docker_login
+	    exit
+	    ;;
+	rspec)
+	    shift
+	    rspec "$@"
+	    exit
+	    ;;
+	spring-rspec|spring-spec|s)
+	    shift
+	    rails_spring_rspec "$@"
+	    exit
+	    ;;
+	spec)
+	    rails_spec
+	    ;;
+        cmd)
+	    shift
+	    rails_cmd "$@"
+	    exit
+	    ;;
+	console|c)
+	    rails_console
+	    exit
+	    ;;
+	rails-logs)
+	    rails_logs
+	    exit
+	    ;;
+	rake)
+	    shift
+	    rails_rake "$@"
+	    exit
+	    ;;
+	restart-rails)
+	    rails_restart
+	    exit
+	    ;;
+	jasmine)
+	    rails_jasmine
+	    exit
+	    ;;
+	reset-test-db)
+	    rails_reset_test_db
+	    exit
+	    ;;
+	search)
+	    shift
+	    rails_search "$@"
+	    exit
+	    ;;
+	spec-search)
+	    shift
+	    rails_spec_search "$@"
+	    exit
+	    ;;
+	cov|coverage)
+	    rails_coverage
+	    exit
+	    ;;
 	-h|help|--help)
 	    show_help
 	    exit
 	    ;;
 	?*) # End of all options.
-            echo 'first arg must one of these options: rails, php, up, down, ps, logs, mysql, help, nginx'
+	    echo 'Invalid option'
+            echo 'all options: rspec, up, down, ps, logs, nginx, mysql, login, rspec, spring-rspec, spec, cmd, console, rails-logs, rake, restart-rails, jasmine, reset-test-db, search, spec-search, cov, help'
             exit 1
 	    ;;
 	*)
