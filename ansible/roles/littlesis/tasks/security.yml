@@ -8,8 +8,29 @@
 - name: Ensure fail2ban is started
   service: name=fail2ban state=started
 
-- name: Update sshd config
-  template:
-    src: sshd_config.j2
-    dest: /etc/ssh/sshd_config
-  notify: restart ssh
+- name: SSH Hardening
+  include_role:
+    name: dev-sec.ssh-hardening
+  vars:
+    ssh_max_auth_retries: 5
+
+- name: Check if Ubuntu is locked
+  become: yes
+  command: grep -q "ubuntu:!:" /etc/shadow
+  register: check_ubuntu_lock
+  ignore_errors: True
+  changed_when: False
+
+- name: Unlock Ubuntu
+  become: yes
+  command: usermod -p "*" ubuntu
+  when: check_ubuntu_lock.rc == 0
+  
+- name: Add additional authorized key for user ubuntu
+  authorized_key:
+    user: ubuntu
+    state: present
+    key: "{{ lookup('file', item) }}"
+  with_items: "{{ ubuntu_ssh_keys }}"
+  when: ubuntu_ssh_keys | length > 0
+  tags: keys

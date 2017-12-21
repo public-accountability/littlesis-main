@@ -1,6 +1,6 @@
 ---
 # ruby
-ruby_version: 'ruby-2.3.3'
+ruby_version: 'ruby-2.3.6'
 
 # node
 nodejs_version: '8.x'
@@ -13,9 +13,21 @@ redis_save:
 
 # server
 server_name: littlesis.org
+blog_server_name: news.littlesis.org
 
 # database
 database_host: localhost
 database_name: littlesis
 database_username: littlesis
 database_pool: 10
+
+# Docker
+docker_edition: 'ce'
+docker_install_compose: true
+docker_compose_version: "1.18.0"
+
+# Wordpress
+wordpress_db_name: eyes_on_the_ties
+wordpress_db_user: wp_blog
+wordpress_memory_limit: 256M
+wordpress_docker_image: wordpress:4.9.1-php7.1-apache

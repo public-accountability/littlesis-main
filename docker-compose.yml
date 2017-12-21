@@ -1,36 +1,25 @@
-version: '2'
+version: '3'
 
 services:
   web:
-    image: aepyornis/ls-rails:0.2.3
+    image: aepyornis/ls-rails:0.3.0
     ports:
         - "8080:80"
         - "8888:8888"
     volumes:
-        - ./apps/symfony:/var/www/littlesis/symfony
-        - ./apps/rails:/home/app/lilsis
-        - ./ls_dev.conf:/etc/nginx/conf.d/site.conf
+        - ./rails:/home/app
+        - ./ls_dev.conf:/etc/nginx/sites-enabled/default
     depends_on:
-        - php
-        - memcached
+        - redis
         - mysql
         - mongo
         - rocketchat
 
-  php:
-    image: aepyornis/ls-php:v0.0.6
-    volumes:
-        - ./apps/symfony:/var/www/littlesis/symfony
-    depends_on:
-      - mysql
-      - memcached
-
-  memcached:
-    image: memcached:latest
-    command: memcached -m 256
+  redis:
+    image: redis:4.0.6
 
   mysql:
-    image: mysql:5.5
+    image: mariadb:10.1
     volumes:
       - ./mysql-data:/var/lib/mysql
     ports:
@@ -64,5 +53,3 @@ services:
     command: mongod --smallfiles
     ports:
       - 27017:27017
-
-    

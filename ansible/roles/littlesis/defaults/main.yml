@@ -21,6 +21,20 @@ littlesis_packages:
   - python3
   - python3-pip
   - fail2ban
+
+# php
+littlesis_php_packages:
+  - php7.1
+  - php7.1-cli
+  - php7.1-common
+  - php7.1-json
+  - php7.1-opcache
+  - php7.1-mysql
+  - php7.1-readline
+  - php7.1-zip
+  - php7.1-xml
+  - php7.1-fpm
+
   
 # ssh
 kex_algorithms: "diffie-hellman-group-exchange-sha256"
@@ -44,3 +58,11 @@ nginx_ssl_ciphers: "'ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:E
 passenger_max_pool_size: 5
 passenger_max_requests: 50000
 passenger_min_instances: 1
+
+ubuntu_ssh_keys: []
+
+wordpress_restore_from_dump: false
+wordpress_sync_uploads: false
+wordpress_docker_port: 5000
+
+wordpress_fpm_socket: /var/run/fpm-wordpress.sock

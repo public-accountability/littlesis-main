@@ -1,16 +1,31 @@
 ---
 - import_tasks: packages.yml
   tags: packages
+
 - import_tasks: security.yml
+  tags: security
+
 - import_tasks: swap.yml
+
 - import_tasks: app_user.yml
+
 - import_tasks: redis.yml
   tags: redis
+
 - import_tasks: sphinx.yml
   tags: sphinx
+
 - import_tasks: rvm.yml
   tags: ruby
+
 - import_tasks: app.yml
   tags: app
+
+- import_tasks: docker.yml
+  tags: docker
+
+- import_tasks: wordpress.yml
+  tags: wordpress
+
 - import_tasks: passenger.yml
   tags: passenger

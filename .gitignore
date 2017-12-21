@@ -1,6 +1,10 @@
 littlesis-apps
 apps/
+rails/
 mysql-data/
 chat/
 *.sql
 ansible/*.retry
+*.gz
+wordpress/wordpress
+wordpress/littlesis-packages

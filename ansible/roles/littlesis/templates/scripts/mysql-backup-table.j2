@@ -1,0 +1,16 @@
+#!/bin/bash
+set -e
+
+if [ -z "$1" ]; then
+    echo "Missing argument: table name"
+    echo "   Use: ./mysql-backup-table <TABLENAME>"
+    exit 1
+fi
+
+DATE=`date +'%m%d%y'`
+DUMP_FILE="$1-$DATE.sql.gz"
+TMP_DUMP_PATH="/tmp/$DUMP_FILE"
+
+mysqldump -u {{ database_username }} -p{{ database_password}} -h {{ database_host }} --single-transaction --quick {{ database_name }} "$1" | gzip > $TMP_DUMP_PATH
+
+aws s3 cp $TMP_DUMP_PATH "s3://{{ aws_s3_bucket }}/backups/tables/$DUMP_FILE"
