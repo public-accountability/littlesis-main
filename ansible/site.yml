@@ -5,18 +5,13 @@
 
   vars:
     server_name: dev.littlesis.org
+    blog_server_name: devnews.littlesis.org
 
   pre_tasks:
     - name: load secret vars from ~/littlesis.yml
       include_vars:
         file: ~/littlesis.yml
-      tags:
-        - passenger
-        - app
-        - packages
-        - scripts
-        - security
-        - keys
+      tags: always
 
   roles:
     - littlesis

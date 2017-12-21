@@ -1,0 +1,11 @@
+version: '3.1'
+
+services:
+  wordpress:
+    image: "{{ wordpress_docker_image }}"
+    restart: always
+    ports:
+      - "{{ wordpress_docker_port }}:80"
+    volumes:
+      - ./wp-content:/var/www/html/wp-content
+      - ./wp-config.php:/var/www/html/wp-config.php

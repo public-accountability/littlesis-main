@@ -48,3 +48,35 @@
     owner: ubuntu
     group: ubuntu
     mode: 0600
+
+- name: Install python dependencies for ansible
+  pip:
+    executable: /usr/bin/pip3
+    name: "{{ item }}"
+  with_items:
+    - mysqlclient
+    - docker-py
+    - docker-compose
+
+- name: add php ppa:odrej/php
+  apt_repository:
+    repo: ppa:ondrej/php
+    state: present
+    update_cache: yes
+  tags: php
+
+- name: Install php packages
+  apt:
+    update_cache: yes
+    name: "{{ item }}"
+  with_items: "{{ littlesis_php_packages }}"
+  tags: php
+
+- name: install composer
+  include_role:
+    name: geerlingguy.composer
+  vars:
+    composer_path: /usr/local/bin/composer
+    composer_keep_updated: true
+  tags: php
+    

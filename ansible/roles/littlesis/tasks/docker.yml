@@ -1,0 +1,10 @@
+---
+- name: Install docker
+  include_role:
+    name: geerlingguy.docker
+      
+- name: Add ubuntu to docker group
+  user:
+    name: ubuntu
+    groups: docker
+    append: yes
