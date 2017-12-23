@@ -38,6 +38,14 @@
     owner: littlesis
     group: littlesis
 
+- name: Setup littlesis crontab
+  become: yes
+  become_user: littlesis
+  shell: "~/.rvm/bin/rvm {{ ruby_version }} do bundle exec whenever --update-crontab"
+  args:
+    chdir: /var/www/littlesis
+  tags: cron
+
 - name: create ~/scripts dir
   file: path=/home/ubuntu/scripts state=directory owner=ubuntu group=ubuntu mode=0700
   tags: scripts
