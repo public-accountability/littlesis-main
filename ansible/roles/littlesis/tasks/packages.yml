@@ -54,7 +54,6 @@
     executable: /usr/bin/pip3
     name: "{{ item }}"
   with_items:
-    - mysqlclient
     - docker-py
     - docker-compose
 
@@ -80,3 +79,10 @@
     composer_keep_updated: true
   tags: php
     
+
+- name: disable snapd
+  service:
+    name: snapd
+    enabled: no
+    state: stopped
+  

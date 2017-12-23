@@ -4,8 +4,8 @@
   become: yes
 
   vars:
-    server_name: dev.littlesis.org
-    blog_server_name: devnews.littlesis.org
+    server_name: littlesis.org
+    blog_server_name: littlesis.org
 
   pre_tasks:
     - name: load secret vars from ~/littlesis.yml
