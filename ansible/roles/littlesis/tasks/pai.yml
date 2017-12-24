@@ -1,0 +1,101 @@
+- name: Create pai group
+  group: name=pai state=present
+
+- name: Create pai user
+  user:
+    name: pai
+    group: pai
+    groups: docker
+    shell: /bin/bash
+
+- name: create /var/www/pai
+  file:
+    path: /var/www/pai
+    state: directory
+    owner: root
+    group: www-data
+    mode: 0755
+
+- name: Create pai wordpress database
+  mysql_db:
+    name: "{{ pai_db_name }}"
+    state: present
+    login_user: "{{ database_username }}"
+    login_host: "{{ database_host }}"
+    login_password: "{{ database_password }}"
+
+- name: Copy database dump file
+  copy:
+    src: "{{ pai_database_dump_file }}"
+    dest: /tmp
+  when: pai_restore_from_dump and pai_database_dump_file is defined
+
+- name: Restore pai database
+  mysql_db:
+    name: "{{ pai_db_name }}"
+    state: import
+    target: /tmp/{{ pai_database_dump_file | basename }}
+    login_user: "{{ database_username }}"
+    login_host: "{{ database_host }}"
+    login_password: "{{ database_password }}"
+  when: pai_restore_from_dump and pai_database_dump_file is defined
+
+- name: create pai database user
+  mysql_user:
+    name: "{{ pai_db_user }}"
+    password: "{{ pai_db_password }}"
+    priv: "{{ pai_db_name }}.*:ALL"
+    host: '%'
+    state: present
+    login_user: "{{ database_username }}"
+    login_host: "{{ database_host }}"
+    login_password: "{{ database_password }}"
+
+- name: Sync pai directory
+  synchronize:
+    src: "{{ pai_directory }}"
+    dest: /var/www/pai
+    recursive: yes
+  when: sync_pai and pai_directory is defined
+  
+- name: Change ownership of pai 
+  file:
+    path: /var/www/pai
+    owner: pai
+    group: www-data
+    mode: 0755
+    state: directory
+    recurse: yes
+
+- name: set pai directory permissions
+  command: find /var/www/pai -type d -exec chmod 755 {} +
+
+- name: Copy TLS Cert
+  copy:
+    content: "{{ pai_tls_certificate }}"
+    dest: /etc/nginx/certs/pai_certificate.pem
+    owner: root
+    group: root
+    mode: 0644
+  no_log: true
+
+- name: Copy PAI TLS Key
+  copy:
+    content: "{{ pai_tls_key }}"
+    dest: /etc/nginx/certs/pai_key.pem
+    owner: root
+    group: root
+    mode: 0644
+  no_log: true
+
+
+
+- name: Copy pai.org nginx configuration
+  template:
+    src: pai.org.j2
+    dest: /etc/nginx/sites-enabled/pai.org
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart nginx
+

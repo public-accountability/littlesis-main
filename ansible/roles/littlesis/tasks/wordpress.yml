@@ -55,12 +55,12 @@
     group: www-data
     mode: 0755
 
-- name: Setup littlesis-packages repo
-  become: yes
-  become_user: wordpress 
-  git:
-    repo: https://github.com/public-accountability/littlesis-packages.git
-    dest: /var/www/news/littlesis-packages
+# - name: Setup littlesis-packages repo
+#   become: yes
+#   become_user: wordpress 
+#   git:
+#     repo: https://github.com/public-accountability/littlesis-packages.git
+#     dest: /var/www/news/littlesis-packages
 
   
 - name: Download WordPress
@@ -97,7 +97,6 @@
 
 - name: Sync wordpress uploads
   synchronize:
-    mode: push
     src: "{{ wordpress_uploads_folder }}"
     dest: /var/www/news/wordpress/wp-content/uploads
     recursive: yes
@@ -111,6 +110,7 @@
     mode: 0644
     owner: wordpress
     group: wordpress
+  tags: wp-config
 
 - name: Change ownership of WordPress installation
   file:

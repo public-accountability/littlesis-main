@@ -89,6 +89,15 @@
     mode: 0644
   no_log: true
 
+- name: Copy nginx ssl configuration
+  template:
+    src: ssl.conf.j2
+    dest: /etc/nginx/ssl.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart nginx
+  tags: passenger-configure
 
 - name: Copy littlesis.org nginx configuration
   template:

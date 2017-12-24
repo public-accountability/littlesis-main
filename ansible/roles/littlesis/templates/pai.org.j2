@@ -1,0 +1,65 @@
+server {
+
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+
+    ssl_certificate         /etc/nginx/certs/pai_certificate.pem;
+    ssl_certificate_key     /etc/nginx/certs/pai_key.pem;
+
+    ssl_session_timeout 1d;
+    ssl_session_cache shared:SSL:50m;
+    ssl_session_tickets off;
+
+    ssl_protocols TLSv1.2;
+    ssl_ciphers {{ nginx_ssl_ciphers }};
+    ssl_prefer_server_ciphers on;
+
+    server_name public-accountability.org;
+    #listen 80;
+    root /var/www/pai;
+    index index.html index.htm index.php;
+
+    access_log /var/log/nginx/pai.access.log;
+    #access_log /var/log/nginx/pai.access.log littlesis;
+    error_log /var/log/nginx/pai.error.log error;
+    
+    location / {
+        # try_files $uri $uri/ =404;
+        try_files $uri $uri/ /index.php?$args;
+    }
+
+    location = /2017/05/the-power-behind-the-pipelines-atlantic-coast-pipeline {
+        return 301 $scheme://public-accountability.org/2017/06/the-power-behind-the-pipelines-atlantic-coast-pipeline/;
+    }
+
+    error_page 404 /404.html;
+
+    error_page 500 502 503 504 /50x.html;
+    location = /50x.html {
+        root /usr/share/nginx/html;
+    }
+
+    location ~ \.php$ {
+        include fastcgi.conf;
+        fastcgi_intercept_errors on;
+        try_files $uri =404;
+        # fastcgi_pass unix:/run/php/php5.6-fpm.sock;
+        fastcgi_pass 172.31.28.198:9000;
+        # fastcgi_index index.php;
+        # fastcgi_split_path_info ^(.+\.php)(/.+)$;
+        include fastcgi_params;
+    }
+
+     location = /xmlrpc.php {
+         deny all;
+         access_log off;
+         log_not_found off;
+     }
+
+     location /paladino {
+        root /var/www/static;
+        try_files $uri  =404;
+     }
+     
+}
+

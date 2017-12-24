@@ -37,6 +37,20 @@ littlesis_php_packages:
   - php7.1-xml
   - php7.1-fpm
 
+pai_php_packages:
+  - php5.6
+  - php5.6-common
+  - php5.6-curl
+  - php5.6-fpm
+  - php5.6-gd
+  - php5.6-json
+  - php5.6-mysql
+  - php5.6-readline
+  - php5.6-opcache
+  - php5.6-zip
+  - php5.6-xml
+  - php5.6-fpm
+  
   
 # ssh
 kex_algorithms: "diffie-hellman-group-exchange-sha256"
@@ -66,5 +80,7 @@ ubuntu_ssh_keys: []
 wordpress_restore_from_dump: false
 wordpress_sync_uploads: false
 wordpress_docker_port: 5000
-
 wordpress_fpm_socket: /var/run/fpm-wordpress.sock
+
+sync_pai: false
+pai_restore_from_dump: false

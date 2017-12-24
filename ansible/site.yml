@@ -5,7 +5,7 @@
 
   vars:
     server_name: littlesis.org
-    blog_server_name: littlesis.org
+    blog_server_name: news.littlesis.org
 
   pre_tasks:
     - name: load secret vars from ~/littlesis.yml
