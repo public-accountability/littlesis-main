@@ -60,17 +60,21 @@ Steps for a fully functional LittleSis Development environment:
 
 4) run app: ` ./littlesis up ` or ` ./littlesis up -d `
 
-4) Setup the database:  ` make db-setup `
+5) Setup the database:  ` make db-setup `
 
 ## Load the development database
 
-If you have an existing copy of LittleSis's database, populate the database now:
+We currently distribute an anonymized dump of our production database to trusted core contributors so they can bootstrap their development environment with a realistic dataset. To obtain such a dump, email ziggy@littlesis.org. `*`
+
+Assuming you already have a local dump of the development database stored at `path/to/ls_dev_db.sql`, use it to populate the database with:
 
 ``` bash
-mysql -u littlesis -pthemanbehindthemanbehindthethrone -h 127.0.0.1 littlesis < path/to/littlesis_db.sql
+mysql -u littlesis -pthemanbehindthemanbehindthethrone -h 127.0.0.1 littlesis < path/to/ls_dev_db.sql
 ```
 
 This can take anywhere from 30mins to 3 hours depending on the size of the database dump.
+
+`*` To help suggest a better solution for producing a working dataset for development purposes, join the discussion on [this github issue](https://github.com/public-accountability/littlesis-rails/issues/456).
 
 ### Setup rails tests
 
@@ -135,7 +139,7 @@ cd /path/to/littlesis-main
 * username: `user1@email.com`
 * password: `password`
 
-### Bonus Tips! 
+### Bonus Tips!
 
 #### Running rspec/rubocop outside of docker
 
@@ -176,7 +180,7 @@ end
 If you are not working on the chat integration you find might it useful to comment
 out the lines in docker-compose.yml so they don't run.
 
-comment out all lines below the ` rocketchat: ` service and comment out the two lines in the depends_on section of web: 
+comment out all lines below the ` rocketchat: ` service and comment out the two lines in the depends_on section of web:
 
 ``` yml
 depends_on:
