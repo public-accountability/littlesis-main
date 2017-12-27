@@ -73,7 +73,7 @@ short_help() {
 
 
 docker_login() {
-    docker exec -t -i littlesisdocker_web_1 /bin/bash -l
+    docker-compose exec -u app web /bin/bash -l
 }
 
 rspec() {
