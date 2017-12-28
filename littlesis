@@ -77,7 +77,7 @@ docker_login() {
 }
 
 rspec() {
-    local CMD="cd /home/app && RAILS_ENV=test COVERAGE=true bundle exec rspec ${@}"
+    local CMD="cd /home/app && RAILS_ENV=test CODACY_RUN_LOCAL=true COVERAGE=true bundle exec rspec ${@}"
     $web_app_exec "${CMD}"
 }
 
