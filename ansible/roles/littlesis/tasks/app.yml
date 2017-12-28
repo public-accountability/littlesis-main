@@ -38,6 +38,15 @@
     owner: littlesis
     group: littlesis
 
+- name: Setup secrets.yml configuration
+  template:
+    src: secrets.yml.j2
+    dest: /var/www/littlesis/config/secrets.yml
+    mode: 0600
+    owner: littlesis
+    group: littlesis
+
+
 - name: Setup littlesis crontab
   become: yes
   become_user: littlesis
