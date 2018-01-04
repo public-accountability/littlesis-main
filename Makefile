@@ -1,5 +1,4 @@
-RAILS_DOCKER_VERSION := 0.3.1
-PHP_DOCKER_VERSION := 0.0.6
+RAILS_DOCKER_VERSION := 0.3.2
 
 help:
 	@echo "Welcome to the LittleSis Dev Environment"
