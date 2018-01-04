@@ -147,6 +147,16 @@ rails_spec_search() {
     grep $grep_opts -r -H --color -i -n "${1}"
 }
 
+mysql_shell() {
+    if [ -x "$(command -v mycli)" ];then
+	local MYSQL=mycli
+    else
+	local MYSQL=mysql
+    fi
+    $MYSQL -u littlesis -pthemanbehindthemanbehindthethrone -h 127.0.0.1 littlesis
+}
+
+
 rails_coverage() {
     local cov_file=rails/coverage/index.html
 
@@ -180,9 +190,9 @@ while :; do
 	    exit
 	    ;;
 	mysql)
-	     mysql -u littlesis -pthemanbehindthemanbehindthethrone -h 127.0.0.1 littlesis
-	     exit
-	     ;;
+	    mysql_shell
+	    exit
+	    ;;
 	login)
 	    docker_login
 	    exit
