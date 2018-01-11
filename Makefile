@@ -19,6 +19,14 @@ db-setup:
 docker-pull:
 	cat docker-compose.yml | grep "image:" | sed 's/image://g' | xargs -I image docker pull image
 
+
+WORDPRESS_REPOS = littlesis-packages littlesis-core-functionality littlesis-news-theme
+CLONE_URL = git@github.com:public-accountability
+
+clone-wordpress-repos:
+	mkdir -v -p wordpress
+	cd wordpress && $(foreach repo,$(WORDPRESS_REPOS), git clone $(CLONE_URL)/$(repo).git;})
+
 install-docker-on-ubuntu:
 	sudo apt-get update && sudo apt-get install git apt-transport-https ca-certificates curl software-properties-common make
 	curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
