@@ -14,7 +14,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get -y install \
     software-properties-common \
     curl \
     lsof \
-    nano \
+    grep \
     gnupg \
     libcurl4-gnutls-dev \
     imagemagick libmagickwand-dev \
@@ -60,9 +60,13 @@ COPY ./rails/Gemfile.lock /home/app/Gemfile.lock
 COPY ./rails/.ruby-version /home/app/.ruby-version
 RUN chown -R app:app /home/app
 
-# Ensure correct version of ruby is installed and set as default
+# Ensure correct version of ruby is installed
 RUN bash -lc 'rvm install $(cat /home/app/.ruby-version)'
+# Remove other ruby versions
+RUN bash -lc "rvm list | egrep -o 'ruby-[0-9\.]{5}' | grep -v $(cat /home/app/.ruby-version) | xargs -I ruby_version rvm remove ruby_version"
+# Set default ruby version
 RUN bash -lc 'rvm --default use $(cat /home/app/.ruby-version)'
+
 
 # Install Gems
 RUN su - app -l -c "cd /home/app && rvm use && gem install --no-rdoc --no-ri bundler"
