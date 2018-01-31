@@ -8,6 +8,10 @@
 - name: Ensure fail2ban is started
   service: name=fail2ban state=started
 
+- name: OS Hardening
+  include_role:
+    name: dev-sec.os-hardening
+ 
 - name: SSH Hardening
   include_role:
     name: dev-sec.ssh-hardening
