@@ -13,7 +13,9 @@
   git:
     repo: https://github.com/public-accountability/littlesis-rails.git
     dest: /var/www/littlesis
+    force: yes
     recursive: yes
+    version: "{{  littlesis_rails_version }}"
 
 - name: Install gems
   become: yes
@@ -45,6 +47,7 @@
     mode: 0600
     owner: littlesis
     group: littlesis
+  tags: secrets
 
 
 - name: Setup littlesis crontab

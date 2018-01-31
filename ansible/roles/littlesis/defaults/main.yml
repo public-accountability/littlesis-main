@@ -11,6 +11,7 @@ littlesis_packages:
   - htop
   - lsof
   - tmux
+  - mosh
   - libcurl4-gnutls-dev
   - imagemagick
   - libmagickwand-dev
@@ -51,6 +52,9 @@ pai_php_packages:
   - php5.6-xml
   - php5.6-fpm
   
+
+# Branch/git ref of littlesis-rails to clone
+littlesis_rails_version: master
   
 # ssh
 kex_algorithms: "diffie-hellman-group-exchange-sha256"
