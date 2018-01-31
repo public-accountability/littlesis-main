@@ -105,10 +105,10 @@ rails_cmd() {
 }
 
 rails_reset_test_db() {
-    $web_app_exec 'cd /home/app; RAILS_ENV=test bundle exec rake db:drop'
-    $web_app_exec 'cd /home/app; RAILS_ENV=test bundle exec rake db:create'
-    $web_app_exec 'cd /home/app; RAILS_ENV=test bundle exec rake db:schema:load'
-    $web_app_exec 'cd /home/app; RAILS_ENV=test bundle exec rake db:seed'
+    $web_app_exec 'cd /home/app; RAILS_ENV=test bundle exec rake db:reset'
+    # $web_app_exec 'cd /home/app; RAILS_ENV=test bundle exec rake db:create'
+    # $web_app_exec 'cd /home/app; RAILS_ENV=test bundle exec rake db:schema:load'
+    # $web_app_exec 'cd /home/app; RAILS_ENV=test bundle exec rake db:seed'
 }
 
 rails_logs() {
