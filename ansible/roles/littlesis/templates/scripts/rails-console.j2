@@ -1,4 +1,4 @@
 #!/bin/bash
 
-sudo -H -i -u littlesis bash -l -c 'cd /var/www/littlesis && rvm use && bin/rails c RAILS_ENV=production'
+sudo -H -u littlesis bash -l -c 'export RAILS_ENV=production ; cd /var/www/littlesis ;  rvm use && bin/rails c'
 
