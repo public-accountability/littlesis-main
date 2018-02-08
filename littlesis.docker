@@ -1,4 +1,4 @@
-FROM phusion/passenger-customizable:0.9.22
+FROM phusion/passenger-customizable:0.9.28
 LABEL maintainer="ziggy@littlesis.org"
 
 # Use baseimage-docker's init system.
@@ -54,23 +54,26 @@ RUN apt-get install -y nodejs
 RUN curl -sSL https://github.com/mozilla/geckodriver/releases/download/v0.19.1/geckodriver-v0.19.1-linux64.tar.gz | tar -C /usr/local/bin/ -xzf - geckodriver
 
 ## APP
-RUN mkdir -p /home/app
-COPY ./rails/Gemfile /home/app/Gemfile
-COPY ./rails/Gemfile.lock /home/app/Gemfile.lock
-COPY ./rails/.ruby-version /home/app/.ruby-version
+RUN mkdir -p /home/app && mkdir -p /home/app/rails
+
+COPY ./rails/Gemfile /home/app/rails/Gemfile
+COPY ./rails/Gemfile.lock /home/app/rails/Gemfile.lock
+COPY ./rails/.ruby-version /home/app/rails/.ruby-version
 RUN chown -R app:app /home/app
 
 # Ensure correct version of ruby is installed
-RUN bash -lc 'rvm install $(cat /home/app/.ruby-version)'
+RUN bash -lc 'rvm install $(cat /home/app/rails/.ruby-version)'
 # Remove other ruby versions
-RUN bash -lc "rvm list | egrep -o 'ruby-[0-9\.]{5}' | grep -v $(cat /home/app/.ruby-version) | xargs -I ruby_version rvm remove ruby_version"
+RUN bash -lc "rvm list | egrep -o 'ruby-[0-9\.]{5}' | grep -v $(cat /home/app/rails/.ruby-version) | xargs -I ruby_version rvm remove ruby_version"
 # Set default ruby version
-RUN bash -lc 'rvm --default use $(cat /home/app/.ruby-version)'
-
+RUN bash -lc 'rvm --default use $(cat /home/app/rails/.ruby-version)'
 
 # Install Gems
-RUN su - app -l -c "cd /home/app && rvm use && gem install --no-rdoc --no-ri bundler"
-RUN su - app -l -c "cd /home/app && rvm use && bundle install"
+RUN su - app -l -c "cd /home/app/rails && rvm use && gem install --no-rdoc --no-ri bundler"
+RUN su - app -l -c "cd /home/app/rails && rvm use && bundle install"
+
+# copy app bash profile
+COPY --chown=app:app ./bash_profile /home/app/.bash_profile
 
 # some weird usermod thing
 RUN usermod -u 1000 app

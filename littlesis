@@ -64,7 +64,6 @@ EOF
 }
 
 web_app_exec="docker-compose exec web su app -l -c"
-web_app_exec_bash="docker-compose exec -u app web /bin/bash -c"
 
 short_help() {
     echo "Usage: ./littlesis rails|php"
@@ -88,8 +87,7 @@ rails_spring_rspec() {
 }
 
 rails_spec() {
-    local CMD="cd /home/app ; source spec/spec_bash_helper.sh ; bash --login"
-    $web_app_exec_bash "${CMD}"
+    docker-compose exec -u app web /bin/bash --login
 }
 
 rails_console() {
