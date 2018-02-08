@@ -2,12 +2,12 @@ version: '3'
 
 services:
   web:
-    image: aepyornis/ls-rails:0.3.3
+    image: aepyornis/ls-rails:0.3.4
     ports:
         - "8080:80"
         - "8888:8888"
     volumes:
-        - ./rails:/home/app
+        - ./rails:/home/app/rails
         - ./ls_dev.conf:/etc/nginx/sites-enabled/default
     depends_on:
         - redis

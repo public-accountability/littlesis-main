@@ -63,65 +63,13 @@ littlesis coverage
 EOF
 }
 
-web_app_exec="docker-compose exec web su app -l -c"
+# web_app_exec="docker-compose exec web su app -l -c"
+web_app_exec="docker-compose exec -u app web /bin/bash -l -c"
 
 short_help() {
     echo "Usage: ./littlesis rails|php"
     echo "Helpful shortcuts to the LittleSis development environment"
     echo "More information: littlesis help"
-}
-
-
-docker_login() {
-    docker-compose exec -u app web /bin/bash -l
-}
-
-rspec() {
-    local CMD="cd /home/app && RAILS_ENV=test CODACY_RUN_LOCAL=true COVERAGE=true bundle exec rspec ${@}"
-    $web_app_exec "${CMD}"
-}
-
-rails_spring_rspec() {
-    local CMD="cd /home/app && RAILS_ENV=test bin/spring rspec ${@}"
-    $web_app_exec "${CMD}"
-}
-
-rails_spec() {
-    docker-compose exec -u app web /bin/bash --login
-}
-
-rails_console() {
-    $web_app_exec 'cd /home/app; RAILS_ENV=development bin/rails c'
-}
-
-rails_rake() {
-    local CMD="cd /home/app && RAILS_ENV=development bundle exec rake ${@}"
-    $web_app_exec "${CMD}"
-}
-
-rails_cmd() {
-    local CMD="cd /home/app && ${@}"
-    $web_app_exec "${CMD}"
-}
-
-rails_reset_test_db() {
-    $web_app_exec 'cd /home/app; RAILS_ENV=test bundle exec rake db:reset'
-    # $web_app_exec 'cd /home/app; RAILS_ENV=test bundle exec rake db:create'
-    # $web_app_exec 'cd /home/app; RAILS_ENV=test bundle exec rake db:schema:load'
-    # $web_app_exec 'cd /home/app; RAILS_ENV=test bundle exec rake db:seed'
-}
-
-rails_logs() {
-    docker-compose exec web /bin/bash -c 'tail -f /home/app/log/development.log'
-}
-
-rails_restart() {
-    docker-compose exec web /bin/bash -c 'passenger-config restart-app /home/app'
-}
-
-rails_jasmine() {
-    local CMD="cd /home/app && RAILS_ENV=test JASMINE=true bundle exec rake jasmine"
-    $web_app_exec "${CMD}"
 }
 
 nginx_logs() {
@@ -161,11 +109,11 @@ mysql_shell() {
 
 rails_coverage() {
     local cov_file=rails/coverage/index.html
-
-    if [ -x "$(command -v firefox)" ];then
+    
+    if [ -x "$(command -v chromium)" ];then
+	chromium --new-window $cov_file > /dev/null 2>&1
+    elif [ -x "$(command -v firefox)" ];then
 	firefox --new-window $cov_file > /dev/null 2>&1
-    elif [ -x "$(command -v chromium)" ];then
-	 chromium $cov_file > /dev/null 2>&1
     else
 	echo 'Could not find firefox or chromium'
 	exit 1
@@ -175,11 +123,7 @@ rails_coverage() {
 while :; do
     case $1 in
 	up)
-	    if [ "$2" == -d ]; then
-		docker-compose up -d
-	    else
-		docker-compose up
-	    fi
+	    docker-compose up -d
 	    exit
 	    ;;
 	down|ps|logs)
@@ -196,50 +140,51 @@ while :; do
 	    exit
 	    ;;
 	login)
-	    docker_login
+	    docker-compose exec -u app web /bin/bash --login
 	    exit
 	    ;;
 	rspec)
 	    shift
-	    rspec "$@"
+	    $web_app_exec "RAILS_ENV=test CODACY_RUN_LOCAL=true COVERAGE=true bundle exec rspec ${@}"
 	    exit
 	    ;;
 	spring-rspec|spring-spec|s)
 	    shift
-	    rails_spring_rspec "$@"
+	    $web_app_exec "RAILS_ENV=test bin/spring rspec ${@}"
 	    exit
 	    ;;
 	spec)
-	    rails_spec
+	    docker-compose exec -u app web /bin/bash --login
+	    exit
 	    ;;
         cmd)
 	    shift
-	    rails_cmd "$@"
+	    $web_app_exec "${@}"
 	    exit
 	    ;;
 	console|c)
-	    rails_console
+	    $web_app_exec 'RAILS_ENV=development bin/rails c'
 	    exit
 	    ;;
 	rails-logs)
-	    rails_logs
+	    tail -f rails/log/development.log
 	    exit
 	    ;;
 	rake)
 	    shift
-	    rails_rake "$@"
+	    $web_app_exec "RAILS_ENV=development bundle exec rake ${@}"
 	    exit
 	    ;;
 	restart-rails)
-	    rails_restart
+	    docker-compose exec web /bin/bash -c 'passenger-config restart-app /home/app'
 	    exit
 	    ;;
 	jasmine)
-	    rails_jasmine
+	    $web_app_exec "RAILS_ENV=test JASMINE=true bundle exec rake jasmine"
 	    exit
 	    ;;
 	reset-test-db)
-	    rails_reset_test_db
+	    $web_app_exec 'RAILS_ENV=test bundle exec rake db:reset'
 	    exit
 	    ;;
 	search)
