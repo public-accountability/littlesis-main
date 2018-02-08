@@ -9,7 +9,7 @@ mysqldump -u {{ database_username }} -p{{ database_password}} -h {{ database_hos
 	  --ignore-table=littlesis.versions  \
 	  --ignore-table=littlesis.ny_disclosures  \
 	  --ignore-table=littlesis.modification_field \
-	  --ignore-table=littlesis.modification \ 
-	  littlesis | gzip > ~/littlesis-backup-most-$DATE.sql.gz
+	  --ignore-table=littlesis.modification \
+	  --databases littlesis | gzip > ~/littlesis-backup-most-$DATE.sql.gz
 
 aws s3 cp ~/littlesis-backup-most-$DATE.sql.gz s3://{{ aws_s3_bucket }}/backups/littlesis-backup-most-$DATE.sql.gz
