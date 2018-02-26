@@ -31,6 +31,7 @@
     mode: 0600
     owner: littlesis
     group: littlesis
+  tags: config
   
 - name: Setup database.yml configuration
   template:

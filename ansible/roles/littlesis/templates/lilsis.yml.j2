@@ -10,8 +10,6 @@ defaults: &defaults
   google_custom_news_search_engine_id: {{ google_custom_news_search_engine_id }}
   google_custom_search_key: {{ google_custom_search_key }}
   google_street_view_key: {{ google_street_view_key }}
-  default_from_email: {{ default_from_email }}
-  default_to_email: {{ default_to_email }}
   admins_only: false
   convert_new_legacy_notes: true
   research_from_email: {{ research_from_email }}
@@ -31,6 +29,8 @@ defaults: &defaults
   default_network_id: 79
   asset_host: {{ asset_host }}
   cloudfront_distribtion_id: {{ cloudfront_distribtion_id }}
+  default_from_email: {{ default_from_email }}
+  default_to_email: {{ notification_to }}
   smtp_address: {{ smtp_address }}
   smtp_port: {{ smtp_port }}
   smtp_domain: {{ smtp_domain }}
@@ -55,6 +55,7 @@ defaults: &defaults
   recaptcha:
     site_key: {{ recaptcha_site_key }}
     secret_key: {{ recaptcha_secret_key }}
+  action_network_api_key: {{ action_network_api_key }}
 
 test:
   <<: *defaults
