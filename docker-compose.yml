@@ -2,7 +2,7 @@ version: '3'
 
 services:
   web:
-    image: aepyornis/ls-rails:0.3.5
+    image: aepyornis/ls-rails:0.3.6
     ports:
         - "8080:80"
         - "8888:8888"
@@ -16,7 +16,7 @@ services:
         - rocketchat
 
   redis:
-    image: redis:4.0.6
+    image: redis:4.0.7
 
   mysql:
     image: mariadb:10.1
