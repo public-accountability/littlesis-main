@@ -91,6 +91,16 @@
   notify: restart nginx
   tags: passenger-configure
 
+- name: Copy realip configuration
+  copy:
+    src: realip.conf
+    dest: /etc/nginx/conf.d/realip.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart nginx
+  tags: passenger-configure
+
 
 - name: Copy nginx ssl configuration
   template:

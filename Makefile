@@ -40,4 +40,14 @@ build-rails-docker:
 ansible-galaxy-roles:
 	ansible-galaxy install rvm_io.ruby DavidWittman.redis geerlingguy.nodejs dev-sec.ssh-hardening geerlingguy.docker geerlingguy.composer
 
+
+realip_conf := ./ansible/roles/littlesis/files/realip.conf
+
+cloudflare-ips:
+	curl -sSL "https://www.cloudflare.com/ips-v4" > /tmp/cloudflare-ips.txt
+	curl -sSL "https://www.cloudflare.com/ips-v6" >> /tmp/cloudflare-ips.txt
+	cat /tmp/cloudflare-ips.txt | ruby -ne 'print "set_real_ip_from #{$$_.delete("\n")};\n"' > $(realip_conf)
+	echo 'real_ip_header X-Forwarded-For;' >> $(realip_conf)
+
 .PHONY: help config build-rails-docker docker-pull db-setup
+.PHONY: ansible-galaxy-roles cloudflare-ips install-docker-on-ubuntu
