@@ -36,14 +36,6 @@
     recurse: yes
   tags: static
     
-- name: Enable passenger in nginx.conf
-  lineinfile:
-    regexp: 'include /etc/nginx/passenger.conf;'
-    line: '  include /etc/nginx/passenger.conf;'
-    path: /etc/nginx/nginx.conf
-  notify: restart nginx
-
-
 - name: Validate install
   shell: /usr/bin/passenger-config validate-install --auto
   register: passenger_validate_install
@@ -89,6 +81,17 @@
     mode: 0644
   no_log: true
 
+- name: Copy nginx configuration
+  template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart nginx
+  tags: passenger-configure
+
+
 - name: Copy nginx ssl configuration
   template:
     src: ssl.conf.j2
@@ -103,16 +106,6 @@
   template:
     src: littlesis.org.j2
     dest: /etc/nginx/sites-enabled/littlesis.org
-    owner: root
-    group: root
-    mode: 0644
-  notify: restart nginx
-  tags: passenger-configure
-
-- name: Copy passenger and nginx HTTP settings
-  template:
-    src: http.conf.j2
-    dest: /etc/nginx/conf.d/http.conf
     owner: root
     group: root
     mode: 0644
