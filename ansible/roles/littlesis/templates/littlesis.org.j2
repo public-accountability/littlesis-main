@@ -53,6 +53,14 @@ server {
       try_files $uri =404;
       expires 6M;
     }
+
+    location ~ /apple-touch-icon(.*)\.png {
+        root /var/www/static;
+        try_files $uri =404;
+        expires 6M;
+        access_log off;
+        log_not_found off;
+    }
     
     # Prevents those random requests from going to PHP
     location = /wp-login.php {
