@@ -159,3 +159,15 @@
     group: root
     mode: 0644
   notify: restart nginx
+  tags: wp-nginx
+
+- name: Copy blog.littlesis.org nginx configuration
+  template:
+    src: blog.littlesis.org.j2
+    dest: /etc/nginx/sites-enabled/blog.littlesis.org
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart nginx
+  tags: wp-nginx
+  
