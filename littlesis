@@ -143,6 +143,10 @@ while :; do
 	    docker-compose exec -u app web /bin/bash --login
 	    exit
 	    ;;
+	login-root)
+	    docker-compose exec web /bin/bash --login
+	    exit
+	    ;;
 	rspec)
 	    shift
 	    $web_app_exec "RAILS_ENV=test CODACY_RUN_LOCAL=true COVERAGE=true bundle exec rspec ${@}"
