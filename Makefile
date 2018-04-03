@@ -27,13 +27,18 @@ CLONE_URL = git@github.com:public-accountability
 clone-wordpress-repos: blog
 	cd blog && $(foreach repo,$(WORDPRESS_REPOS), git clone $(CLONE_URL)/$(repo).git;})
 
-
-wordpress-setup: blog wordpress-download
+wordpress-setup: blog clone-wordpress-repos wordpress-download
 	cp wp-config.php blog/wordpress/wp-config.php
 	mkdir -v -p blog/wordpress/wp-content/uploads
 	rsync -a wp-uploads/ blog/wordpress/wp-content/uploads/
 	cd blog/littlesis-packages && composer install
+#	$(MAKE) wordpress-refresh
 
+wordpress-refresh:
+	mkdir -v -p ./blog/wordpress/wp-content/themes/littlesis
+	mkdir -v -p ./blog/wordpress/wp-content/plugins/littlesis-core-functionality
+	rsync -v -a --exclude='.git/' ./blog/littlesis-core-functionality/ ./blog/wordpress/wp-content/plugins/littlesis-core-functionality/
+	rsync -v -a --exclude='.git/' ./blog/littlesis-news-theme/ ./blog/wordpress/wp-content/themes/littlesis
 
 wordpress-download:
 	if ! test -f blog/wordpress/index.php; then \
@@ -41,8 +46,7 @@ wordpress-download:
 	fi
 
 blog:
-	mkdir -v -p blog
-	mkdir -v -p blog/wordpress
+	mkdir -v -p blog && mkdir -v -p blog/wordpress
 
 
 install-docker-on-ubuntu:
@@ -50,6 +54,7 @@ install-docker-on-ubuntu:
 	curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 	sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(shell lsb_release -cs) stable"
 	sudo apt-get update && sudo apt-get install docker-ce
+
 
 build-rails-docker:
 	docker build --no-cache -t aepyornis/ls-rails:$(RAILS_DOCKER_VERSION) -f littlesis.docker .
@@ -73,4 +78,4 @@ cloudflare-ips:
 .PHONY: help config db-setup
 .PHONY: build-php-docker build-rails-docker docker-pull
 .PHONY: ansible-galaxy-roles cloudflare-ips install-docker-on-ubuntu
-.PHONY: wordpress-setup wordpress-download
+.PHONY: wordpress-setup wordpress-download wordpress-refresh
