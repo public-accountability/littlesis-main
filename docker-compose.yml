@@ -9,11 +9,22 @@ services:
     volumes:
         - ./rails:/home/app/rails
         - ./ls_dev.conf:/etc/nginx/sites-enabled/default
+        - ./wordpress.conf:/etc/nginx/sites-enabled/wordpress.conf
+        - ./blog/wordpress:/var/www/wordpress
     depends_on:
         - redis
         - mysql
+        - php
         - mongo
         - rocketchat
+
+
+  php:
+    image: aepyornis/ls-php:0.0.7
+    volumes:
+      - ./blog/wordpress:/var/www/wordpress
+    depends_on:
+      - mysql
 
   redis:
     image: redis:4.0.7

@@ -106,6 +106,15 @@ mysql_shell() {
     $MYSQL -u littlesis -pthemanbehindthemanbehindthethrone -h 127.0.0.1 littlesis
 }
 
+mysql_shell_wordpress() {
+    if [ -x "$(command -v mycli)" ];then
+	local MYSQL=mycli
+    else
+	local MYSQL=mysql
+    fi
+    $MYSQL -u wordpress -pwordpress -h 127.0.0.1 eyes_on_the_ties
+}
+
 
 rails_coverage() {
     local cov_file=rails/coverage/index.html
@@ -137,6 +146,10 @@ while :; do
 	    ;;
 	mysql)
 	    mysql_shell
+	    exit
+	    ;;
+	mysql-wordpress)
+	    mysql_shell_wordpress
 	    exit
 	    ;;
 	login)

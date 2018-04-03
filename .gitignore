@@ -7,4 +7,5 @@ chat/
 !/scripts/mysql_setup.sql
 ansible/*.retry
 *.gz
-wordpress
+blog
+wp-uploads

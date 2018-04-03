@@ -1,6 +1,9 @@
 mysql-data*
 chat
 wordpress
+wp-uploads
+blog*
+*.tar.gz
 *.sql
 ansible
 static
