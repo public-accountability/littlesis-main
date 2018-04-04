@@ -48,6 +48,12 @@ server {
        try_files $uri =404;
     }
 
+    location /images/system/ {
+        root /var/www/static;
+        expires 1M;
+        access_log off;
+    }
+    
     location = /favicon.ico {
       root /var/www/static;
       try_files $uri =404;

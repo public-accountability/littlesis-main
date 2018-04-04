@@ -45,6 +45,9 @@
     mode: 0755
   tags: static
 
+- name: Set directory permissions on subfolders
+  command: find /var/www/static -type d -exec chmod 0755 {} \;
+  tags: static
   
 - name: Validate install
   shell: /usr/bin/passenger-config validate-install --auto
