@@ -37,6 +37,16 @@ server {
         access_log off;
     }
 
+    # Sometimes requests intended for our asset server get sent here.
+    # This redirects those requests.
+    location ~ ^//?dfl6orqdcqt4f.cloudfront.net/(.*) {
+        return 301 https://dfl6orqdcqt4f.cloudfront.net/$1;
+    }
+
+    ##
+    # Static assets
+    #
+
     location /js {
       root /var/www/static;
       try_files $uri =404;
@@ -74,7 +84,6 @@ server {
         access_log off;
         log_not_found off;
     }
-
 
     location = /xmlrpc.php {
          deny all;
