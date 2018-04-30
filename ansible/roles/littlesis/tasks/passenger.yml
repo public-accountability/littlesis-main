@@ -82,7 +82,7 @@
     dest: /etc/nginx/certs/certificate.pem
     owner: root
     group: root
-    mode: 0644
+    mode: 0600
   no_log: true
 
 - name: Copy TLS Key
@@ -91,7 +91,7 @@
     dest: /etc/nginx/certs/key.pem
     owner: root
     group: root
-    mode: 0644
+    mode: 0600
   no_log: true
 
 - name: Copy nginx configuration
