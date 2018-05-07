@@ -2,7 +2,7 @@ version: '3'
 
 services:
   web:
-    image: aepyornis/ls-rails:0.4.0
+    image: aepyornis/ls-rails:0.4.2
     ports:
         - "8080:80"
         - "8888:8888"
