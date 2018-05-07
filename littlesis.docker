@@ -45,7 +45,7 @@ RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
 RUN apt-get install -y nodejs
 
 # Geckodriver
-RUN curl -sSL https://github.com/mozilla/geckodriver/releases/download/v0.19.1/geckodriver-v0.19.1-linux64.tar.gz | tar -C /usr/local/bin/ -xzf - geckodriver
+RUN curl -sSL https://github.com/mozilla/geckodriver/releases/download/v0.20.1/geckodriver-v0.20.1-linux64.tar.gz | tar -C /usr/local/bin/ -xzf - geckodriver
 
 ## APP
 RUN mkdir -p /home/app && mkdir -p /home/app/rails
