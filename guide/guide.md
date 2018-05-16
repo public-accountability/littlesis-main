@@ -22,6 +22,16 @@ The repo [littlesis-main](https://github.com/public-accountability/littlesis-mai
 
 Our code is all open source, licensed with the General Public License version 3.0.
 
+
+### Who made this?
+
+Matthew Skomarovsky co-founded LittleSis and was the initial developer behind the project. When it started in 2009, LittleSis was a PHP app (see [here](https://github.com/littlesis-org/littlesis) for the legacy PHP code). The port to Ruby on Rails began in 2013 and finished in 2017.
+
+Along the way, Austin ([@aguestuser](https://github.com/aguestuser)) worked on oligrapher and the rails codebase. Liz ([@lizstarin](https://github.com/lizstarin)) helped port PHP code to rails and developed the chrome extension. Pea ([@misfist](https://github.com/misfist)) coded our wordpress sites.
+
+The project is currently maintained by ziggy ([@aepyornis](https://github.com/aepyornis)).
+
+
 ## Core development principles
 
 ## Data Model
