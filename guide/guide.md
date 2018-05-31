@@ -40,7 +40,44 @@ The project is currently maintained by ziggy ([@aepyornis](https://github.com/ae
 
 ## Production and operations
 
+LittleSis runs on ubuntu servers. We have 3 core servers:
 
+1) Rails Server: Our "main" web server which runs our rails app + wordpress site
+2) Chat Server: a server running Rocket.Chat with docker
+3) Database server running MariaDb
 
+Our traffic is proxied by Cloudflare. Cloudlfare is also used to manage our DNS. Our assets are hosted on Amazon S3 and served via Amazon's cloudfront.
 
+### Rails Server
 
+#### Creating a new server.
+
+In the advent that you need to create an entirely new server, there is an ansible playbook to setup up a new ubuntu xenial server. See the `ansible` folder for the playbook. Variables are configured in `ansible/group_vars/all`. The wordpress will need some additional setup (described later).
+
+The ansible playbook looks for a file of secrets located at ` ~/littlesis.yml `. This file ~can~ should be encrypted with [ansible vault](https://docs.ansible.com/ansible/latest/user_guide/vault.html). `~/littlesis.yml` contains all sensitive information and credentials including database passwords and tls certificates. 
+
+#### Rails Server Components
+
+##### Nginx/Phusion Passenger
+
+Our core webserver is [Nginx/Phusion Passenger](https://www.phusionpassenger.com), which allows us to run our ruby app using nginx.
+
+##### RVM
+
+Rather than relying on ubuntu for ruby, we use RVM (managed via ansible) to install ruby. Whenever we update our ruby version in the ansible variables section, re-run the playbook with the ruby tag and it will update ruby for us
+
+``` sh
+ansible-playbooks site.yml --tags 'ruby'
+```
+
+##### Redis
+
+For caching, our rails app uses Redis.  In `ansible/group_vars/all` a few redis configuration variables have been set, but generally redis is remarkable stable. It's never crashed, require no maintaince, and even saves the cache to disk periodically and automatically restores it upon restart.
+
+##### Sphinx
+
+Sphinx is used by rails for full-text searching of documents. The running of sphinx is managed via rake tasks.
+
+##### PHP/wordpress
+
+news.littlesis.org is also run on our main rails server. The wordpress files are located here: ``` /var/www/news ```
