@@ -31,3 +31,6 @@ wordpress_db_name: eyes_on_the_ties
 wordpress_db_user: wp_blog
 wordpress_memory_limit: 256M
 wordpress_docker_image: wordpress:4.9.1-php7.1-apache
+
+# lilsis.yml defaults
+redis_url: "redis://127.0.0.1:6379/0/cache"

@@ -56,7 +56,8 @@ defaults: &defaults
     site_key: {{ recaptcha_site_key }}
     secret_key: {{ recaptcha_secret_key }}
   action_network_api_key: {{ action_network_api_key }}
-
+  redis_url: {{ redis_url }}
+ 
 test:
   <<: *defaults
 
