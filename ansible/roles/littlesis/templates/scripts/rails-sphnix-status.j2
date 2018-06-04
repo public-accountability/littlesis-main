@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/bin/sh
 
-sudo -i -u littlesis bash -l -c 'cd /var/www/littlesis && rvm use bundle exec rake ts:status RAILS_ENV=production'
+{{ scripts_directory }}/rails-rake "ts:status"
+
 

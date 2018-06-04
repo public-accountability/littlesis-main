@@ -88,3 +88,6 @@ wordpress_fpm_socket: /var/run/fpm-wordpress.sock
 
 sync_pai: false
 pai_restore_from_dump: false
+
+# scripts directory
+scripts_directory: /home/ubuntu/scripts
