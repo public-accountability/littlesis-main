@@ -1,0 +1,57 @@
+#!/bin/bash
+
+exit_status=0
+
+rails-cmd () {
+    {{ scripts_directory }}/rails-command $@
+}
+
+rails-rake() {
+    {{ scripts_directory }}/rails-rake $@
+}
+
+print_section () {
+    echo '-----------------------'
+    echo "       ${1}            "
+    echo '-----------------------'
+}
+
+print_ok () {
+    printf "[✓] \e[32m$1\e[0m\n"
+}
+
+print_error () {
+    exit_status=1
+    printf "[x] \e[31m$1\e[0m\n"
+}
+
+check_service () {
+    if eval "$2" &> /dev/null
+    then
+	print_ok "$1"
+    else
+	print_error "$1"
+    fi
+    
+}
+
+print_section "services"
+
+for service in nginx php7.1-fpm fail2ban redis_6379
+do
+    check_service $service "sudo systemctl is-active $service"
+done
+    
+check_service 'mysql connection' '{{ scripts_directory }}/mysql-test'
+check_service 'delayed job' 'rails-cmd bin/delayed_job status' 
+check_service 'Thining sphinx' 'rails-rake ts:status'
+check_service 'Passenger Rails' "ps -f -u littlesis | egrep --quiet -e 'Passenger(.*)/littlesis'"
+
+
+print_section "stats"
+
+free | grep Mem | awk '{ printf("Memory used: %.1f% \n", $3/$2 * 100) }'
+mpstat | grep 'all' | awk '{ printf("CPU Usage: %.2f%\n", (100 - $13)) }'
+
+
+exit $exit_status

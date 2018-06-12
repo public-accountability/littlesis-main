@@ -9,6 +9,7 @@ littlesis_packages:
   - gnupg
   - dirmngr
   - htop
+  - sysstat
   - lsof
   - tmux
   - mosh
