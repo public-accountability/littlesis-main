@@ -42,16 +42,18 @@ do
     check_service $service "sudo systemctl is-active $service"
 done
     
-check_service 'mysql connection' '{{ scripts_directory }}/mysql-test'
-check_service 'delayed job' 'rails-cmd bin/delayed_job status' 
-check_service 'Thining sphinx' 'rails-rake ts:status'
+check_service 'Mysql connection' '{{ scripts_directory }}/mysql-test'
+check_service 'Delayed job' 'rails-cmd bin/delayed_job status' 
+check_service 'Sphinx' 'rails-rake ts:status'
 check_service 'Passenger Rails' "ps -f -u littlesis | egrep --quiet -e 'Passenger(.*)/littlesis'"
 
 
 print_section "stats"
 
-free | grep Mem | awk '{ printf("Memory used: %.1f% \n", $3/$2 * 100) }'
-mpstat | grep 'all' | awk '{ printf("CPU Usage: %.2f%\n", (100 - $13)) }'
+printf "Rails processes: %d\n" $(sudo passenger-status | grep 'Processes' | egrep -o '[0-9]')
+printf "Rails memory: %.0f mb\n" $(sudo passenger-memory-stats 2> /dev/null | grep 'Total private dirty' | egrep -o '[0-9]+\.[0-9]' | awk '{s+=$1} END {print s}')
+free | grep Mem | awk '{ printf("System memory used: %.1f% \n", $3/$2 * 100) }'
+mpstat | grep 'all' | awk '{ printf("CPU used: %.2f%\n", (100 - $13)) }'
 
 
 exit $exit_status
