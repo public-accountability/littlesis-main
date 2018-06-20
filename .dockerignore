@@ -2,5 +2,8 @@ mysql-data*
 chat
 wordpress
 *.sql
+*.gz
+rails/log
+rails/tmp
 ansible
 static
