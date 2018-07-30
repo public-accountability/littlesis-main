@@ -65,12 +65,14 @@
       make:
         chdir: /littlesis
         target: setup
+      tags: rails
 
     - name: Pull required docker containers
       become_user: ubuntu
       make:
         chdir: /littlesis
         target: docker-pull
+      tags: rails
 
     - name: install .tmux.conf
       copy:
