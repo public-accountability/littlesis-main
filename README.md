@@ -58,7 +58,7 @@ Steps for a fully functional LittleSis Development environment:
 
 3) [optional] Edit the configuration files in ./config and run: ``` make config ```
 
-4) run app: ` ./littlesis up ` or ` ./littlesis up -d `
+4) run app: ` ./littlesis up `
 
 5) Setup the database:  ` make db-setup `
 
@@ -128,7 +128,7 @@ you can access the site at ``` littlesis.local:8080 ```
 
 ```
 cd /path/to/littlesis-main
-./littlesis up -d
+./littlesis up
 ./littlesis rake ts:start
 ```
 
@@ -189,3 +189,7 @@ depends_on:
   # - mongo
   # - rocketchat
 ```
+
+#### work in the ☁️
+
+If you'd prefer not to bother with docker on your own computer or if your computer is old and slow, see the ansible playbook `development.yml`. It will setup an ubuntu 18.04 server with everything you need to work on littlesis. After running the playbook you'll still have to load the development database (steps 4 & 5). Files can be edited locally with sshfs -- see scripts/remote-up.sh and scripts/remote-down.sh.

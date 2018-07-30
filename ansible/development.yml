@@ -1,0 +1,102 @@
+---
+- hosts: littlesis-dev
+  become: yes
+
+  vars:
+    verified_github_ssh_fingerprint: 'SHA256:nThbg6kXUpJWGl7E1IGOCspRomTxdCARLviKw6E5SY8'
+    install_tmux_dotfiles: yes
+
+  pre_tasks:
+    - name: load secret vars from ~/littlesis-dev.yml
+      include_vars:
+        file: ~/littlesis-dev.yml
+      tags: always
+
+  tasks:
+    - name: Install required packages
+      apt:
+        update_cache: yes
+        name: "{{ item }}"
+      with_items: "{{ dev_packages }}"
+      tags: packages
+
+    - name: disable snapd
+      service:
+        name: snapd
+        enabled: no
+        state: stopped
+
+    - name: swap
+      include_role:
+        name: littlesis
+        tasks_from: swap
+
+    - name: security
+      include_role:
+        name: littlesis
+        tasks_from: security
+
+    - name: aws cli
+      include_role:
+        name: littlesis
+        tasks_from: awscli
+
+    - name: docker
+      include_role:
+        name: littlesis
+        tasks_from: docker
+
+    - name: Create /littlesis
+      file:
+        path: /littlesis
+        state: directory
+        owner: ubuntu
+        mode: 0755
+
+    - name: Clone littlesis-main from github
+      become_user: ubuntu
+      git:
+        repo: https://github.com/public-accountability/littlesis-main.git
+        dest: /littlesis
+        force: yes
+      
+    - name: Setup rails repo
+      become_user: ubuntu
+      make:
+        chdir: /littlesis
+        target: setup
+      tags: rails
+
+    - name: Pull required docker containers
+      become_user: ubuntu
+      make:
+        chdir: /littlesis
+        target: docker-pull
+      tags: rails
+
+    - name: install .tmux.conf
+      copy:
+        src: ~/.tmux.conf
+        dest: /home/ubuntu/.tmux.conf
+        owner: ubuntu
+        group: ubuntu
+        mode: 0644
+      when: install_tmux_dotfiles
+      tags: dotfiles
+
+    - name: Create .config/fish
+      file:
+        dest: /home/ubuntu/.config/fish
+        owner: ubuntu
+        state: directory
+        mode: 0755
+      tags: dotfiles
+
+    - name: Setup fish shell
+      copy:
+        content: "{{ fish_config_file }}"
+        dest: /home/ubuntu/.config/fish/config.fish
+        owner: ubuntu
+        group: ubuntu
+        mode: 0644
+      tags: dotfiles

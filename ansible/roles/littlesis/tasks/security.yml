@@ -15,8 +15,6 @@
 - name: SSH Hardening
   include_role:
     name: dev-sec.ssh-hardening
-  vars:
-    ssh_max_auth_retries: 5
 
 - name: Check if Ubuntu is locked
   become: yes

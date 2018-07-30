@@ -92,3 +92,6 @@ pai_restore_from_dump: false
 
 # scripts directory
 scripts_directory: /home/ubuntu/scripts
+
+# ssh vars
+ssh_max_auth_retries: 5
