@@ -2,6 +2,11 @@
 - import_tasks: packages.yml
   tags: packages
 
+- import_tasks: awscli.yml
+  tags:
+    - packages
+    - awscli
+
 - import_tasks: security.yml
   tags: security
 

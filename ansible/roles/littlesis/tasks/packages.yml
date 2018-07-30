@@ -33,30 +33,6 @@
   include_role:
     name: geerlingguy.nodejs
 
-- name: Install awscli
-  pip:
-    name: awscli
-    executable: /usr/bin/pip3  
-
-- name: create ~/.aws dir
-  file: path=/home/ubuntu/.aws state=directory owner=ubuntu group=ubuntu mode=0760
-
-- name: Configure awscli
-  template:
-    src: awscli.j2
-    dest: /home/ubuntu/.aws/config
-    owner: ubuntu
-    group: ubuntu
-    mode: 0600
-
-- name: Install python dependencies for ansible
-  pip:
-    executable: /usr/bin/pip3
-    name: "{{ item }}"
-  with_items:
-    - docker-py
-    - docker-compose
-
 - name: add php ppa:odrej/php
   apt_repository:
     repo: ppa:ondrej/php
@@ -79,7 +55,6 @@
     composer_keep_updated: true
   tags: php
     
-
 - name: disable snapd
   service:
     name: snapd
