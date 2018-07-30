@@ -84,6 +84,13 @@
       when: install_tmux_dotfiles
       tags: dotfiles
 
+    - name: Create .config/fish
+      file:
+        dest: /home/ubuntu/.config/fish
+        owner: ubuntu
+        state: directory
+        mode: 0755
+      tags: dotfiles
 
     - name: Setup fish shell
       copy:
