@@ -26,7 +26,14 @@ dev_packages:
   - xauth
   - zile
   - emacs25-lucid
-
+  - qt5-default
+  - libqt5webkit5-dev
+  - gstreamer1.0-plugins-base
+  - gstreamer1.0-tools
+  - gstreamer1.0-x
+  - libmariadbclient-dev
+  - imagemagick
+  - libmagickwand-dev
 
 # ssh configuration
 ssh_allow_tcp_forwarding: true
