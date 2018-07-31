@@ -101,7 +101,6 @@
         mode: 0644
       tags: dotfiles
 
-
     - name: Enable IPv4 forwarding (required for docker networking)
       sysctl:
         name: net.ipv4.ip_forward
@@ -109,3 +108,15 @@
         sysctl_set: yes
         state: present
         reload: yes
+
+
+    - name: Add rvm repository
+      apt_repository:
+        repo: 'ppa:rael-gc/rvm'
+      tags: ruby
+
+    - name: Install rvm
+      apt:
+        name: rvm
+        update_cache: yes
+      tags: ruby

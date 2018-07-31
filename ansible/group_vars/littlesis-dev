@@ -23,8 +23,9 @@ dev_packages:
   - mariadb-client
   - python3
   - python3-pip
-#  - sshfs
-#  - fuse
+  - xauth
+  - zile
+  - emacs25-lucid
 
 
 # ssh configuration
