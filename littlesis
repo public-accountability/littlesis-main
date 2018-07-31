@@ -1,7 +1,7 @@
 #!/bin/bash
 
 show_help() {
-cat << EOF
+    cat << EOF
 Usage: ./littlesis <command>
 Helpful shortcuts to the LittleSis development environment
 
@@ -59,6 +59,10 @@ littlesis spec-search <TERM>
 
 View rails coverage:
 littlesis coverage
+
+start/stop remote dev server:
+littlesis remote up
+littlesis remote down
 
 EOF
 }
@@ -120,103 +124,121 @@ rails_coverage() {
     fi
 }
 
-while :; do
+remote() {
     case $1 in
 	up)
-	    docker-compose up -d
-	    exit
+	    ./scripts/remote-up.sh
 	    ;;
-	down|ps|logs)
-	    docker-compose "$1"
-	    exit
-	    ;;
-	nginx)
-	    shift
-	    nginx_logs "$@"
-	    exit
-	    ;;
-	mysql)
-	    mysql_shell
-	    exit
-	    ;;
-	login)
-	    docker-compose exec -u app web /bin/bash --login
-	    exit
-	    ;;
-	login-root)
-	    docker-compose exec web /bin/bash --login
-	    exit
-	    ;;
-	rspec)
-	    shift
-	    $web_app_exec "RAILS_ENV=test CODACY_RUN_LOCAL=true COVERAGE=true bundle exec rspec ${@}"
-	    exit
-	    ;;
-	spring-rspec|spring-spec|s)
-	    shift
-	    $web_app_exec "RAILS_ENV=test bin/spring rspec ${@}"
-	    exit
-	    ;;
-	spec)
-	    docker-compose exec -u app web /bin/bash --login
-	    exit
-	    ;;
-        cmd)
-	    shift
-	    $web_app_exec "${@}"
-	    exit
-	    ;;
-	console|c)
-	    $web_app_exec 'RAILS_ENV=development bin/rails c'
-	    exit
-	    ;;
-	rails-logs)
-	    tail -f rails/log/development.log | grep -v '/assets/'
-	    exit
-	    ;;
-	rake)
-	    shift
-	    $web_app_exec "RAILS_ENV=development bundle exec rake ${@}"
-	    exit
-	    ;;
-	restart-rails)
-	    docker-compose exec web /bin/bash -c 'passenger-config restart-app /home/app'
-	    exit
-	    ;;
-	jasmine)
-	    $web_app_exec "RAILS_ENV=test JASMINE=true bundle exec rake jasmine"
-	    exit
-	    ;;
-	reset-test-db)
-	    $web_app_exec 'RAILS_ENV=test bundle exec rake db:reset'
-	    exit
-	    ;;
-	search)
-	    shift
-	    rails_search "$@"
-	    exit
-	    ;;
-	spec-search)
-	    shift
-	    rails_spec_search "$@"
-	    exit
-	    ;;
-	cov|coverage)
-	    rails_coverage
-	    exit
-	    ;;
-	-h|help|--help)
-	    show_help
-	    exit
-	    ;;
-	?*) # End of all options.
-	    echo 'Invalid option'
-            echo 'all options: rspec, up, down, ps, logs, nginx, mysql, login, rspec, spring-rspec, spec, cmd, console, rails-logs, rake, restart-rails, jasmine, reset-test-db, search, spec-search, cov, help'
-            exit 1
+	down)
+	    ./scripts/remote-down.sh
 	    ;;
 	*)
-	    short_help
-	    exit
+	    echo "invalid option"
+	    exit 1
 	    ;;
     esac
-done
+}
+
+case $1 in
+    up)
+	docker-compose up -d
+	exit
+	;;
+    down|ps|logs)
+	docker-compose "$1"
+	exit
+	;;
+    nginx)
+	shift
+	nginx_logs "$@"
+	exit
+	;;
+    mysql)
+	mysql_shell
+	exit
+	;;
+    login)
+	docker-compose exec -u app web /bin/bash --login
+	exit
+	;;
+    login-root)
+	docker-compose exec web /bin/bash --login
+	exit
+	;;
+    rspec)
+	shift
+	$web_app_exec "RAILS_ENV=test CODACY_RUN_LOCAL=true COVERAGE=true bundle exec rspec ${@}"
+	exit
+	;;
+    spring-rspec|spring-spec|s)
+	shift
+	$web_app_exec "RAILS_ENV=test bin/spring rspec ${@}"
+	exit
+	;;
+    spec)
+	docker-compose exec -u app web /bin/bash --login
+	exit
+	;;
+    cmd)
+	shift
+	$web_app_exec "${@}"
+	exit
+	;;
+    console|c)
+	$web_app_exec 'RAILS_ENV=development bin/rails c'
+	exit
+	;;
+    rails-logs)
+	tail -f rails/log/development.log | grep -v '/assets/'
+	exit
+	;;
+    rake)
+	shift
+	$web_app_exec "RAILS_ENV=development bundle exec rake ${@}"
+	exit
+	;;
+    restart-rails)
+	docker-compose exec web /bin/bash -c 'passenger-config restart-app /home/app'
+	exit
+	;;
+    jasmine)
+	$web_app_exec "RAILS_ENV=test JASMINE=true bundle exec rake jasmine"
+	exit
+	;;
+    reset-test-db)
+	$web_app_exec 'RAILS_ENV=test bundle exec rake db:reset'
+	exit
+	;;
+    search)
+	shift
+	rails_search "$@"
+	exit
+	;;
+    spec-search)
+	shift
+	rails_spec_search "$@"
+	exit
+	;;
+    cov|coverage)
+	rails_coverage
+	exit
+	;;
+    remote)
+	shift
+	remote "$@"
+	exit
+	;;
+    -h|help|--help)
+	show_help
+	exit
+	;;
+    ?*) # End of all options.
+	echo 'Invalid option'
+        echo 'all options: rspec, up, down, ps, logs, nginx, mysql, login, rspec, spring-rspec, spec, cmd, console, rails-logs, rake, restart-rails, jasmine, reset-test-db, search, spec-search, cov, help'
+        exit 1
+	;;
+    *)
+	short_help
+	exit
+	;;
+esac
