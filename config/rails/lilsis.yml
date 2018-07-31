@@ -43,7 +43,6 @@ defaults: &defaults
   notification_user_name: "email.robot@littlesis.org"
   notification_password: ""
   notification_to: "test@littlesis.org"
-  legacy_cache_connection: "memcached:11211"
   carousel_list_id: 404
   restricted_ips:
     - 192.0.2.1
@@ -56,9 +55,14 @@ defaults: &defaults
   recaptcha:
     site_key: 'your-recaptcha-site-key-here'
     secret_key: 'your-recaptcha-secret-key-here'
+  action_network_api_key: 'your-action-network-api-key-here'
+  redis_url: "redis://redis:6379/0/cache"
 
 test:
   <<: *defaults
+  notification_email: notification@littlesis.dev
+  notification_to: rspec@testing.com
+  asset_host: assets.example.net
 
 development:
   <<: *defaults
