@@ -127,10 +127,13 @@ rails_coverage() {
 remote() {
     case $1 in
 	up)
-	    ./scripts/remote-up.sh
+	    ssh -4 -T -L 8080:localhost:8080 -L 8888:localhost:8888 -L 3306:localhost:3306 littlesis-dev > /dev/null 2>&1
 	    ;;
 	down)
-	    ./scripts/remote-down.sh
+	    pgrep -f 'ssh.*littlesis-dev' | xargs -I PID kill PID
+	    ;;
+	edit)
+	    ssh littlesis-dev emacsclient -c
 	    ;;
 	*)
 	    echo "invalid option"
@@ -226,7 +229,6 @@ case $1 in
     remote)
 	shift
 	remote "$@"
-	exit
 	;;
     -h|help|--help)
 	show_help
