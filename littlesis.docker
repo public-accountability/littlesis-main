@@ -1,4 +1,4 @@
-FROM phusion/passenger-customizable:0.9.33
+FROM phusion/passenger-customizable:0.9.35
 LABEL maintainer="ziggy@littlesis.org"
 
 # Use baseimage-docker's init system.
