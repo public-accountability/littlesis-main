@@ -2,7 +2,7 @@ version: '3'
 
 services:
   web:
-    image: aepyornis/ls-rails:0.5.2
+    image: aepyornis/ls-rails:0.6.0
     ports:
         - "8080:80"
         - "8888:8888"
@@ -19,7 +19,7 @@ services:
     image: redis:4.0.7
 
   mysql:
-    image: mariadb:10.1
+    image: mariadb:10.2
     volumes:
       - ./mysql-data:/var/lib/mysql
     ports:
