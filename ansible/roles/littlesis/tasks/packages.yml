@@ -2,6 +2,7 @@
 - name: Install required packages
   apt:
     update_cache: yes
+    upgrade: yes
     name: "{{ item }}"
   with_items: "{{ littlesis_packages }}"
 
@@ -10,19 +11,30 @@
     keyserver: 'hkp://keyserver.ubuntu.com:80'
     id: F1656F24C74CD1D8
 
-- name: Add Mariadb repo
+- name: Remove old mariadb repo
   apt_repository:
     repo: 'deb [arch=amd64,i386,ppc64el] http://nyc2.mirrors.digitalocean.com/mariadb/repo/10.1/ubuntu xenial main'
+    state: absent
+
+- name: Remove old mariadb library
+  apt:
+    name: libmariadbclient18
+    state: absent
+
+- name: Add Mariadb repo
+  apt_repository:
+    repo: 'deb [arch=amd64,i386,ppc64el] http://nyc2.mirrors.digitalocean.com/mariadb/repo/10.2/ubuntu xenial main'
     state: present
     update_cache: yes
 
 - name: Install Mariadb-client
   apt:
     update_cache: yes
+    upgrade: yes
     name: "{{ item }}"
-  with_items: 
-      - mariadb-client
-      - libmariadbclient-dev
+  with_items:
+    - mariadb-client
+    - libmariadb-dev
 
 - name: Install geckodriver
   shell: "curl -sSL {{ geckodriver_url }} | tar -C /usr/local/bin/ -xzf - geckodriver"
@@ -60,4 +72,3 @@
     name: snapd
     enabled: no
     state: stopped
-  
