@@ -193,3 +193,13 @@ depends_on:
 #### work in the ☁️
 
 If you'd prefer not to bother with docker on your own computer or if your computer is old and slow, see the ansible playbook `development.yml`. It will setup an ubuntu 18.04 server with everything you need to work on littlesis. After running the playbook you'll still have to load the development database (steps 4 & 5). Files can be edited locally with sshfs -- see scripts/remote-up.sh and scripts/remote-down.sh.
+
+#### nginx permission error
+
+If you encounter an nginx permission error when starting the web docker container, try upgrading the permissions to:
+
+``` sh
+sudo chmod g+x,o+x /littlesis /littlesis/rails /littlesis/rails/public 
+```
+
+
