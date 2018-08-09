@@ -23,7 +23,8 @@ RUN apt-get update && apt-get upgrade -y && apt-get -y install \
     automake \
     libffi-dev \
     firefox \
-    xvfb
+    xvfb \
+    redis-tools
 
 # set time
 ENV TZ America/New_York
