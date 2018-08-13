@@ -1,12 +1,24 @@
 ---
+- name: Copy nginx-noscript configuration
+  copy:
+    src: nginx-noscript.conf
+    dest: /etc/fail2ban/filter.d/nginx-noscript.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart fail2ban
+  tags: fail2ban
+
 - name: Copy fail2ban configuration into place
   template:
     src: jail.local.j2
     dest: /etc/fail2ban/jail.local
   notify: restart fail2ban
+  tags: fail2ban
 
 - name: Ensure fail2ban is started
   service: name=fail2ban state=started
+  tags: fail2ban
 
 - name: OS Hardening
   include_role:
