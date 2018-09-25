@@ -24,7 +24,9 @@ RUN apt-get update && apt-get upgrade -y && apt-get -y install \
     libffi-dev \
     firefox \
     xvfb \
-    redis-tools
+    redis-tools \
+    zip \
+    unzip
 
 # set time
 ENV TZ America/New_York
