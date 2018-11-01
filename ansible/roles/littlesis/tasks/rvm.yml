@@ -23,10 +23,10 @@
 # ansible-galaxy install rvm_io.ruby
 - name: Install RVM
   include_role:
-    name: rvm_io.ruby
+    name: rvm.ruby
   vars:
     rvm1_rubies:
       - "{{ ruby_version }}"
     rvm1_user: 'littlesis'
     rvm1_install_path: '/home/littlesis/.rvm'
-    rvm1_ruby_install_flags: --autolibs=read-fail
+    rvm1_install_flags: '--auto-dotfiles --user-install --autolibs=read-fail'

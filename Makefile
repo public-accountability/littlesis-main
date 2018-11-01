@@ -38,7 +38,7 @@ build-rails-docker:
 
 
 ansible-galaxy-roles:
-	ansible-galaxy install rvm_io.ruby DavidWittman.redis geerlingguy.nodejs dev-sec.ssh-hardening geerlingguy.docker geerlingguy.composer
+	ansible-galaxy install rvm.ruby DavidWittman.redis geerlingguy.nodejs dev-sec.ssh-hardening dev-sec.os-hardening geerlingguy.docker geerlingguy.composer
 
 
 realip_conf := ./ansible/roles/littlesis/files/realip.conf
