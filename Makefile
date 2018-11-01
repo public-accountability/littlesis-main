@@ -1,4 +1,4 @@
-RAILS_DOCKER_VERSION := 0.6.4
+RAILS_DOCKER_VERSION := 0.6.5
 
 help:
 	@echo "Welcome to the LittleSis Dev Environment"
@@ -51,3 +51,4 @@ cloudflare-ips:
 
 .PHONY: help config build-rails-docker docker-pull db-setup
 .PHONY: ansible-galaxy-roles cloudflare-ips install-docker-on-ubuntu
+.PHONY: create-dev-user
