@@ -69,7 +69,7 @@ We currently distribute an anonymized dump of our production database to trusted
 Assuming you already have a local dump of the development database stored at `path/to/ls_dev_db.sql`, use it to populate the database with:
 
 ``` bash
-mysql -u littlesis -pthemanbehindthemanbehindthethrone -h 127.0.0.1 littlesis < path/to/ls_dev_db.sql
+./scripts/load-dev-db.sh path/to/ls_dev_db.sql
 ```
 
 This can take anywhere from 30mins to 3 hours depending on the size of the database dump.
