@@ -31,7 +31,7 @@ defaults: &defaults
   symfony_path: /var/www/littleis/symfony
   bing_maps_key:
   default_network_id: 79
-  asset_host: "dfl6orqdcqt4f.cloudfront.net"
+  asset_host: "127.0.0.1:8080"
   cloudfront_distribtion_id:
   smtp_address: "mail.littlesis.org"
   smtp_port: 465
