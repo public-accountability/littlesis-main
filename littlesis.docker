@@ -56,7 +56,7 @@ RUN mkdir -p /home/app && mkdir -p /home/app/rails
 COPY ./rails/Gemfile /home/app/rails/Gemfile
 COPY ./rails/Gemfile.lock /home/app/rails/Gemfile.lock
 COPY ./rails/.ruby-version /home/app/rails/.ruby-version
-COPY ./rails/.ruby-gemset /home/app/rails/.ruby-gemset
+
 RUN chown -R app:app /home/app
 
 # Ensure correct version of ruby is installed
