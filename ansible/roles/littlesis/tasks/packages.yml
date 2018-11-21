@@ -60,8 +60,7 @@
 - name: Install php packages
   apt:
     update_cache: yes
-    name: "{{ item }}"
-  with_items: "{{ littlesis_php_packages }}"
+    pkg: "{{ littlesis_php_packages }}"
   tags: php
 
 - name: install composer

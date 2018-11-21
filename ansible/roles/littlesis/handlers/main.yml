@@ -9,4 +9,4 @@
   service: name=nginx state=restarted
 
 - name: restart php-fpm
-  service: name=php7.1-fpm state=restarted
+  service: name=php7.2-fpm state=restarted

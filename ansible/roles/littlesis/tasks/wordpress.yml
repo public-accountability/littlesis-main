@@ -1,4 +1,10 @@
 ---
+- name: disable php7.1 (old version)
+  service:
+    name: php7.1-fpm
+    enabled: no
+    state: stopped
+
 - name: Create wordpress group
   group: name=wordpress state=present
 
@@ -9,51 +15,51 @@
     groups: docker
     shell: /bin/bash
 
-- name: Create wordpress database
-  mysql_db:
-    name: "{{ wordpress_db_name }}"
-    state: present
-    login_user: "{{ database_username }}"
-    login_host: "{{ database_host }}"
-    login_password: "{{ database_password }}"
-  tags: wp-mysql
+# - name: Create wordpress database
+#   mysql_db:
+#     name: "{{ wordpress_db_name }}"
+#     state: present
+#     login_user: "{{ database_username }}"
+#     login_host: "{{ database_host }}"
+#     login_password: "{{ database_password }}"
+#   tags: wp-mysql
 
-- name: Copy database dump file
-  copy:
-    src: "{{ wordpress_database_dump_file }}"
-    dest: /tmp
-  when: wordpress_restore_from_dump and wordpress_database_dump_file is defined
-  tags: wp-mysql
+# - name: Copy database dump file
+#   copy:
+#     src: "{{ wordpress_database_dump_file }}"
+#     dest: /tmp
+#   when: wordpress_restore_from_dump and wordpress_database_dump_file is defined
+#   tags: wp-mysql
 
-- name: Restore wordpress database
-  mysql_db:
-    name: "{{ wordpress_db_name }}"
-    state: import
-    target: /tmp/{{ wordpress_database_dump_file | basename }}
-    login_user: "{{ database_username }}"
-    login_host: "{{ database_host }}"
-    login_password: "{{ database_password }}"
-  when: wordpress_restore_from_dump and wordpress_database_dump_file is defined
-  tags: wp-mysql
+# - name: Restore wordpress database
+#   mysql_db:
+#     name: "{{ wordpress_db_name }}"
+#     state: import
+#     target: /tmp/{{ wordpress_database_dump_file | basename }}
+#     login_user: "{{ database_username }}"
+#     login_host: "{{ database_host }}"
+#     login_password: "{{ database_password }}"
+#   when: wordpress_restore_from_dump and wordpress_database_dump_file is defined
+#   tags: wp-mysql
 
-- name: create wordpress database user
-  mysql_user:
-    name: "{{ wordpress_db_user }}"
-    password: "{{ wordpress_db_password }}"
-    priv: "{{ wordpress_db_name }}.*:ALL"
-    host: '%'
-    state: present
-    login_user: "{{ database_username }}"
-    login_host: "{{ database_host }}"
-    login_password: "{{ database_password }}"
+# - name: create wordpress database user
+#   mysql_user:
+#     name: "{{ wordpress_db_user }}"
+#     password: "{{ wordpress_db_password }}"
+#     priv: "{{ wordpress_db_name }}.*:ALL"
+#     host: '%'
+#     state: present
+#     login_user: "{{ database_username }}"
+#     login_host: "{{ database_host }}"
+#     login_password: "{{ database_password }}"
 
-- name: create /var/www/news
-  file:
-    path: /var/www/news
-    state: directory
-    owner: wordpress
-    group: www-data
-    mode: 0755
+# - name: create /var/www/news
+#   file:
+#     path: /var/www/news
+#     state: directory
+#     owner: wordpress
+#     group: www-data
+#     mode: 0755
 
 # - name: Setup littlesis-packages repo
 #   become: yes
@@ -63,22 +69,22 @@
 #     dest: /var/www/news/littlesis-packages
 
   
-- name: Download WordPress
-  get_url:
-    url: https://wordpress.org/wordpress-4.9.1.tar.gz
-    dest: /tmp/wordpress-4.9.1.tar.gz
-    checksum: sha1:892d2c23b9d458ec3d44de59b753adb41012e903
-  creates: /tmp/wordpress-4.9.1.tar.gz
+# - name: Download WordPress
+#   get_url:
+#     url: https://wordpress.org/wordpress-4.9.1.tar.gz
+#     dest: /tmp/wordpress-4.9.1.tar.gz
+#     checksum: sha1:892d2c23b9d458ec3d44de59b753adb41012e903
+#   creates: /tmp/wordpress-4.9.1.tar.gz
     
-- name: Extract wordpress
-  unarchive:
-    src: /tmp/wordpress-4.9.1.tar.gz
-    dest: /var/www/news
-    owner: wordpress
-    group: wordpress
-    mode: 0755
-    remote_src: yes
-  creates: /var/www/news/wordpress
+# - name: Extract wordpress
+#   unarchive:
+#     src: /tmp/wordpress-4.9.1.tar.gz
+#     dest: /var/www/news
+#     owner: wordpress
+#     group: wordpress
+#     mode: 0755
+#     remote_src: yes
+#   creates: /var/www/news/wordpress
 
 # - name: Install wp plugins and packages
 #   become: yes
@@ -87,40 +93,40 @@
 #     command: install
 #     working_dir: /var/www/news/littlesis-packages
   
-- name: create /var/www/news/wordpress/wp-content/uploads
-  file:
-    path: /var/www/news/wordpress/wp-content/uploads
-    state: directory
-    owner: wordpress
-    group: wordpress
-    mode: 0755
+# - name: create /var/www/news/wordpress/wp-content/uploads
+#   file:
+#     path: /var/www/news/wordpress/wp-content/uploads
+#     state: directory
+#     owner: wordpress
+#     group: wordpress
+#     mode: 0755
 
-- name: Sync wordpress uploads
-  synchronize:
-    src: "{{ wordpress_uploads_folder }}"
-    dest: /var/www/news/wordpress/wp-content/uploads
-    recursive: yes
-  when: wordpress_sync_uploads and wordpress_uploads_folder is defined
-  tags: wp-sync
+# - name: Sync wordpress uploads
+#   synchronize:
+#     src: "{{ wordpress_uploads_folder }}"
+#     dest: /var/www/news/wordpress/wp-content/uploads
+#     recursive: yes
+#   when: wordpress_sync_uploads and wordpress_uploads_folder is defined
+#   tags: wp-sync
 
-- name: Copy wp-config.php
-  template:
-    src: wp-config.php.j2
-    dest: /var/www/news/wordpress/wp-config.php
-    mode: 0644
-    owner: wordpress
-    group: wordpress
-  tags: wp-config
+# - name: Copy wp-config.php
+#   template:
+#     src: wp-config.php.j2
+#     dest: /var/www/news/wordpress/wp-config.php
+#     mode: 0644
+#     owner: wordpress
+#     group: wordpress
+#   tags: wp-config
 
-- name: Change ownership of WordPress installation
-  file:
-    path: /var/www/news
-    owner: wordpress
-    group: wordpress
-    mode: 0755
-    state: directory
-    recurse: yes
-  tags: wp-sync
+# - name: Change ownership of WordPress installation
+#   file:
+#     path: /var/www/news
+#     owner: wordpress
+#     group: wordpress
+#     mode: 0755
+#     state: directory
+#     recurse: yes
+#   tags: wp-sync
 
 # There's probably a nice ansible way to run this command....
 
@@ -128,10 +134,10 @@
   command: find /var/www/news -type d -exec chmod 755 {} +
   tags: wp-sync
 
-- name: Copy wordpress fpm configuration
+- name: Copy news.littlesis.org wordpress fpm configuration
   template:
-    src: fpm-pool.conf.j2
-    dest: /etc/php/7.1/fpm/pool.d/wordpress.conf
+    src: fpm-news-pool.conf.j2
+    dest: /etc/php/7.2/fpm/pool.d/wordpress.conf
     owner: root
     group: root
     mode: 0644
@@ -140,14 +146,15 @@
 - name: Remove stock www php pool configuration
   file:
     state: absent
-    path: /etc/php/7.1/fpm/pool.d/www.conf
+    path: /etc/php/7.2/fpm/pool.d/www.conf
   notify: restart php-fpm
+
 
 - name: update weird path thingy in php.ini
   lineinfile:
     regexp: 'cgi.fix_pathinfo='
     line: 'cgi.fix_pathinfo=0'
-    path: /etc/php/7.1/fpm/php.ini
+    path: /etc/php/7.2/fpm/php.ini
   notify: restart php-fpm
 
 
@@ -160,6 +167,7 @@
     mode: 0644
   notify: restart nginx
   tags: wp-nginx
+
 
 - name: Copy blog.littlesis.org nginx configuration
   template:
