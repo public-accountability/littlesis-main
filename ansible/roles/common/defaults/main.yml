@@ -20,3 +20,4 @@ littlesis_common_packages:
   - lsof
   - tmux
   - mosh
+  - rsync

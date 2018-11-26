@@ -1,0 +1,21 @@
+---
+littlesis_php_packages:
+  - php7.2
+  - php7.2-cli
+  - php7.2-common
+  - php7.2-json
+  - php7.2-opcache
+  - php7.2-mysql
+  - php7.2-readline
+  - php7.2-zip
+  - php7.2-xml
+  - php7.2-fpm
+  - php7.2-gd
+
+
+wordpress_restore_from_dump: false
+install_wordpress: false
+
+wordpress_url: https://wordpress.org/wordpress-4.9.8.tar.gz
+wordpress_checksum: "sha1:0945bab959cba127531dceb2c4fed81770812b4f"
+
