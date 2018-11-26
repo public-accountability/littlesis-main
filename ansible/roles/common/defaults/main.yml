@@ -5,6 +5,8 @@ swapfile_location: /swapfile
 
 ubuntu_ssh_keys: []
 
+mariadb_repo: 'deb [arch=amd64,arm64,ppc64el] http://nyc2.mirrors.digitalocean.com/mariadb/repo/10.2/ubuntu bionic main'
+
 littlesis_common_packages:
   - curl
   - build-essential

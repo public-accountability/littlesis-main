@@ -16,3 +16,21 @@
 - name: Install Common Packages
   apt:
     pkg: "{{ littlesis_common_packages }}"
+
+- name: Add mariadb key
+  apt_key:
+    keyserver: 'hkp://keyserver.ubuntu.com:80'
+    id: F1656F24C74CD1D8
+
+- name: Add Mariadb repo
+  apt_repository:
+    repo: "{{ mariadb_repo }}"
+    state: present
+    update_cache: yes
+
+- name: Install Mariadb-client
+  apt:
+    update_cache: yes
+    name:
+      - mariadb-client
+      - libmariadb-dev
