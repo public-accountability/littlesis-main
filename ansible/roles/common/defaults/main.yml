@@ -1,0 +1,20 @@
+---
+# Swap
+swapfile_size: 2G
+swapfile_location: /swapfile
+
+ubuntu_ssh_keys: []
+
+littlesis_common_packages:
+  - curl
+  - build-essential
+  - git
+  - software-properties-common
+  - apt-transport-https
+  - ca-certificates
+  - gnupg
+  - htop
+  - sysstat
+  - lsof
+  - tmux
+  - mosh

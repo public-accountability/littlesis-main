@@ -1,0 +1,18 @@
+---
+- hosts: littlesis-wordpress-dev
+  remote_user: ubuntu
+  become: yes
+
+  vars:
+    swapfile_size: 1G
+    # server_name: littlesis.org
+    # blog_server_name: news.littlesis.org
+
+  # pre_tasks:
+  #   - name: load secret vars from ~/littlesis.yml
+  #     include_vars:
+  #       file: ~/littlesis.yml
+  #     tags: always
+
+  roles:
+    - common
