@@ -1,12 +1,12 @@
 ---
-- hosts: littlesis-wordpress-dev
+- hosts: littlesis-wordpress
   remote_user: ubuntu
   become: yes
 
   vars:
-    swapfile_size: 1G
-    news_server_name: newsdev.littlesis.org
-    pai_server_name:  dev.public-accountability.org
+    swapfile_size: 2G
+    news_server_name: news.littlesis.org
+    pai_server_name:  public-accountability.org
 
   pre_tasks:
     - name: load secret vars from ~/littlesis.yml

@@ -216,7 +216,7 @@
     state: directory
     owner: root
     group: root
-    mode: 0750
+    mode: 0755
   tags: nginx
 
 - name: Copy news TLS Cert
@@ -225,7 +225,7 @@
     dest: /etc/nginx/certs/news_certificate.pem
     owner: root
     group: root
-    mode: 0600
+    mode: 0640
   no_log: true
   tags: nginx
 
@@ -235,7 +235,7 @@
     dest: /etc/nginx/certs/news_key.pem
     owner: root
     group: root
-    mode: 0600
+    mode: 0640
   no_log: true
   tags: nginx
 
@@ -245,7 +245,7 @@
     dest: /etc/nginx/certs/pai_certificate.pem
     owner: root
     group: root
-    mode: 0600
+    mode: 0640
   no_log: true
   tags: nginx
 
@@ -255,7 +255,7 @@
     dest: /etc/nginx/certs/pai_key.pem
     owner: root
     group: root
-    mode: 0600
+    mode: 0640
   no_log: true
   tags: nginx
 
@@ -265,7 +265,7 @@
     dest: /etc/nginx/wordpress_server.conf
     owner: root
     group: root
-    mode: 0644
+    mode: 0640
   notify: restart nginx
   tags: nginx
 
@@ -285,6 +285,6 @@
     dest: /etc/nginx/sites-enabled/wordpress.conf
     owner: root
     group: root
-    mode: 0644
+    mode: 0640
   notify: restart nginx
   tags: nginx
