@@ -55,7 +55,6 @@
   when: wordpress_restore_from_dump and wordpress_database_dump_file is defined
   tags: database
 
-
 - name: create wordpress database user
   mysql_user:
     name: "{{ wordpress_db_user }}"
@@ -67,7 +66,6 @@
     login_host: "{{ database_host }}"
     login_password: "{{ database_password }}"
   tags: database
-
 
 - name: Download WP-CLI
   get_url:
@@ -127,7 +125,6 @@
   when: install_wordpress
   tags: install
 
-
 - name: Install PHP Packages with Composer
   become: yes
   become_user: wordpress
@@ -138,7 +135,6 @@
   tags:
     - install
     - composer
-
 
 - name: create /var/www/wordpress/wordpress/wp-content/uploads
   file:
@@ -159,7 +155,6 @@
     group: wordpress
   tags: config
 
-
 - name: Change ownership of WordPress installation
   file:
     path: /var/www/wordpress
@@ -169,7 +164,6 @@
     state: directory
     recurse: yes
   tags: chmod
-
 
 - name: Change ownership of WordPress installation
   file:
@@ -265,6 +259,16 @@
   no_log: true
   tags: nginx
 
+- name: Copy wordress server shared configuration
+  template:
+    src: wordpress_server.conf.j2
+    dest: /etc/nginx/wordpress_server.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart nginx
+  tags: nginx
+
 - name: Configure nginx
   include_role:
     name: littlesis
@@ -275,14 +279,12 @@
     nginx_conf_template: roles/wordpress/templates/nginx.conf.j2
   tags: nginx
 
-
 - name: Copy nginx site configuration
   template:
-    asrc: wordpress-nginx.conf.j2
+    src: wordpress-nginx.conf.j2
     dest: /etc/nginx/sites-enabled/wordpress.conf
     owner: root
     group: root
     mode: 0644
   notify: restart nginx
   tags: nginx
-  
