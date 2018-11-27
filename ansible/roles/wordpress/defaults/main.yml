@@ -19,3 +19,9 @@ install_wordpress: false
 wordpress_url: https://wordpress.org/wordpress-4.9.8.tar.gz
 wordpress_checksum: "sha1:0945bab959cba127531dceb2c4fed81770812b4f"
 
+wordpress_memory_limit: 256M
+
+wordpress_fpm_socket: /var/run/fpm-wordpress.sock
+
+news_server_name: news.littlesis.org
+pai_server_name:  public-accountability.org

@@ -139,3 +139,139 @@
     - install
     - composer
 
+
+- name: create /var/www/wordpress/wordpress/wp-content/uploads
+  file:
+    path: /var/www/wordpress/wordpress/wp-content/uploads
+    state: directory
+    owner: wordpress
+    group: wordpress
+    mode: 0755
+  tags:
+    - install
+
+- name: Copy wp-config.php
+  template:
+    src: wp-config.php.j2
+    dest: /var/www/wordpress/wordpress/wp-config.php
+    mode: 0644
+    owner: wordpress
+    group: wordpress
+  tags: config
+
+
+- name: Change ownership of WordPress installation
+  file:
+    path: /var/www/wordpress
+    owner: wordpress
+    group: wordpress
+    mode: 0755
+    state: directory
+    recurse: yes
+  tags: chmod
+
+
+- name: Change ownership of WordPress installation
+  file:
+    path: /var/www/wordpress
+    owner: wordpress
+    group: wordpress
+    mode: 0755
+    state: directory
+    recurse: yes
+  tags: chmod
+
+- name: set wordpress directory permissions
+  command: find /var/www/wordpress -type d -exec chmod 755 {} +
+  tags: chmod
+
+- name: Remove stock www php pool configuration
+  file:
+    state: absent
+    path: /etc/php/7.2/fpm/pool.d/www.conf
+  notify: restart php-fpm
+  tags: fpm
+
+- name: update weird path thingy in php.ini
+  lineinfile:
+    regexp: 'cgi.fix_pathinfo='
+    line: 'cgi.fix_pathinfo=0'
+    path: /etc/php/7.2/fpm/php.ini
+  notify: restart php-fpm
+  tags: fpm
+
+- name: Copy wordpress fpm pool configuration
+  template:
+    src: pool.conf.j2
+    dest: /etc/php/7.2/fpm/pool.d/wordpress.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart php-fpm
+  tags: fpm
+
+- name: Install nginx
+  apt:
+    update_cache: yes
+    name: nginx
+  tags: nginx
+
+- name: Create /etc/nginx/certs folder
+  file:
+    path: /etc/nginx/certs
+    state: directory
+    owner: root
+    group: root
+    mode: 0750
+  tags: nginx
+
+- name: Copy news TLS Cert
+  copy:
+    content: "{{ news_tls_certificate }}"
+    dest: /etc/nginx/certs/news_certificate.pem
+    owner: root
+    group: root
+    mode: 0600
+  no_log: true
+  tags: nginx
+
+- name: Copy new TLS Key
+  copy:
+    content: "{{ news_tls_key }}"
+    dest: /etc/nginx/certs/news_key.pem
+    owner: root
+    group: root
+    mode: 0600
+  no_log: true
+  tags: nginx
+
+- name: Copy pai TLS Cert
+  copy:
+    content: "{{ pai_tls_certificate }}"
+    dest: /etc/nginx/certs/pai_certificate.pem
+    owner: root
+    group: root
+    mode: 0600
+  no_log: true
+  tags: nginx
+
+- name: Copy pai TLS Key
+  copy:
+    content: "{{ pai_tls_key }}"
+    dest: /etc/nginx/certs/pai_key.pem
+    owner: root
+    group: root
+    mode: 0600
+  no_log: true
+  tags: nginx
+
+- name: Configure nginx
+  include_role:
+    name: littlesis
+    tasks_from: nginx_config
+    apply:
+      tags: ['nginx']
+  vars:
+    nginx_conf_template: roles/wordpress/templates/nginx.conf.j2
+  tags: nginx
+

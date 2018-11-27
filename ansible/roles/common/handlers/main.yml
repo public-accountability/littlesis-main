@@ -1,3 +1,7 @@
 ---
 - name: restart fail2ban
   service: name=fail2ban state=restarted
+
+
+- name: restart nginx
+  service: name=nginx state=restarted

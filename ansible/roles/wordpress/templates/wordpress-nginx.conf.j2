@@ -1,0 +1,61 @@
+upstream wordpress_php {
+    server unix:{{ wordpress_fpm_socket }};
+}
+
+server {
+    listen 80;
+    server_name {{ news_server_name }};
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 80;
+    server_name {{ pai_server_name }};
+    return 301 https://$host$request_uri;
+}
+
+server {
+    include /etc/nginx/ssl.conf;
+    server_name {{ pai_server_name }};
+
+    root /var/www/wordpress/wordpress;
+    index index.php;
+
+    access_log /var/log/nginx/wordpress.access.log;
+    error_log /var/log/nginx/wordpress.error.log;
+    
+    location / {
+        # This is cool because no php is touched for static content.
+        # include the "?$args" part so non-default permalinks doesn't break when using query string
+        try_files $uri $uri/ /index.php?$args;
+    }
+
+    location ~ \.php$ {
+        #NOTE: You should have "cgi.fix_pathinfo = 0;" in php.ini
+        include fastcgi.conf;
+        fastcgi_intercept_errors on;
+        fastcgi_pass wordpress_php;
+    }
+
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico)$ {
+        expires 7d;
+        log_not_found off;
+    }
+
+    location = /favicon.ico {
+        log_not_found off;
+        access_log off;
+    }
+
+    location = /robots.txt {
+        allow all;
+        log_not_found off;
+        access_log off;
+    }
+
+    # location = /xmlrpc.php {
+    #    deny all;
+    #    # access_log off;
+    #    # log_not_found off;
+    # }
+}
