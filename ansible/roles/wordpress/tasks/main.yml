@@ -275,3 +275,14 @@
     nginx_conf_template: roles/wordpress/templates/nginx.conf.j2
   tags: nginx
 
+
+- name: Copy nginx site configuration
+  template:
+    asrc: wordpress-nginx.conf.j2
+    dest: /etc/nginx/sites-enabled/wordpress.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart nginx
+  tags: nginx
+  

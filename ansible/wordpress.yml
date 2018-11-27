@@ -5,14 +5,15 @@
 
   vars:
     swapfile_size: 1G
-    # server_name: littlesis.org
-    # blog_server_name: news.littlesis.org
+    news_server_name: newsdev.littlesis.org
+    pai_server_name:  dev.public-accountability.org
 
-  # pre_tasks:
-  #   - name: load secret vars from ~/littlesis.yml
-  #     include_vars:
-  #       file: ~/littlesis.yml
-  #     tags: always
+  pre_tasks:
+    - name: load secret vars from ~/littlesis.yml
+      include_vars:
+        file: ~/littlesis.yml
+      tags: always
 
   roles:
     - common
+    - wordpress
