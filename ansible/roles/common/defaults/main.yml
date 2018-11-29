@@ -21,3 +21,5 @@ littlesis_common_packages:
   - tmux
   - mosh
   - rsync
+  - zip
+  - unzip
