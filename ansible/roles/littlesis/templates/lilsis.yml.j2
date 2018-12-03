@@ -58,6 +58,8 @@ defaults: &defaults
     secret_key: {{ recaptcha_secret_key }}
   action_network_api_key: {{ action_network_api_key }}
   redis_url: {{ redis_url }}
+  donation_banner_display:  {{ donation_banner_display }}
+  donation_banner_html: {{ donation_banner_html }}
  
 test:
   <<: *defaults
