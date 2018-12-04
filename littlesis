@@ -230,6 +230,9 @@ case $1 in
 	shift
 	remote "$@"
 	;;
+    redis)
+	docker-compose exec -u app web /usr/bin/redis-cli -h redis
+	;;
     -h|help|--help)
 	show_help
 	exit
