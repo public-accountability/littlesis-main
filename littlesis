@@ -64,6 +64,9 @@ start/stop remote dev server:
 littlesis remote up
 littlesis remote down
 
+bash shell with dev env set:
+littlesis bash
+
 EOF
 }
 
@@ -232,6 +235,11 @@ case $1 in
 	;;
     redis)
 	docker-compose exec -u app web /usr/bin/redis-cli -h redis
+	;;
+    bash)
+	export RAILS_ENV=development
+	cd rails && bash --login
+	exit
 	;;
     -h|help|--help)
 	show_help
