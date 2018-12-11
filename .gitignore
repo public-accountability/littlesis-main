@@ -8,3 +8,5 @@ chat/
 ansible/*.retry
 *.gz
 /wordpress
+.travis_api_token
+littlesis-travis-log*.txt
