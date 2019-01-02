@@ -305,3 +305,12 @@
     group: root
     mode: 0755
   tags: scripts
+
+- name: Setup wordpress-backup cron
+  cron:
+    name: "Backup Wordpress"
+    minute: "0"
+    hour: "08"
+    job: "/usr/local/bin/wordpress-backup.sh"
+  tags: cron
+
