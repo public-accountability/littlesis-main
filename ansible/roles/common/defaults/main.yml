@@ -23,3 +23,5 @@ littlesis_common_packages:
   - rsync
   - zip
   - unzip
+  - python3
+  - python3-pip

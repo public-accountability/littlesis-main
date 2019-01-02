@@ -153,6 +153,7 @@
     mode: 0644
     owner: wordpress
     group: wordpress
+  notify: restart php-fpm
   tags: config
 
 - name: Change ownership of WordPress installation
@@ -288,3 +289,19 @@
     mode: 0640
   notify: restart nginx
   tags: nginx
+
+- name: aws cli
+  import_role:
+    name: littlesis
+    tasks_from: awscli
+  tags: awscli
+
+- name: Install backup script
+  become: true
+  template:
+    src: wordpress-backup.sh.j2
+    dest: /usr/local/bin/wordpress-backup.sh
+    owner: root
+    group: root
+    mode: 0755
+  tags: scripts

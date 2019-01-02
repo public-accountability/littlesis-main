@@ -7,6 +7,9 @@
     swapfile_size: 2G
     news_server_name: news.littlesis.org
     pai_server_name:  public-accountability.org
+    wordpress_restore_from_dump: false
+    wordpress_database_dump_file: 
+    ubuntu_ssh_keys: []
 
   pre_tasks:
     - name: load secret vars from ~/littlesis.yml
