@@ -211,6 +211,11 @@ case $1 in
 	$web_app_exec "${@}"
 	exit
 	;;
+    runner)
+	shift
+	$web_app_exec "RAILS_ENV=development bin/rails runner ${@}"
+	exit
+	;;
     console|c)
 	$web_app_exec 'RAILS_ENV=development bin/rails c'
 	exit
