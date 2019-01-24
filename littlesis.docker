@@ -7,26 +7,28 @@ CMD ["/sbin/my_init"]
 RUN /pd_build/utilities.sh
 RUN rm -f /etc/service/nginx/down  # enable nginx
 
-RUN apt-get update && apt-get upgrade -y && apt-get -y install \
-    git \
-    build-essential \
-    software-properties-common \
-    tzdata \
-    curl \
-    lsof \
-    grep \
-    gnupg \
-    iproute2 \
-    libcurl4-gnutls-dev \
-    imagemagick libmagickwand-dev \
-    qt5-default libqt5webkit5-dev gstreamer1.0-plugins-base gstreamer1.0-tools gstreamer1.0-x \
-    automake \
-    libffi-dev \
-    firefox \
-    xvfb \
-    redis-tools \
-    zip \
-    unzip
+RUN apt-get update && \
+	apt-get upgrade -y -o Dpkg::Options::="--force-confold" && \
+	apt-get -y install \
+	git \
+	build-essential \
+	software-properties-common \
+	tzdata \
+	curl \
+	lsof \
+	grep \
+	gnupg \
+	iproute2 \
+	libcurl4-gnutls-dev \
+	imagemagick libmagickwand-dev \
+	qt5-default libqt5webkit5-dev gstreamer1.0-plugins-base gstreamer1.0-tools gstreamer1.0-x \
+	automake \
+	libffi-dev \
+	firefox \
+	xvfb \
+	redis-tools \
+	zip \
+	unzip
 
 # set time
 ENV TZ America/New_York
