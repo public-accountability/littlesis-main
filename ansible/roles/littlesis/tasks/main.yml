@@ -30,14 +30,5 @@
 - import_tasks: app.yml
   tags: app
 
-# - import_tasks: docker.yml
-#   tags: docker
-
 - import_tasks: passenger.yml
   tags: passenger
-
-- import_tasks: wordpress.yml
-  tags: wordpress
-
-- import_tasks: pai.yml
-  tags: pai 
