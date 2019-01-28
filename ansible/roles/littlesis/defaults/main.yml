@@ -44,6 +44,11 @@ swapfile_location: /swapfile
 # awscli
 awscli_region: us-east-1
 
+# manticore
+manticore_url: "https://github.com/manticoresoftware/manticoresearch/releases/download/2.8.0/manticore_2.8.0-190128-4006794-release-stemmer.trusty_amd64-bin.deb"
+manticore_checksum: "sha256:4f8bd192f6842e7207c1627a2231eee7e1b10ad4c0e9a9bcf130d2dfc8dd36b9"
+manticore_reinstall: false
+
 # nginx
 nginx_ssl_ciphers: "'ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256'"
 

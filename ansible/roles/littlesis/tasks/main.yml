@@ -20,7 +20,9 @@
   tags: redis
 
 - import_tasks: sphinx.yml
-  tags: sphinx
+  tags:
+    - sphinx
+    - manticore
 
 - import_tasks: rvm.yml
   tags: ruby
