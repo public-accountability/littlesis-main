@@ -44,11 +44,9 @@ RUN add-apt-repository 'deb [arch=amd64,i386,ppc64el] http://nyc2.mirrors.digita
 RUN apt-get update && apt-get -y install mariadb-client-10.2 libmariadb-dev
 
 # Manticore
-RUN curl -sSL https://github.com/manticoresoftware/manticoresearch/releases/download/2.7.5/manticore_2.7.5-181204-4a31c54-release-stemmer.bionic_amd64-bin.deb > /tmp/manticore.deb
-RUN echo "4df0d04e729f380d2bd68c6b485b17aa81fc4fc9afc935d4d822724cd17d6953  /tmp/manticore.deb" | sha256sum -c
+RUN curl -sSL https://github.com/manticoresoftware/manticoresearch/releases/download/2.8.0/manticore_2.8.0-190128-4006794-release-stemmer.trusty_amd64-bin.deb  > /tmp/manticore.deb
+RUN echo '4f8bd192f6842e7207c1627a2231eee7e1b10ad4c0e9a9bcf130d2dfc8dd36b9 /tmp/manticore.deb' | sha256sum -c
 RUN dpkg -i /tmp/manticore.deb
-
-# RUN add-apt-repository ppa:builds/sphinxsearch-rel22 && apt-get update && apt-get install -y sphinxsearch
 
 # NODE
 RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
