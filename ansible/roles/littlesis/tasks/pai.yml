@@ -5,7 +5,6 @@
   user:
     name: pai
     group: pai
-    groups: docker
     shell: /bin/bash
 
 - name: create /var/www/pai
