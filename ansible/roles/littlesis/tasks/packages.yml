@@ -9,37 +9,25 @@
 
 - name: Install required packages
   apt:
-    name: "{{ item }}"
-  with_items: "{{ littlesis_packages }}"
+    name: "{{ littlesis_packages }}"
 
 - name: Add mariadb key
   apt_key:
     keyserver: 'hkp://keyserver.ubuntu.com:80'
     id: F1656F24C74CD1D8
 
-- name: Remove old mariadb repo
-  apt_repository:
-    repo: 'deb [arch=amd64,i386,ppc64el] http://nyc2.mirrors.digitalocean.com/mariadb/repo/10.1/ubuntu xenial main'
-    state: absent
-
-- name: Remove old mariadb library
-  apt:
-    name: libmariadbclient18
-    state: absent
-
 - name: Add Mariadb repo
   apt_repository:
-    repo: 'deb [arch=amd64,i386,ppc64el] http://nyc2.mirrors.digitalocean.com/mariadb/repo/10.2/ubuntu xenial main'
+    repo: 'deb [arch=amd64,i386,ppc64el] http://nyc2.mirrors.digitalocean.com/mariadb/repo/10.2/ubuntu bionic main'
     state: present
     update_cache: yes
 
 - name: Install Mariadb-client
   apt:
     update_cache: yes
-    name: "{{ item }}"
-  with_items:
-    - mariadb-client
-    - libmariadb-dev
+    name: 
+      - mariadb-client
+      - libmariadb-dev
 
 - name: Install geckodriver
   shell: "curl -sSL {{ geckodriver_url }} | tar -C /usr/local/bin/ -xzf - geckodriver"
@@ -50,27 +38,6 @@
   include_role:
     name: geerlingguy.nodejs
 
-- name: add php ppa:odrej/php
-  apt_repository:
-    repo: ppa:ondrej/php
-    state: present
-    update_cache: yes
-  tags: php
-
-- name: Install php packages
-  apt:
-    update_cache: yes
-    pkg: "{{ littlesis_php_packages }}"
-  tags: php
-
-- name: install composer
-  include_role:
-    name: geerlingguy.composer
-  vars:
-    composer_path: /usr/local/bin/composer
-    composer_keep_updated: true
-  tags: php
-    
 - name: disable snapd
   service:
     name: snapd

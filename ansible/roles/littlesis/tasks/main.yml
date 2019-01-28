@@ -2,17 +2,19 @@
 - import_tasks: packages.yml
   tags: packages
 
+- import_tasks: security.yml
+  tags: security
+
 - import_tasks: awscli.yml
   tags:
     - packages
     - awscli
 
-- import_tasks: security.yml
-  tags: security
-
 - import_tasks: swap.yml
+  tags: swap
 
 - import_tasks: app_user.yml
+  tags: app_user
 
 - import_tasks: redis.yml
   tags: redis

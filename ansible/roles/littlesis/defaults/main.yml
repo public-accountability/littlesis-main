@@ -26,35 +26,6 @@ littlesis_packages:
   - python3-mysqldb
   - fail2ban
 
-# php
-littlesis_php_packages:
-  - php7.2
-  - php7.2-cli
-  - php7.2-common
-  - php7.2-json
-  - php7.2-opcache
-  - php7.2-mysql
-  - php7.2-readline
-  - php7.2-zip
-  - php7.2-xml
-  - php7.2-fpm
-  - php7.2-gd
-
-pai_php_packages:
-  - php5.6
-  - php5.6-common
-  - php5.6-curl
-  - php5.6-fpm
-  - php5.6-gd
-  - php5.6-json
-  - php5.6-mysql
-  - php5.6-readline
-  - php5.6-opcache
-  - php5.6-zip
-  - php5.6-xml
-  - php5.6-fpm
-  
-
 # Branch/git ref of littlesis-rails to clone
 littlesis_rails_version: master
   
