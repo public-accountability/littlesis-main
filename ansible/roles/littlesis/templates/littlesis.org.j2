@@ -97,3 +97,5 @@ server {
          log_not_found off;
      }
 }
+
+passenger_pre_start https://{{ server_name }};
