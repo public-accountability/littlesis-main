@@ -6,22 +6,47 @@
 
 - name: Add passenger Repo
   apt_repository:
-    repo: 'deb https://oss-binaries.phusionpassenger.com/apt/passenger xenial main'
+    repo: 'deb https://oss-binaries.phusionpassenger.com/apt/passenger bionic main'
     state: present
     update_cache: yes
 
 - name: Install Passenger & Nginx
   apt:
-    name: "{{ item }}"
-  with_items:
-    - nginx-extras
-    - passenger
+    name:
+      - nginx-full
+      - libnginx-mod-http-passenger
 
+- name: Enable the Passenger Nginx module and restart Nginx
+  file:
+    src: /usr/share/nginx/modules-available/mod-http-passenger.load
+    dest: /etc/nginx/modules-enabled/50-mod-http-passenger.conf
+    state: link
+  notify: restart nginx
+
+- name: Copy mod-http-passenger.conf
+  copy:
+    src: mod-http-passenger.conf
+    dest: /etc/nginx/conf.d/mod-http-passenger.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart nginx
+
+- name: create /var/www/static
+  file:
+    path: /var/www/static
+    state: directory
+    owner: root
+    group: www-data
+    mode: 0644
+    recurse: yes
+  tags: static
 
 - name: Copy static files
   synchronize:
     src: ../static/
     dest: /var/www/static
+    use_ssh_args: yes
     delete: yes
     recursive: yes
   tags: static
@@ -48,12 +73,14 @@
 - name: Set directory permissions on subfolders
   command: find /var/www/static -type d -exec chmod 0755 {} \;
   tags: static
-  
+
 - name: Validate install
   shell: /usr/bin/passenger-config validate-install --auto
   register: passenger_validate_install
   changed_when: false
+  failed_when: passenger_validate_install.rc != 0
   tags: passenger-validate
+
 - debug: msg="{{ passenger_validate_install.stdout_lines }}"
   tags: passenger-validate
 
@@ -94,7 +121,36 @@
     mode: 0600
   no_log: true
 
-- import_tasks: nginx_config.yml
+- name: Copy nginx configuration
+  template:
+    src: "{{ nginx_conf_template | default('nginx.conf.j2') }}"
+    dest: /etc/nginx/nginx.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart nginx
+  tags: passenger-configure
+
+- name: Copy realip configuration
+  copy:
+    src: realip.conf
+    dest: /etc/nginx/conf.d/realip.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart nginx
+  tags:
+    - passenger-configure
+
+- name: Copy nginx ssl configuration
+  template:
+    src: ssl.conf.j2
+    dest: /etc/nginx/ssl.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart nginx
+  tags: passenger-configure
 
 - name: Copy littlesis.org nginx configuration
   template:

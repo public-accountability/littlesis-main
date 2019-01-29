@@ -25,35 +25,8 @@ littlesis_packages:
   - python3-dev
   - python3-mysqldb
   - fail2ban
-
-# php
-littlesis_php_packages:
-  - php7.2
-  - php7.2-cli
-  - php7.2-common
-  - php7.2-json
-  - php7.2-opcache
-  - php7.2-mysql
-  - php7.2-readline
-  - php7.2-zip
-  - php7.2-xml
-  - php7.2-fpm
-  - php7.2-gd
-
-pai_php_packages:
-  - php5.6
-  - php5.6-common
-  - php5.6-curl
-  - php5.6-fpm
-  - php5.6-gd
-  - php5.6-json
-  - php5.6-mysql
-  - php5.6-readline
-  - php5.6-opcache
-  - php5.6-zip
-  - php5.6-xml
-  - php5.6-fpm
-  
+  - zip
+  - unzip
 
 # Branch/git ref of littlesis-rails to clone
 littlesis_rails_version: master
@@ -67,11 +40,16 @@ macs: "hmac-sha2-512,hmac-sha2-256,hmac-ripemd160"
 geckodriver_url: "https://github.com/mozilla/geckodriver/releases/download/v0.19.1/geckodriver-v0.19.1-linux64.tar.gz"
 
 # Swap
-swapfile_size: 2G
+swapfile_size: 4G
 swapfile_location: /swapfile
 
 # awscli
 awscli_region: us-east-1
+
+# manticore
+manticore_url: "https://github.com/manticoresoftware/manticoresearch/releases/download/2.7.5/manticore_2.7.5-181204-4a31c54-release-stemmer.bionic_amd64-bin.deb"
+manticore_checksum: "sha256:4df0d04e729f380d2bd68c6b485b17aa81fc4fc9afc935d4d822724cd17d6953"
+manticore_reinstall: false
 
 # nginx
 nginx_ssl_ciphers: "'ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256'"
