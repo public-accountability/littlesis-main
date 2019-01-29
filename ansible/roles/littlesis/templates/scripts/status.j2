@@ -37,7 +37,7 @@ check_service () {
 
 print_section "services"
 
-for service in nginx php7.1-fpm fail2ban redis_6379
+for service in nginx fail2ban redis_6379
 do
     check_service $service "sudo systemctl is-active $service"
 done
