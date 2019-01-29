@@ -25,6 +25,8 @@ littlesis_packages:
   - python3-dev
   - python3-mysqldb
   - fail2ban
+  - zip
+  - unzip
 
 # Branch/git ref of littlesis-rails to clone
 littlesis_rails_version: master
@@ -38,15 +40,15 @@ macs: "hmac-sha2-512,hmac-sha2-256,hmac-ripemd160"
 geckodriver_url: "https://github.com/mozilla/geckodriver/releases/download/v0.19.1/geckodriver-v0.19.1-linux64.tar.gz"
 
 # Swap
-swapfile_size: 2G
+swapfile_size: 4G
 swapfile_location: /swapfile
 
 # awscli
 awscli_region: us-east-1
 
 # manticore
-manticore_url: "https://github.com/manticoresoftware/manticoresearch/releases/download/2.8.0/manticore_2.8.0-190128-4006794-release-stemmer.trusty_amd64-bin.deb"
-manticore_checksum: "sha256:4f8bd192f6842e7207c1627a2231eee7e1b10ad4c0e9a9bcf130d2dfc8dd36b9"
+manticore_url: "https://github.com/manticoresoftware/manticoresearch/releases/download/2.7.5/manticore_2.7.5-181204-4a31c54-release-stemmer.bionic_amd64-bin.deb"
+manticore_checksum: "sha256:4df0d04e729f380d2bd68c6b485b17aa81fc4fc9afc935d4d822724cd17d6953"
 manticore_reinstall: false
 
 # nginx

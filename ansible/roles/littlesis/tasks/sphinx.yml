@@ -1,6 +1,6 @@
 ---
 - name: Check if manticore is installed
-  command: dpkg-query -W manticore
+  shell: /usr/bin/dpkg-query --show --showformat='${db:Status-Status}\n' manticore | grep installed
   register: manticore_check_deb
   failed_when: manticore_check_deb.rc > 1
   changed_when: manticore_check_deb.rc == 1
