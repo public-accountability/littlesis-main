@@ -21,11 +21,6 @@ database_name: littlesis
 database_username: littlesis
 database_pool: 10
 
-# Docker
-docker_edition: 'ce'
-docker_install_compose: true
-docker_compose_version: "1.18.0"
-
 # Wordpress
 wordpress_db_name: eyes_on_the_ties
 wordpress_db_user: wp_blog

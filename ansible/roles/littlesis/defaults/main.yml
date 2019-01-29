@@ -61,13 +61,6 @@ passenger_min_instances: 1
 
 ubuntu_ssh_keys: []
 
-wordpress_restore_from_dump: false
-wordpress_sync_uploads: false
-wordpress_docker_port: 5000
-wordpress_fpm_socket: /var/run/fpm-wordpress.sock
-
-sync_pai: false
-pai_restore_from_dump: false
 
 # scripts directory
 scripts_directory: /home/ubuntu/scripts
