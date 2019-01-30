@@ -38,6 +38,24 @@
   include_role:
     name: geerlingguy.nodejs
 
+- name: Add yarn key
+  apt_key:
+    id: 1646B01B86E50310
+    url: "https://dl.yarnpkg.com/debian/pubkey.gpg"
+  tags: yarn
+
+- name: Add yarn apt repository
+  apt_repository:
+    repo: deb https://dl.yarnpkg.com/debian/ stable main
+    state: present
+  tags: yarn
+
+- name: Install Yarn
+  apt:
+    update_cache: yes
+    name: yarn
+  tags: yarn
+
 - name: disable snapd
   service:
     name: snapd
