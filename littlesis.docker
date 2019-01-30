@@ -52,6 +52,11 @@ RUN dpkg -i /tmp/manticore.deb
 RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
 RUN apt-get install -y nodejs
 
+# YARN
+RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
+RUN add-apt-repository "deb https://dl.yarnpkg.com/debian/ stable main"
+RUN apt-get update && apt-get -y install yarn
+
 # Geckodriver
 RUN curl -sSL https://github.com/mozilla/geckodriver/releases/download/v0.20.1/geckodriver-v0.20.1-linux64.tar.gz | tar -C /usr/local/bin/ -xzf - geckodriver
 
