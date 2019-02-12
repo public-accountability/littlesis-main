@@ -9,6 +9,7 @@ services:
     volumes:
         - ./rails:/home/app/rails
         - ./ls_dev.conf:/etc/nginx/sites-enabled/default
+        - ./static:/var/www/static
     depends_on:
         - redis
         - mysql
