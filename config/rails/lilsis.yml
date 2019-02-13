@@ -57,12 +57,14 @@ defaults: &defaults
     secret_key: 'your-recaptcha-secret-key-here'
   action_network_api_key: 'your-action-network-api-key-here'
   redis_url: "redis://redis:6379/0/cache"
+  oligrapher_version: 0.4.1
 
 test:
   <<: *defaults
   notification_email: notification@littlesis.dev
   notification_to: rspec@testing.com
   asset_host: assets.example.net
+  oligrapher_version: 0.0.1
 
 development:
   <<: *defaults

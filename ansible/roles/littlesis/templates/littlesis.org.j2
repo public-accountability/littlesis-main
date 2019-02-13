@@ -60,7 +60,7 @@ server {
     }
 
     location /js/oligrapher {
-      expires 1m;
+      expires 1y;
       root /var/www/static;
       try_files $uri =404;
     }
