@@ -59,6 +59,12 @@ server {
       expires 1M;
     }
 
+    location /js/oligrapher {
+      expires 1m;
+      root /var/www/static;
+      try_files $uri =404;
+    }
+
     location ~ \.pdf {
        root /var/www/static;
        try_files $uri =404;
