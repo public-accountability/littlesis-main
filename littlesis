@@ -54,6 +54,7 @@ For instance, to restart sphinx: littlesis rake ts:restart
 
 Search rails app:
 littlesis search <TERM>
+littlesis rg <TERM>
 
 Search test files:
 littlesis spec-search <TERM>
@@ -249,6 +250,10 @@ case $1 in
 	shift
 	rails_search "$@"
 	exit
+	;;
+    rg)
+	shift
+	rg $@
 	;;
     spec-search)
 	shift
