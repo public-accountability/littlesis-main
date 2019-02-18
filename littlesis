@@ -167,6 +167,10 @@ travis_build_log() {
 
 
 case $1 in
+    docker-compose)
+	shift
+	docker-compose $@
+	;;
     up)
 	docker-compose up -d
 	exit
