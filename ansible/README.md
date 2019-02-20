@@ -63,3 +63,10 @@ After changing the variables in ` littlesis.yml ` run:
 ``` shell
 ansible-playbook site.yml --tags=config
 ```
+
+### update Nginx/Passenger configuration
+
+``` shell
+ansible-playbook site.yml --tags=passenger-configure
+```
+

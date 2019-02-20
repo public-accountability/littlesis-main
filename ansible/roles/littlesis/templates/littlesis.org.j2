@@ -10,7 +10,8 @@ server {
     passenger_enabled on;
     passenger_ruby {{ ruby_command.stdout }};
     passenger_user littlesis;
-    
+
+    # Various rewrites and redirects #
 
     location ~ ^/(org|person)/([0-9]+)/.+/recipients$ {
 	 rewrite ^/(org|person)/([0-9]+)/.+/recipients$ /entities/$2?relationships=donation_recipients break;
@@ -21,12 +22,7 @@ server {
        rewrite ^/list/([0-9]+)/(.+)$ /lists/$1 break;
     }
 
-    # list 79 is used as the U.S. network
-    # and should not be accessible.
-    location ~ ^/lists/79-?.*/members$ {
-          return 404;
-    }
-
+    
     # rewrite relationship view page from legacy url
     location /relationship/view {
         rewrite ^/relationship/view/id/([0-9]+)$ /relationships/$1 break;
@@ -47,33 +43,39 @@ server {
     # Static assets
     #
 
-    location ~ ^/assets/ {
+    # Images
+    location /images {
+        root /var/www/littlesis/public;
+        expires 6M;
+        add_header Cache-Control "public";
+        try_files $uri =404;
+    }
+    
+    # compiled Rails assets (via sprockets)
+    location /assets {
         expires 1y;
-        add_header Cache-Control public;
+        add_header Cache-Control "public";
         add_header ETag "";
+    }
+
+    # compiled Rails assets (via webpack)
+    location /packs/js {
+        expires 1y;
+        add_header Cache-Control "public";
+        try_files $uri =404;
     }
     
     location /js {
-      root /var/www/static;
-      try_files $uri =404;
-      expires 1M;
-    }
-
-    location /js/oligrapher {
-      expires 1y;
-      root /var/www/static;
-      try_files $uri =404;
+        root /var/www/static;
+        expires 1y;
+        add_header Cache-Control public;
+        try_files $uri =404;
     }
 
     location ~ \.pdf {
-       root /var/www/static;
-       try_files $uri =404;
-    }
-
-    location /images/system/ {
         root /var/www/static;
-        expires 1M;
-        access_log off;
+        add_header Cache-Control public;
+        try_files $uri =404;
     }
     
     location = /favicon.ico {
@@ -84,10 +86,19 @@ server {
 
     location ~ /apple-touch-icon(.*)\.png {
         root /var/www/static;
+        add_header Cache-Control public;
         try_files $uri =404;
         expires 6M;
         access_log off;
         log_not_found off;
+    }
+
+    # Deny  # 
+
+    # list 79 is used as the U.S. network
+    # and should not be accessible.
+    location ~ ^/lists/79-?.*/members$ {
+        return 404;
     }
     
     # Prevents those random requests from going to PHP
