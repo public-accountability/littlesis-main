@@ -43,6 +43,14 @@ server {
     # Static assets
     #
 
+    # These two empty location blocks are expections to the general /images location
+    # The are rails routes that should be handled as a regular passenger route
+    location ~ ^/images/[0-9]+/(crop|crop_remote|request_deletion) {
+    }
+
+    location ~ ^/images/(approve_deletion|deny_deletion|deletion_request)/(.+)$ {
+    }
+    
     # Images
     location /images {
         root /var/www/littlesis/public;
