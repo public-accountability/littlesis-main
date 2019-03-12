@@ -80,6 +80,13 @@ server {
         try_files $uri =404;
     }
 
+    location /static/ {
+        root /var/www/;
+        expires 2h;
+        add_header Cache-Control public;
+        try_files $uri =404;
+    }
+    
     location ~ \.pdf {
         root /var/www/static;
         add_header Cache-Control public;
