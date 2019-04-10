@@ -52,7 +52,7 @@ ruby_version: 'ruby-2.5.3'
 and run:
 
 ``` shell
-ansible-playbook site.yml --tags "ruby,gems,passenger"
+ansible-playbook site.yml --tags "ruby,clone,gems,passenger"
 ```
 
 ### Update lilsis.yml rails configuration

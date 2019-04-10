@@ -29,3 +29,11 @@
     rvm1_install_path: '/home/littlesis/.rvm'
     rvm1_install_flags: '--auto-dotfiles --user-install --autolibs=0'
     rvm1_autolib_mode: 0
+
+- name: Install/Update bundler
+  become: yes
+  become_user: littlesis
+  shell: "~/.rvm/bin/rvm {{ ruby_version }} do gem install bundler"
+  args:
+    chdir: /var/www/littlesis
+  tags: bundler

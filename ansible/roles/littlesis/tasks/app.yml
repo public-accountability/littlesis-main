@@ -16,6 +16,7 @@
     force: yes
     recursive: yes
     version: "{{  littlesis_rails_version }}"
+  tags: clone
 
 - name: Install gems
   become: yes
