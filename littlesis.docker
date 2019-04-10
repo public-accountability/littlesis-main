@@ -76,7 +76,7 @@ RUN bash -lc "rvm list | egrep -o 'ruby-[0-9\.]{5}' | grep -v $(cat /home/app/ra
 RUN bash -lc 'rvm --default use $(cat /home/app/rails/.ruby-version)'
 
 # Install Gems
-RUN su - app -l -c "cd /home/app/rails && rvm use && gem install --no-rdoc --no-ri bundler"
+RUN su - app -l -c "cd /home/app/rails && rvm use && gem install --no-document bundler"
 RUN su - app -l -c "cd /home/app/rails && rvm use && bundle install"
 
 # copy app bash profile
