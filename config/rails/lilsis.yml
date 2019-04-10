@@ -46,12 +46,6 @@ defaults: &defaults
   carousel_list_id: 404
   restricted_ips:
     - 192.0.2.1
-  chat:
-    chat_url: "http://localhost:3000"
-    mongo_url: "mongo:27017"
-    api_url: "http://rocketchat:3000"
-    admin_username: "admin"
-    admin_password: "admin"
   recaptcha:
     site_key: 'your-recaptcha-site-key-here'
     secret_key: 'your-recaptcha-secret-key-here'
