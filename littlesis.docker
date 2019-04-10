@@ -74,6 +74,8 @@ RUN bash -lc 'rvm install $(cat /home/app/rails/.ruby-version)'
 RUN bash -lc "rvm list | egrep -o 'ruby-[0-9\.]{5}' | grep -v $(cat /home/app/rails/.ruby-version) | xargs -I ruby_version rvm remove ruby_version"
 # Set default ruby version
 RUN bash -lc 'rvm --default use $(cat /home/app/rails/.ruby-version)'
+# Clean up rvm
+run bash -lc 'rvm cleanup all'
 
 # Install Gems
 RUN su - app -l -c "cd /home/app/rails && rvm use && gem install --no-document bundler"
