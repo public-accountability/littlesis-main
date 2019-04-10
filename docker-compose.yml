@@ -17,7 +17,7 @@ services:
         - rocketchat
 
   redis:
-    image: redis:5.0.3
+    image: redis:5.0.4
 
   mysql:
     image: mariadb:10.2
