@@ -2,12 +2,8 @@
 
 exit_status=0
 
-rails-cmd () {
-    {{ scripts_directory }}/rails-command $@
-}
-
-rails-rake() {
-    {{ scripts_directory }}/rails-rake $@
+run-script() {
+    sh -c "{{ scripts_directory }}/$1"
 }
 
 print_section () {
@@ -43,8 +39,8 @@ do
 done
     
 check_service 'Mysql connection' '{{ scripts_directory }}/mysql-test'
-check_service 'Delayed job' 'rails-cmd bin/delayed_job status' 
-check_service 'Sphinx' 'rails-rake ts:status'
+check_service 'Delayed job' 'run-script rails-delayed-job-status' 
+check_service 'Sphinx' 'run-script rails-sphinx-status'
 check_service 'Passenger Rails' "ps -f -u littlesis | egrep --quiet -e 'Passenger(.*)/littlesis'"
 
 
