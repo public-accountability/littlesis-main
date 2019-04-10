@@ -32,3 +32,6 @@
 
 - import_tasks: passenger.yml
   tags: passenger
+
+- import_tasks: cron.yml
+  tags: cron

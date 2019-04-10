@@ -1,0 +1,25 @@
+---
+- name: Daily mysql backup cron job
+  become_user: ubuntu
+  cron:
+    name: "daily mysql backup"
+    minute: "0"
+    hour: "2"
+    job: "/home/ubuntu/scripts/mysql-backup-most > /dev/null 2>&1"
+
+- name: Monthy mysql backup cron job
+  become_user: ubuntu
+  cron:
+    name: "monthly mysql backup"
+    day: "1"
+    minute: "0"
+    hour: "3"
+    job: "/home/ubuntu/scripts/mysql-backup-all > /dev/null 2>&1"
+  
+- name: Backup images cron job
+  become_user: ubuntu
+  cron:
+    name: "backup images"
+    minute: "0"
+    hour: "1"
+    job: "/home/ubuntu/scripts/images-backup > /dev/null 2>&1"
