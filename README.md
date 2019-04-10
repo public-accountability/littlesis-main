@@ -17,7 +17,6 @@ When complete you should have a folder structure that looks like this:
 	ls_dev.conf -> nginx configuration
 	config/ -> rails configuration
 	mysql-data/ -> mysql server data
-	chat/ -> rocket.chat configuration and mongo data
 	rails/ -> root of the rails repo
 	ansible -> ansible playbook. ignore this unless running littlesis on prod
 
@@ -173,21 +172,6 @@ function littlesis
 	./littlesis $argv
 	popd
 end
-```
-
-#### Don't run rocket.chat
-
-If you are not working on the chat integration you find might it useful to comment
-out the lines in docker-compose.yml so they don't run.
-
-comment out all lines below the ` rocketchat: ` service and comment out the two lines in the depends_on section of web:
-
-``` yml
-depends_on:
-  - redis
-  - mysql
-  # - mongo
-  # - rocketchat
 ```
 
 #### work in the ☁️

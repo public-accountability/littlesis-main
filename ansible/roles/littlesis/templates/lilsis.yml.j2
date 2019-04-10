@@ -47,12 +47,6 @@ defaults: &defaults
 {% for ip_addr in restricted_ips %}
     - {{ ip_addr }}
 {% endfor %}
-  chat:
-    chat_url: {{ chat_url }}
-    mongo_url: {{ chat_mongo_url }} 
-    api_url: {{ chat_api_url }}
-    admin_username: {{ chat_admin_username }}
-    admin_password: {{ chat_admin_password }}
   recaptcha:
     site_key: {{ recaptcha_site_key }}
     secret_key: {{ recaptcha_secret_key }}
