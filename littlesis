@@ -5,15 +5,14 @@ show_help() {
 Usage: ./littlesis <command>
 Helpful shortcuts to the LittleSis development environment
 
-Start app:
-littlesis up or littlesis up -d
+Start/pause/stop app:
+littlesis up
 littlesis pause/unpause
-
-Stop app:
 littlesis down
 
-Enter mysql shell: 
-littlesis mysql
+Rails console: littlesis c
+
+Mysql shell: littlesis mysql
 
 Information:
 littlesis ps
@@ -21,12 +20,15 @@ littlesis logs
 
 Login to the containers:
 littlesis login
+littlesis login-root
 
-Run all rails tests:
-littlesis rspec
+Run all rails tests: littlesis test
+This runs inside docker and will work if you don't have rvm setup
 
-or run one test file. example:
-littlesis rspec spec/models/relationship_spec.rb
+Run a single test: littlesis rspec path/to/specfile
+example:
+   littlesis rspec spec/models/relationship_spec.rb
+This uses ruby/rvm outside of docker
 
 Open bash console for easy test running:
 littlesis spec
@@ -34,15 +36,9 @@ littlesis spec
 Reset the test database (littlesis_test)
 littlesis reset-test-db
 
-Run rspec w/ spring
-littlesis spring-spec
-
-Start javascript tests:
-littlesis jasmine
-
-Rails console: littlesis c
-
 Rails logs: littlesis rails-logs
+
+Rails test logs: littlesis rails-test-logs
 
 Nginx logs: littlesis nginx access|error
 
@@ -62,12 +58,10 @@ littlesis spec-search <TERM>
 View rails coverage:
 littlesis coverage
 
-start/stop remote dev server:
-littlesis remote up
-littlesis remote down
-
 bash shell with dev env set:
 littlesis bash
+
+redis cli: littlesis redis
 
 download latest build log from travis:
 littlesis travis-log
@@ -77,11 +71,10 @@ littlesis travis-log
 EOF
 }
 
-# web_app_exec="docker-compose exec web su app -l -c"
 web_app_exec="docker-compose exec -u app web /bin/bash -l -c"
 
 short_help() {
-    echo "Usage: ./littlesis rails|php"
+    echo "Usage: ./littlesis [COMMAND]"
     echo "Helpful shortcuts to the LittleSis development environment"
     echo "More information: littlesis help"
 }
@@ -134,22 +127,9 @@ rails_coverage() {
     fi
 }
 
-remote() {
-    case $1 in
-	up)
-	    ssh -4 -T -L 8080:localhost:8080 -L 8888:localhost:8888 -L 3306:localhost:3306 littlesis-dev > /dev/null 2>&1
-	    ;;
-	down)
-	    pgrep -f 'ssh.*littlesis-dev' | xargs -I PID kill PID
-	    ;;
-	edit)
-	    ssh littlesis-dev emacsclient -c
-	    ;;
-	*)
-	    echo "invalid option"
-	    exit 1
-	    ;;
-    esac
+rvm_use() {
+    source ~/.rvm/scripts/rvm
+    cd rails && rvm use > /dev/null
 }
 
 travis_api_token=$(cat ./.travis_api_token)
@@ -170,103 +150,80 @@ travis_build_log() {
 case $1 in
     docker-compose)
 	shift
-	docker-compose $@
+	docker-compose "$@"
 	;;
     up)
 	docker-compose up -d
-	exit
 	;;
     down|ps|logs|pause|unpause)
 	docker-compose "$1"
-	exit
 	;;
     nginx)
 	shift
 	nginx_logs "$@"
-	exit
 	;;
     mysql)
 	mysql_shell
-	exit
 	;;
     login)
 	docker-compose exec -u app web /bin/bash --login
-	exit
 	;;
     login-root)
 	docker-compose exec web /bin/bash --login
-	exit
+	;;
+    test)
+	shift
+	$web_app_exec "RAILS_ENV=test CODACY_RUN_LOCAL=true COVERAGE=true bundle exec rspec ${@}"
 	;;
     rspec)
 	shift
-	$web_app_exec "RAILS_ENV=test CODACY_RUN_LOCAL=true COVERAGE=true bundle exec rspec ${@}"
-	exit
-	;;
-    spring-rspec|spring-spec|s)
-	shift
-	$web_app_exec "RAILS_ENV=test bin/spring rspec ${@}"
-	exit
+	rvm_use
+	bin/rspec "$@"
 	;;
     spec)
 	docker-compose exec -u app web /bin/bash --login
-	exit
 	;;
     cmd)
 	shift
 	$web_app_exec "${@}"
-	exit
 	;;
     runner)
 	shift
 	$web_app_exec "RAILS_ENV=development bin/rails runner ${@}"
-	exit
 	;;
     console|c)
 	$web_app_exec 'RAILS_ENV=development bin/rails c'
-	exit
 	;;
     rails-logs)
 	tail -f rails/log/development.log | grep -v '/assets/'
-	exit
+	;;
+    rails-test-logs)
+	tail -f rails/log/test.log
 	;;
     rake)
 	shift
 	$web_app_exec "RAILS_ENV=development bundle exec rake ${@}"
-	exit
 	;;
     restart-rails)
 	docker-compose exec web /bin/bash -c 'passenger-config restart-app /home/app'
-	exit
-	;;
-    jasmine)
-	$web_app_exec "RAILS_ENV=test JASMINE=true bundle exec rake jasmine"
-	exit
 	;;
     reset-test-db)
 	$web_app_exec 'RAILS_ENV=test bundle exec rake db:reset'
-	exit
 	;;
     search)
 	shift
 	rails_search "$@"
-	exit
 	;;
     rg)
 	shift
-	rg $@
+	cd rails && rg "$@"
 	;;
     spec-search)
 	shift
 	rails_spec_search "$@"
-	exit
 	;;
     cov|coverage)
 	rails_coverage
-	exit
-	;;
-    remote)
-	shift
-	remote "$@"
 	;;
     redis)
 	docker-compose exec -u app web /usr/bin/redis-cli -h redis
@@ -274,22 +231,19 @@ case $1 in
     bash)
 	export RAILS_ENV=development
 	cd rails && bash --login
-	exit
 	;;
     travis-log)
 	travis_build_log
 	;;
     -h|help|--help)
 	show_help
-	exit
 	;;
     ?*) # End of all options.
 	echo 'Invalid option'
-        echo 'all options: rspec, up, down, ps, logs, nginx, mysql, login, rspec, spring-rspec, spec, cmd, console, rails-logs, rake, restart-rails, jasmine, reset-test-db, search, spec-search, cov, help'
+        echo 'all options: rspec, up, down, ps, logs, nginx, mysql, login, test, rspec, spec, cmd, console, rails-logs, rake, restart-rails, jasmine, reset-test-db, search, spec-search, cov, help'
         exit 1
 	;;
     *)
 	short_help
-	exit
 	;;
 esac
