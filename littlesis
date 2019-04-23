@@ -177,7 +177,6 @@ case $1 in
 	;;
     rspec)
 	shift
-	rvm_use
 	bin/rspec "$@"
 	;;
     spec)
