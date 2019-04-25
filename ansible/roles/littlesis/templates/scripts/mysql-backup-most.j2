@@ -12,4 +12,4 @@ mysqldump -u {{ database_username }} -p{{ database_password}} -h {{ database_hos
 	  --ignore-table=littlesis.modification \
 	  --databases littlesis | gzip > ~/littlesis-backup-most-$DATE.sql.gz
 
-aws s3 cp ~/littlesis-backup-most-$DATE.sql.gz s3://{{ aws_s3_bucket }}/backups/littlesis-backup-most-$DATE.sql.gz
+/usr/local/bin/aws s3 cp ~/littlesis-backup-most-$DATE.sql.gz s3://{{ aws_s3_bucket }}/backups/littlesis-backup-most-$DATE.sql.gz
