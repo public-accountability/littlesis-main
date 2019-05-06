@@ -2,7 +2,6 @@
 
 Welcome to the LittleSis project! LittleSis has been tracking powerful people and organizations since 2009. This guide will help you understand the LittleSis data model, how the code is structured, and how we host our site.
 
-
 ## Code and components
 
 All our code can be found under the github organization [public-accountability](https://github.com/public-accountability). 
@@ -17,8 +16,7 @@ The repo [littlesis-main](https://github.com/public-accountability/littlesis-mai
 
 [littlesis-browser-addon](https://github.com/public-accountability/littlesis-browser-addon) is a chrome browser extension to add relationships to the database.
 
-[pai-core-functionality](https://github.com/public-accountability/pai-core-functionality), [pai-packages](https://github.com/public-accountability/pai-packages), [pai](https://github.com/public-accountability/pai), [littlesis-packages](https://github.com/public-accountability/littlesis-packages), [littlesis-news-theme](https://github.com/public-accountability/littlesis-news-theme), and [littlesis-core-functionality](https://github.com/public-accountability/littlesis-core-functionality) are the themes and functionality for our two wordpress sites: [news.littlesis.com](https://news.littlesis.com) and [public-accountability.org](https://public-accountability.org/).
-
+[pai-core-functionality](https://github.com/public-accountability/pai-core-functionality), [pai-packages](https://github.com/public-accountability/pai-packages), [pai](https://github.com/public-accountability/pai), [littlesis-packages](https://github.com/public-accountability/littlesis-packages), [littlesis-news-theme](https://github.com/public-accountability/littlesis-news-theme), and [littlesis-core-functionality](https://github.com/public-accountability/littlesis-core-functionality) are the themes and functionality for our two wordpress sites: [news.littlesis.org](https://news.littlesis.org) and [public-accountability.org](https://public-accountability.org/).
 
 Our code is all open source, licensed with the General Public License version 3.0.
 
@@ -34,6 +32,10 @@ The project is currently maintained by ziggy ([@aepyornis](https://github.com/ae
 
 ## Core development principles
 
+## Hacking
+
+### Testing
+
 ## Data Model
 
 ## Rails Code base
@@ -42,17 +44,17 @@ The project is currently maintained by ziggy ([@aepyornis](https://github.com/ae
 
 LittleSis runs on ubuntu servers. We have 3 core servers:
 
-1) Rails Server: Our "main" web server which runs our rails app + wordpress site
-2) Chat Server: a server running Rocket.Chat with docker
+1) Rails Server: Our "main" web server which runs our rails app
+2) Wordpress Server: a server running our wordpress sites
 3) Database server running MariaDb
 
-Our traffic is proxied by Cloudflare. Cloudlfare is also used to manage our DNS. Our assets are hosted on Amazon S3 and served via Amazon's cloudfront.
+Our traffic is proxied by Cloudflare, whom we rely on as a firewall for DDOS protection. Cloudlfare is also used to manage our DNS.
 
 ### Rails Server
 
 #### Creating a new server.
 
-In the advent that you need to create an entirely new server, there is an ansible playbook to setup up a new ubuntu xenial server. See the `ansible` folder for the playbook. Variables are configured in `ansible/group_vars/all`. The wordpress will need some additional setup (described later).
+If you need to create an entirely new server to run LittleSis, there is an ansible playbook to setup up a new ubuntu bionic server. See the `ansible` folder for the playbook. Variables are configured in `ansible/group_vars/all`. The wordpress sites will need some additional setup (described later).
 
 The ansible playbook looks for a file of secrets located at ` ~/littlesis.yml `. This file ~can~ should be encrypted with [ansible vault](https://docs.ansible.com/ansible/latest/user_guide/vault.html). `~/littlesis.yml` contains all sensitive information and credentials including database passwords and tls certificates. 
 
@@ -72,11 +74,11 @@ ansible-playbooks site.yml --tags 'ruby'
 
 ##### Redis
 
-For caching, our rails app uses Redis.  In `ansible/group_vars/all` a few redis configuration variables have been set, but generally redis is remarkable stable. It's never crashed, require no maintaince, and even saves the cache to disk periodically and automatically restores it upon restart.
+For caching, our rails app uses Redis.  In `ansible/group_vars/all` a few redis configuration variables have been set.
 
-##### Sphinx
+##### Sphinx/Manticore
 
-Sphinx is used by rails for full-text searching of documents. The running of sphinx is managed via rake tasks.
+Manticore (a fork of Sphinx) is used by rails for full-text searching of documents. The running of sphinx is managed via rake tasks using the Gem `thinking sphinx`
 
 ##### PHP/wordpress
 
