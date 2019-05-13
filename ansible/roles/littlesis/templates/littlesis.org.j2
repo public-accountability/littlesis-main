@@ -119,6 +119,12 @@ server {
     location ~ "^/person/[3]{1}[456789]{1}[0-9]{4}$" {
         return 403;
     }
+
+    location = /ads.txt {
+        return 404;
+        access_log off;
+        log_not_found off;
+    }
     
     # Prevents those random requests from going to PHP
     location = /wp-login.php {
