@@ -1,4 +1,4 @@
-RAILS_DOCKER_VERSION := 0.8.3
+RAILS_DOCKER_VERSION := 0.8.4
 
 help:
 	@echo "Welcome to the LittleSis Dev Environment"
@@ -28,7 +28,7 @@ clone-wordpress-repos:
 	cd wordpress && $(foreach repo,$(WORDPRESS_REPOS), git clone $(CLONE_URL)/$(repo).git;})
 
 install-docker-on-ubuntu:
-	sudo apt-get update && sudo apt-get install git apt-transport-https ca-certificates curl software-properties-common make
+	sudo apt-get install apt-transport-https ca-certificates curl gnupg-agent software-properties-common
 	curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 	sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(shell lsb_release -cs) stable"
 	sudo apt-get update && sudo apt-get install docker-ce
