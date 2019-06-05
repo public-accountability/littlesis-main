@@ -161,3 +161,15 @@
     mode: 0644
   notify: restart nginx
   tags: passenger-configure
+
+- name: Copy api.littlesis.org nginx configuration
+  copy:
+    src: api.littlesis.org
+    dest: /etc/nginx/sites-enabled/api.littlesis.org
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart nginx
+  tags: 
+    - passenger-configure
+    - nginx-api
