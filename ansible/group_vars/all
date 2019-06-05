@@ -6,7 +6,7 @@ ruby_version: 'ruby-2.6.3'
 nodejs_version: '8.x'
 
 # redis config
-redis_maxmemory: 1gb
+redis_maxmemory: 1.5gb
 redis_maxmemory_policy: allkeys-lru
 redis_save:
   - 900 1
