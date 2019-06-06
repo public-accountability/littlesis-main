@@ -83,3 +83,26 @@ Manticore (a fork of Sphinx) is used by rails for full-text searching of documen
 ##### PHP/wordpress
 
 news.littlesis.org is also run on our main rails server. The wordpress files are located here: ``` /var/www/news ```
+
+
+### Updating Oligrapher
+
+1) Release a new version with a numeric tag -- i.e. `0.4.1`
+
+2) Download latest version to static folder
+
+``` fish
+set OLIGRAPHER_VERSION [VERSION]
+source ./scripts/download_oligrapher_version.fish
+cd static/js/oligrapher && download_oli $OLIGRAPHER_VERSION
+```
+
+3) add and commit new files to this repo
+
+4) Copy files to production server ` cd ansible && ansible-playbook site.yml --tags=static `
+
+5) Change the variable `oligrapher_version` to new numeric tag number in `littlesis.yml`
+
+6) Update the production server:  ` cd ansible && ansible-playbook site.yml --tags=config`
+
+7) Restart rails: ` ssh littlesis '~/scripts/restart-rails' `
