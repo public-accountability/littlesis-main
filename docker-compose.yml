@@ -15,7 +15,7 @@ services:
         - mysql
 
   redis:
-    image: redis:5.0.4
+    image: redis:5.0.5
 
   mysql:
     image: mariadb:10.2
