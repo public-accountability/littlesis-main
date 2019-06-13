@@ -4,7 +4,7 @@ upstream wordpress_php {
 
 server {
     listen 80;
-    server_name {{ news_server_name }};
+    server_name {{ news_server_name }} blog.littlesis.org;
     return 301 https://$host$request_uri;
 }
 
@@ -12,6 +12,16 @@ server {
     listen 80;
     server_name {{ pai_server_name }};
     return 301 https://$host$request_uri;
+}
+
+# redirect blog.littlesis.org
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    ssl_certificate         /etc/nginx/certs/news_certificate.pem;
+    ssl_certificate_key     /etc/nginx/certs/news_key.pem;
+    server_name blog.littlesis.org;
+    return 301 https://{{news_server_name }}$request_uri;
 }
 
 # news #
