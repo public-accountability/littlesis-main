@@ -1,4 +1,4 @@
-RAILS_DOCKER_VERSION := 0.8.6
+RAILS_DOCKER_VERSION := 0.8.7
 
 help:
 	@echo "Welcome to the LittleSis Dev Environment"
@@ -35,7 +35,6 @@ install-docker-on-ubuntu:
 
 build-rails-docker:
 	docker build --no-cache -t aepyornis/ls-rails:$(RAILS_DOCKER_VERSION) -f littlesis.docker .
-
 
 ansible-galaxy-roles:
 	ansible-galaxy install rvm.ruby DavidWittman.redis geerlingguy.nodejs dev-sec.ssh-hardening dev-sec.os-hardening geerlingguy.docker geerlingguy.composer
