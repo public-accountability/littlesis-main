@@ -71,6 +71,14 @@ server {
         add_header Cache-Control "public";
         try_files $uri =404;
     }
+
+    # system images are stored in the static folder
+    location /images/system {
+        root /var/www/static;
+        expires 1y;
+        add_header Cache-Control public;
+        try_files $uri =404;
+    }
     
     location /js {
         root /var/www/static;
