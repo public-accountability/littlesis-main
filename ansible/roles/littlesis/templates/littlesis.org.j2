@@ -38,6 +38,11 @@ server {
         return 301 https://littlesis.org/$1;
     }
 
+    # rate limit the api
+    location /api {
+        limit_req zone=api burst=2 nodelay;
+    }
+
     ##
     # Static assets
     #

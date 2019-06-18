@@ -76,7 +76,13 @@ http {
     passenger_max_requests {{ passenger_max_requests }};
     passenger_min_instances {{ passenger_min_instances }};
 
-    
+
+    ##
+    # rate limit
+    ##
+
+    limit_req_zone $binary_remote_addr zone=api:5m rate=2r/s;
+
     ##
     # Virtual Host Configs
     ##
