@@ -61,20 +61,6 @@ Steps for a fully functional LittleSis Development environment:
 
 5) Setup the database:  ` make db-setup `
 
-## Load the development database
-
-We currently distribute an anonymized dump of our production database to trusted core contributors so they can bootstrap their development environment with a realistic dataset. To obtain such a dump, email ziggy@littlesis.org. `*`
-
-Assuming you already have a local dump of the development database stored at `path/to/ls_dev_db.sql`, use it to populate the database with:
-
-``` bash
-./scripts/load-dev-db.sh path/to/ls_dev_db.sql
-```
-
-This can take anywhere from 30mins to 3 hours depending on the size of the database dump.
-
-`*` To help suggest a better solution for producing a working dataset for development purposes, join the discussion on [this github issue](https://github.com/public-accountability/littlesis-rails/issues/456).
-
 ### Setup rails tests
 
 Setup the testing database: ` littlesis reset-test-db `
