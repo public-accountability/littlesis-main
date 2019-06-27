@@ -48,7 +48,7 @@ RUN echo '4df0d04e729f380d2bd68c6b485b17aa81fc4fc9afc935d4d822724cd17d6953 /tmp/
 RUN dpkg -i /tmp/manticore.deb
 
 # NODE
-RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
+RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
 RUN apt-get install -y nodejs
 
 # YARN
