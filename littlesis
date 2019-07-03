@@ -146,17 +146,16 @@ travis_build_log() {
     echo "log saved to: $(readlink -f littlesis-travis-log-$latest_job_id.txt)"
 }
 
-
 case $1 in
-    docker-compose)
+    docker|docker-compose)
 	shift
 	docker-compose "$@"
 	;;
     up)
 	docker-compose up -d
 	;;
-    down|ps|logs|pause|unpause)
-	docker-compose "$1"
+    down)
+	docker-compose down
 	;;
     nginx)
 	shift
@@ -173,6 +172,7 @@ case $1 in
 	;;
     test)
 	shift
+	# $web_app_exec "RAILS_ENV=test CODACY_RUN_LOCAL=true COVERAGE=true bundle exec rspec ${@}"
 	$web_app_exec "RAILS_ENV=test CODACY_RUN_LOCAL=true COVERAGE=true bundle exec rspec ${@}"
 	;;
     rspec)
