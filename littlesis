@@ -132,7 +132,11 @@ rvm_use() {
     cd rails && rvm use > /dev/null
 }
 
-travis_api_token=$(cat ./.travis_api_token)
+if [ -f ./.travis_api_token ]
+then
+    travis_api_token=$(cat ./.travis_api_token)
+fi
+
 travis_repo_id=12307754
 
 travis_curl() {
