@@ -270,20 +270,21 @@
   notify: restart nginx
   tags: nginx
 
-- name: Configure nginx
-  include_role:
-    name: littlesis
-    tasks_from: nginx_config
-    apply:
-      tags: ['nginx']
-  vars:
-    nginx_conf_template: roles/wordpress/templates/nginx.conf.j2
-  tags: nginx
 
 - name: Copy nginx site configuration
   template:
     src: wordpress-nginx.conf.j2
     dest: /etc/nginx/sites-enabled/wordpress.conf
+    owner: root
+    group: root
+    mode: 0640
+  notify: restart nginx
+  tags: nginx
+
+- name: Copy nginx configuration
+  template:
+    src: "{{ nginx_conf_template | default('nginx.conf.j2') }}"
+    dest: /etc/nginx/nginx.conf
     owner: root
     group: root
     mode: 0640
