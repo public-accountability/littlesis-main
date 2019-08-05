@@ -1,4 +1,4 @@
-RAILS_DOCKER_VERSION := 0.8.10
+RAILS_DOCKER_VERSION := 0.8.11
 
 help:
 	@echo "Welcome to the LittleSis Dev Environment"
@@ -39,6 +39,7 @@ cloudflare-ips:
 	curl -sSL "https://www.cloudflare.com/ips-v6" >> /tmp/cloudflare-ips.txt
 	cat /tmp/cloudflare-ips.txt | ruby -ne 'print "set_real_ip_from #{$$_.delete("\n")};\n"' > $(realip_conf)
 	echo 'real_ip_header X-Forwarded-For;' >> $(realip_conf)
+
 
 .PHONY: help setup rails config db-setup docker-pull
 .PHONY: clone-wordpress-repos build-rails-docker ansible-galaxy-roles cloudflare-ips
