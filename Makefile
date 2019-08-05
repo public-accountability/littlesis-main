@@ -19,7 +19,6 @@ db-setup:
 docker-pull:
 	cat docker-compose.yml | grep "image:" | sed 's/image://g' | xargs -I image docker pull image
 
-
 WORDPRESS_REPOS = littlesis-packages littlesis-core-functionality littlesis-news-theme
 CLONE_URL = git@github.com:public-accountability
 
@@ -27,18 +26,11 @@ clone-wordpress-repos:
 	mkdir -v -p wordpress
 	cd wordpress && $(foreach repo,$(WORDPRESS_REPOS), git clone $(CLONE_URL)/$(repo).git;})
 
-install-docker-on-ubuntu:
-	sudo apt-get install apt-transport-https ca-certificates curl gnupg-agent software-properties-common
-	curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-	sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(shell lsb_release -cs) stable"
-	sudo apt-get update && sudo apt-get install docker-ce
-
 build-rails-docker:
 	docker build --no-cache -t aepyornis/ls-rails:$(RAILS_DOCKER_VERSION) -f littlesis.docker .
 
 ansible-galaxy-roles:
 	ansible-galaxy install rvm.ruby DavidWittman.redis geerlingguy.nodejs dev-sec.ssh-hardening dev-sec.os-hardening geerlingguy.docker geerlingguy.composer
-
 
 realip_conf := ./ansible/roles/littlesis/files/realip.conf
 
@@ -48,6 +40,5 @@ cloudflare-ips:
 	cat /tmp/cloudflare-ips.txt | ruby -ne 'print "set_real_ip_from #{$$_.delete("\n")};\n"' > $(realip_conf)
 	echo 'real_ip_header X-Forwarded-For;' >> $(realip_conf)
 
-.PHONY: help config build-rails-docker docker-pull db-setup
-.PHONY: ansible-galaxy-roles cloudflare-ips install-docker-on-ubuntu
-.PHONY: create-dev-user
+.PHONY: help setup rails config db-setup docker-pull
+.PHONY: clone-wordpress-repos build-rails-docker ansible-galaxy-roles cloudflare-ips
