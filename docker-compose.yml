@@ -18,7 +18,7 @@ services:
     image: redis:5.0.5
 
   mysql:
-    image: mariadb:10.2
+    image: mariadb:10.3
     volumes:
       - ./mysql-data:/var/lib/mysql
     ports:

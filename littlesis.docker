@@ -37,10 +37,10 @@ RUN echo $TZ > /etc/timezone && \
     ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
     dpkg-reconfigure -f noninteractive tzdata
 
-# Mariadb 10.2 client
+# Mariadb 10.3 client
 RUN apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xF1656F24C74CD1D8
-RUN add-apt-repository 'deb [arch=amd64,i386,ppc64el] http://nyc2.mirrors.digitalocean.com/mariadb/repo/10.2/ubuntu bionic main'
-RUN apt-get update && apt-get -y install mariadb-client-10.2 libmariadb-dev
+RUN add-apt-repository 'deb [arch=amd64,i386,ppc64el] http://nyc2.mirrors.digitalocean.com/mariadb/repo/10.3/ubuntu bionic main'
+RUN apt-get update && apt-get -y install mariadb-client libmariadb-dev
 
 # Manticore
 RUN curl -sSL https://github.com/manticoresoftware/manticoresearch/releases/download/2.7.5/manticore_2.7.5-181204-4a31c54-release-stemmer.bionic_amd64-bin.deb > /tmp/manticore.deb
