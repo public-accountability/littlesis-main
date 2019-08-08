@@ -1,0 +1,26 @@
+---
+- name: Add MariaDB apt key (F1656F24C74CD1D8)
+  become: true
+  apt_key:
+    data: "{{ lookup('file', 'F1656F24C74CD1D8.asc') }}"
+    state: present
+
+- name: Add Mariadb repo
+  become: true
+  apt_repository:
+    repo: 'deb http://nyc2.mirrors.digitalocean.com/mariadb/repo/10.4/debian buster main'
+    state: present
+    update_cache: yes
+
+- name: Install mariadb
+  become: true
+  apt:
+    update_cache: yes
+    name:
+      - mariadb-server
+      - mariadb-client
+      - libmariadb3
+      - mariadb-backup
+      - mariadb-common
+
+# - name: configure mariadb

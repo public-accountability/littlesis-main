@@ -1,14 +1,23 @@
----
-- hosts: app
+# ---
+# - hosts: app
+#   vars_files:
+#     - "vars.yml"
+#   handlers:
+#     - include: handlers/main.yml
+#   roles:
+#     - common
+#   tags: app
+    
+- hosts: database
   vars_files:
     - "vars.yml"
   handlers:
     - include: handlers/main.yml
-  roles: ["common"]
-    
-# - hosts: littlesis:database
-#   roles: ["database"]
-#   handlers: include=handlers/main.yml
+  roles:
+#    - common
+    - database
+  tags: database
+
 
 # - hosts: littlesis:wordpress
 #   roles: ["wordpress"]
