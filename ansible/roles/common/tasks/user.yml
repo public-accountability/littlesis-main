@@ -1,0 +1,25 @@
+---
+- name: Make sure we have a sshusers groups
+  become: true
+  group:
+    name: sshusers
+    state: present
+
+- name: Create admin user
+  become: true
+  user:
+    name: "{{ maintainer_user_name }}"
+    password: "{{ maintainer_user_password }}"
+    groups:
+      - sudo
+      - sshusers
+    append: yes
+    shell: /bin/bash
+
+- name: Set admin authorized keys
+  become: true
+  authorized_key:
+    user: "{{ maintainer_user_name }}"
+    state: present
+    key: "{{ maintainer_user_key }}"
+

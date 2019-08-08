@@ -5,17 +5,6 @@
     state: present
     update_cache: yes
 
-
-- name: Copy nginx-noscript configuration
-  copy:
-    src: nginx-noscript.conf
-    dest: /etc/fail2ban/filter.d/nginx-noscript.conf
-    owner: root
-    group: root
-    mode: 0644
-  notify: restart fail2ban
-  tags: fail2ban
-
 - name: Copy fail2ban configuration into place
   template:
     src: jail.local.j2
@@ -35,23 +24,14 @@
   include_role:
     name: dev-sec.ssh-hardening
 
-- name: Check if Ubuntu is locked
+- name: Check if maintainer user name is locked
   become: yes
-  command: grep -q "ubuntu:!:" /etc/shadow
-  register: check_ubuntu_lock
+  command: "grep -q \"{{ maintainer_user_name }}:!:\" /etc/shadow"
+  register: check_user_lock
   ignore_errors: True
   changed_when: False
 
-- name: Unlock Ubuntu
+- name: Unlock admin user
   become: yes
-  command: usermod -p "*" ubuntu
-  when: check_ubuntu_lock.rc == 0
-  
-- name: Add additional authorized key for user ubuntu
-  authorized_key:
-    user: ubuntu
-    state: present
-    key: "{{ lookup('file', item) }}"
-  with_items: "{{ ubuntu_ssh_keys }}"
-  when: ubuntu_ssh_keys | length > 0
-  tags: keys
+  command: "usermod -p '*' {{ maintainer_user_name }}"
+  when: check_user_lock.rc == 0

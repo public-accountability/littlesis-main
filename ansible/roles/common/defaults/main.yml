@@ -1,15 +1,13 @@
 ---
-# Swap
-swapfile_size: 2G
+swapfile_size: 4G
 swapfile_location: /swapfile
 
-ubuntu_ssh_keys: []
-
-mariadb_repo: 'deb [arch=amd64,arm64,ppc64el] http://nyc2.mirrors.digitalocean.com/mariadb/repo/10.2/ubuntu bionic main'
+maintainer_user_name: maintainer
 
 littlesis_common_packages:
-  - curl
   - build-essential
+  - sudo
+  - curl
   - git
   - software-properties-common
   - apt-transport-https

@@ -1,10 +1,4 @@
 ---
-- import_tasks: security.yml
-  tags: security
-
-- import_tasks: swap.yml
-  tags: swap
-
 - name: update apt packages
   apt:
     update_cache: yes
@@ -15,25 +9,18 @@
   apt: upgrade=yes
   tags: packages
 
-- name: Install Common Packages
+- name: Install common Packages
   apt:
     pkg: "{{ littlesis_common_packages }}"
   tags: packages
 
-- name: Add mariadb key
-  apt_key:
-    keyserver: 'hkp://keyserver.ubuntu.com:80'
-    id: F1656F24C74CD1D8
+- import_tasks: swap.yml
+  tags: swap
 
-- name: Add Mariadb repo
-  apt_repository:
-    repo: "{{ mariadb_repo }}"
-    state: present
-    update_cache: yes
+- import_tasks: user.yml
+  tags: user
 
-- name: Install Mariadb-client
-  apt:
-    update_cache: yes
-    name:
-      - mariadb-client
-      - libmariadb-dev
+- import_tasks: security.yml
+  tags: security
+
+
