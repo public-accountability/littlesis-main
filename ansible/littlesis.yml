@@ -1,0 +1,30 @@
+---
+- hosts: littlesis
+  # roles: ["common"]
+  handlers: include=handlers/main.yml
+
+  tasks:
+    debug:
+      msg: "test from app"
+
+  # roles:
+  #   - common
+
+- hosts: littlesis:app
+  roles: ["app"]
+  handlers: include=handlers/main.yml
+
+- hosts: littlesis:database  
+  roles: ["database"]
+  handlers: include=handlers/main.yml
+
+- hosts: littlesis:wordpress
+  roles: ["wordpress"]
+  handlers: include=handlers/main.yml
+
+- hosts: littlesis:replicant
+  roles: ["replicant"]
+  handlers: include=handlers/main.yml
+  
+
+  
