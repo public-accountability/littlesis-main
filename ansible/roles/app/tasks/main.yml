@@ -1,7 +1,4 @@
 ---
-- import_tasks: packages.yml
-  tags: packages
-
 - name: Create littlesis group
   group:
     name: littlesis
@@ -11,7 +8,10 @@
   user:
     name: littlesis
     group: littlesis
-    shell: /bin/bash  
+    shell: /bin/bash
+
+- import_tasks: packages.yml
+  tags: packages
 
 - name: Install Redis
   include_role:
@@ -24,3 +24,17 @@
     
 - import_tasks: manticore.yml
   tags: manticore
+
+- name: Install Ruby with rbenv
+  vars:
+    rbenv:
+      env: user
+      version: v1.1.2
+      default_ruby: "{{ ruby_version }}"
+      rubies:
+        - version: "{{ ruby_version }}"
+    rbenv_users:
+      - littlesis
+  import_role:
+    name: zzet.rbenv
+  tags: ruby
