@@ -1,6 +1,7 @@
 ---
 littlesis_app_packages:
   - imagemagick
+  - libmariadb-dev
 
   #  - libmagickwand-dev
   # - automake
