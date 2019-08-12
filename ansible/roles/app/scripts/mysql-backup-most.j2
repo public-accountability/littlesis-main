@@ -1,0 +1,15 @@
+#!/bin/bash
+set -e
+
+DATE=`date +'%m%d%y'`
+
+mysqldump -u {{ database_username }} -p{{ database_password}} -h {{ database_host }} \
+	  --single-transaction --quick \
+	  --ignore-table=littlesis.os_donations \
+	  --ignore-table=littlesis.versions  \
+	  --ignore-table=littlesis.ny_disclosures  \
+	  --ignore-table=littlesis.modification_field \
+	  --ignore-table=littlesis.modification \
+	  --databases littlesis | gzip > ~/littlesis-backup-most-$DATE.sql.gz
+
+/usr/local/bin/aws s3 cp ~/littlesis-backup-most-$DATE.sql.gz s3://{{ aws_s3_bucket }}/backups/littlesis-backup-most-$DATE.sql.gz

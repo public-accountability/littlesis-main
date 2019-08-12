@@ -70,18 +70,22 @@
     - rails-config
     - cron
 
-# - name: create ~/scripts dir
-#   file: path={{ scripts_directory }} state=directory owner=ubuntu group=ubuntu mode=0700
-#   tags: scripts
+- name: create ~/scripts dir
+  file:
+    path: "{{ scripts_directory }}"
+    state: directory
+    owner: maintainer
+    group: maintainer
+    mode: 0700
+  tags: scripts
 
-# - name: Copy helper scripts
-#   template:
-#     src: "{{ item }}"
-#     dest: "{{ scripts_directory }}/{{ item | basename | regex_replace('\\.j2','') }}"
-#     owner: maintainer
-#     group: maintainer
-#     mode: 0500
-#   with_fileglob:
-#     - ../templates/scripts/*.j2
-#   tags: scripts
-  
+- name: Copy helper scripts
+  template:
+    src: "{{ item }}"
+    dest: "{{ scripts_directory }}/{{ item | basename | regex_replace('\\.j2','') }}"
+    owner: maintainer
+    group: maintainer
+    mode: 0500
+  with_fileglob:
+    - ../templates/scripts/*.j2
+  tags: scripts
