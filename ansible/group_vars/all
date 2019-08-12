@@ -9,6 +9,7 @@ server_name: littlesis.org
 blog_server_name: news.littlesis.org
 
 # database
+database_unix_socket: /var/run/mysqld/mysqld.sock
 database_host: localhost
 database_littlesis_name: littlesis
 database_littlesis_password:

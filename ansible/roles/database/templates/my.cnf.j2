@@ -1,0 +1,127 @@
+# MariaDB database server configuration file.
+[client]
+port		= 3306
+socket		= {{ database_unix_socket }}
+default-character-set = utf8mb4
+
+# This was formally known as [safe_mysqld]. Both versions are currently parsed.
+[mysqld_safe]
+socket		= {{ database_unix_socket }}
+nice		= 0
+
+[mysqld]
+#
+# * Basic Settings
+#
+user		= mysql
+port		= 3306
+
+bind-address    = 127.0.0.1
+socket		= {{ database_unix_socket }}
+
+pid-file	= /var/run/mysqld/mysqld.pid
+basedir		= /usr
+datadir		= /var/lib/mysql
+tmpdir		= /tmp
+
+lc_messages_dir	= /usr/share/mysql
+lc_messages	= en_US
+skip-external-locking
+
+#
+# * Character sets
+# 
+collation-server = utf8mb4_unicode_ci
+character-set-server = utf8mb4
+
+#
+# * Fine Tuning
+#
+max_connections		= 100
+connect_timeout		= 5
+wait_timeout		= 600
+max_allowed_packet	= 16M
+thread_cache_size       = 128
+sort_buffer_size	= 4M
+bulk_insert_buffer_size	= 16M
+tmp_table_size		= 32M
+max_heap_table_size	= 32M
+
+# join_buffer_size
+
+aria_pagecache_buffer_size = {{ aria_pagecache_buffer_size }}
+innodb_buffer_pool_size = {{ innodb_buffer_pool_size }}
+innodb_buffer_pool_instances = {{ innodb_buffer_pool_instances }}
+innodb_read_io_threads  = {{ innodb_read_io_threads }}
+innodb_write_io_threads = {{ innodb_write_io_threads }}
+# Size in bytes of the buffer for writing InnoDB redo log files to disk.
+# Increasing this means larger transactions can run without needing to perform disk I/O before committing. 
+innodb_log_buffer_size = 64M
+
+# innodb_flush_method	= O_DIRECT
+
+#
+# * Query Cache Configuration
+#
+query_cache_limit		= 6M
+query_cache_size		= 256M
+# for more write intensive setups, set to DEMAND or OFF
+query_cache_type		= ON
+
+# * Logging and Replication
+## Both location gets rotated by the cronjob.
+# Be aware that this log type is a performance killer.
+# As of 5.1 you can enable the log at runtime!
+#general_log_file        = /var/log/mysql/mysql.log
+#general_log             = 1
+log_warnings		= 2
+
+# Enable the slow query log to see queries with especially long duration
+slow_query_log          = 1
+slow_query_log_file	= /var/log/mysql/mariadb-slow.log
+long_query_time         = 10
+#log_slow_rate_limit	= 1000
+log_slow_verbosity	= query_plan
+
+log-queries-not-using-indexes
+#log_slow_admin_statements
+#
+# The following can be used as easy to replay backup logs or for replication.
+# note: if you are setting up a replication slave, see README.Debian about
+#       other settings you may need to change.
+
+#server-id		= 1
+#report_host		= master1
+#auto_increment_increment = 2
+#auto_increment_offset	= 1
+log_bin			= /var/log/mysql/mariadb-bin
+log_bin_index		= /var/log/mysql/mariadb-bin.index
+# not fab for performance, but safer
+#sync_binlog		= 1
+expire_logs_days	= 10
+max_binlog_size         = 200M
+
+# slaves
+#relay_log		= /var/log/mysql/relay-bin
+#relay_log_index	= /var/log/mysql/relay-bin.index
+#relay_log_info_file	= /var/log/mysql/relay-bin.info
+#log_slave_updates
+#read_only
+
+#
+# If applications support it, this stricter sql_mode prevents some
+# mistakes like inserting invalid dates etc.
+#sql_mode		= NO_ENGINE_SUBSTITUTION,TRADITIONAL
+#
+# * InnoDB
+#
+default_storage_engine	= InnoDB
+
+# ssl-ca=/etc/mysql/cacert.pem
+# ssl-cert=/etc/mysql/server-cert.pem
+# ssl-key=/etc/mysql/server-key.pem
+
+[mysqldump]
+quick
+quote-names
+max_allowed_packet	= 16M

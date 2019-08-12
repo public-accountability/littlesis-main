@@ -4,3 +4,6 @@
 
 - name: restart nginx
   service: name=nginx state=restarted
+
+- name: restart mariadb
+  service: name=mysql state=restarted

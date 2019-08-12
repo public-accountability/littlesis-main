@@ -1,0 +1,35 @@
+---
+- name: Install python3-pymysql (required for ansible's mysql tasks)
+  apt:
+    name: python3-pymysql
+    state: present
+
+- name: Add MariaDB apt key (F1656F24C74CD1D8)
+  apt_key:
+    data: "{{ lookup('file', 'F1656F24C74CD1D8.asc') }}"
+    state: present
+
+- name: Add Mariadb repo
+  apt_repository:
+    repo: 'deb http://nyc2.mirrors.digitalocean.com/mariadb/repo/10.4/debian buster main'
+    state: present
+    update_cache: yes
+
+- name: Install mariadb
+  apt:
+    update_cache: yes
+    name:
+      - mariadb-server
+      - mariadb-client
+      - libmariadb3
+      - mariadb-backup
+      - mariadb-common
+
+- name: Configure mariadb
+  template:
+    src: my.cnf.j2
+    dest: /etc/mysql/my.cnf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart mariadb

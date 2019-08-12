@@ -1,0 +1,38 @@
+---
+- name: Remove all anonymous mysql user accounts
+  mysql_user:
+    name: ''
+    host_all: yes
+    login_unix_socket: "{{ database_unix_socket }}"
+    state: absent
+  tags: mysql-config
+
+- name: Create littlesis database
+  mysql_db:
+    name: "{{ database_littlesis_name }}"
+    state: present
+    login_unix_socket: "{{ database_unix_socket }}"
+  tags: mysql-config
+
+- name: Create wordpress database
+  mysql_db:
+    name: "{{ database_wordpress_name }}"
+    state: present
+    login_unix_socket: "{{ database_unix_socket }}"
+  tags: mysql-config
+
+- name: Create littlesis database user
+  mysql_user:
+    name: "{{ database_littlesis_name }}"
+    password: "{{ database_littlesis_password }}"
+    login_unix_socket: "{{ database_unix_socket }}"
+    priv: "{{ database_littlesis_name }}.*:ALL"
+    state: present
+
+- name: Create wordpress database user
+  mysql_user:
+    name: "{{ database_wordpress_name }}"
+    password: "{{ database_wordpress_password }}"
+    login_unix_socket: "{{ database_unix_socket }}"
+    priv: "{{ database_wordpress_name }}.*:ALL"
+    state: present

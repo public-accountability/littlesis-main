@@ -1,26 +1,11 @@
 ---
-- name: Add MariaDB apt key (F1656F24C74CD1D8)
+- import_tasks: install.yml
   become: true
-  apt_key:
-    data: "{{ lookup('file', 'F1656F24C74CD1D8.asc') }}"
-    state: present
+  tags: mysql-install
 
-- name: Add Mariadb repo
+- import_tasks: setup.yml
   become: true
-  apt_repository:
-    repo: 'deb http://nyc2.mirrors.digitalocean.com/mariadb/repo/10.4/debian buster main'
-    state: present
-    update_cache: yes
-
-- name: Install mariadb
-  become: true
-  apt:
-    update_cache: yes
-    name:
-      - mariadb-server
-      - mariadb-client
-      - libmariadb3
-      - mariadb-backup
-      - mariadb-common
-
-# - name: configure mariadb
+  become_user: mysql
+  vars:
+    ansible_ssh_pipelining: true
+  tags: mysql-setup
