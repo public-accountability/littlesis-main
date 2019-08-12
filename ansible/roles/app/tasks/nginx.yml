@@ -1,0 +1,12 @@
+---
+- name: Install nginx
+  apt:
+    name: nginx
+
+- name: Add Passenger key
+  apt_key:
+    data: "{{ lookup('file', '561F9B9CAC40B2F7.asc') }}"
+    state: present
+    
+
+
