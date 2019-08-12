@@ -1,0 +1,26 @@
+# This loads a copy of LittleSis's production database
+# Only run this on new installs of LittleSis
+- hosts: database
+  vars_files: ["../vars.yml"]
+  vars:
+    ansible_ssh_pipelining: true
+  tasks:
+    - name: Copy database dump file
+      become: true
+      copy:
+        src: "{{ littlesis_sql_dump_file }}"
+        owner: mysql
+        dest: /tmp
+
+    - name: Restore database
+      become: yes
+      become_user: mysql
+      mysql_db:
+        login_user: "{{ database_littlesis_name }}"
+        login_password: "{{ database_littlesis_password }}"
+        name: "{{ database_littlesis_name }}"
+        state: import
+        target: "/tmp/{{ littlesis_sql_dump_file | basename }}"
+
+
+        
