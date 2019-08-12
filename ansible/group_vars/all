@@ -22,8 +22,10 @@ littlesis_sql_dump_file:
 wordpress_sql_dump_file:
 
 # Software Versions
-ruby_version: 'ruby-2.6.3'
+ruby_version: '2.6.3'
 nodejs_version: '10.x'
+
+littlesis_rails_version: 'master'
 
 # redis config
 redis_maxmemory: 1.5gb

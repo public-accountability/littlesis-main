@@ -25,16 +25,8 @@
 - import_tasks: manticore.yml
   tags: manticore
 
-- name: Install Ruby with rbenv
-  vars:
-    rbenv:
-      env: user
-      version: v1.1.2
-      default_ruby: "{{ ruby_version }}"
-      rubies:
-        - version: "{{ ruby_version }}"
-    rbenv_users:
-      - littlesis
-  import_role:
-    name: zzet.rbenv
+- import_tasks: ruby.yml
   tags: ruby
+
+- import_tasks: deploy.yml
+  tags: deploy
