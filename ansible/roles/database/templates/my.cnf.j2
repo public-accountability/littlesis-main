@@ -16,7 +16,7 @@ nice		= 0
 user		= mysql
 port		= 3306
 
-bind-address    = 127.0.0.1
+bind-address    = {{ database_bind_address }}
 socket		= {{ database_unix_socket }}
 
 pid-file	= /var/run/mysqld/mysqld.pid

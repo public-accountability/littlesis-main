@@ -14,6 +14,22 @@
     pkg: "{{ littlesis_common_packages }}"
   tags: packages
 
+- name: Add MariaDB apt key (F1656F24C74CD1D8)
+  apt_key:
+    data: "{{ lookup('file', 'F1656F24C74CD1D8.asc') }}"
+    state: present
+
+- name: Add Mariadb repo
+  apt_repository:
+    repo: 'deb http://nyc2.mirrors.digitalocean.com/mariadb/repo/10.4/debian buster main'
+    state: present
+    update_cache: yes
+
+- name: Install mariadb client
+  apt:
+    update_cache: yes
+    name: mariadb-client
+
 - import_tasks: swap.yml
   tags: swap
 

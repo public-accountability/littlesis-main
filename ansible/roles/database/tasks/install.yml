@@ -4,23 +4,13 @@
     name: python3-pymysql
     state: present
 
-- name: Add MariaDB apt key (F1656F24C74CD1D8)
-  apt_key:
-    data: "{{ lookup('file', 'F1656F24C74CD1D8.asc') }}"
-    state: present
-
-- name: Add Mariadb repo
-  apt_repository:
-    repo: 'deb http://nyc2.mirrors.digitalocean.com/mariadb/repo/10.4/debian buster main'
-    state: present
-    update_cache: yes
-
+# The "common" 
 - name: Install mariadb
   apt:
     update_cache: yes
     name:
-      - mariadb-server
       - mariadb-client
+      - mariadb-server
       - libmariadb3
       - mariadb-backup
       - mariadb-common
