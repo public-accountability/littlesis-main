@@ -1,0 +1,32 @@
+---
+- name: Install required packages
+  apt:
+    cache_valid_time: 3600
+    update_cache: yes
+    name: "{{ littlesis_app_packages }}"
+
+# - name: Install geckodriver
+#   shell: "curl -sSL {{ geckodriver_url }} | tar -C /usr/local/bin/ -xzf - geckodriver"
+#   args:
+#     creates: /usr/local/bin/geckodriver
+
+- name: Install NodeJS
+  include_role:
+    name: geerlingguy.nodejs
+
+- name: Add Yarn apt key
+  apt_key:
+    data: "{{ lookup('file', 'yarn_pubkey.asc') }}"
+    state: present
+
+- name: Add Yarn apt repository
+  apt_repository:
+    repo: deb https://dl.yarnpkg.com/debian/ stable main
+    state: present
+  tags: yarn
+
+- name: Install Yarn
+  apt:
+    update_cache: yes
+    name: yarn
+  tags: yarn
