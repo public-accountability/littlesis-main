@@ -3,18 +3,19 @@
   file:
     path: /var/www/static
     state: directory
-    owner: root
-    group: www-data
-    mode: 0644
+    owner: maintainer
+    group: maintainer
+    mode: 0755
     recurse: yes
 
 - name: Copy static files
   synchronize:
+    rsync_path: /usr/bin/rsync
     src: ../static/
     dest: /var/www/static
-    use_ssh_args: yes
     delete: yes
     recursive: yes
+    use_ssh_args: yes
 
 - name: Set permissions on static files
   file:
