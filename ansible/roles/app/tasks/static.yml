@@ -1,0 +1,37 @@
+---
+- name: create /var/www/static
+  file:
+    path: /var/www/static
+    state: directory
+    owner: root
+    group: www-data
+    mode: 0644
+    recurse: yes
+
+- name: Copy static files
+  synchronize:
+    src: ../static/
+    dest: /var/www/static
+    use_ssh_args: yes
+    delete: yes
+    recursive: yes
+
+- name: Set permissions on static files
+  file:
+    path: /var/www/static
+    state: directory
+    owner: root
+    group: www-data
+    mode: 0644
+    recurse: yes
+
+- name: Set permissions on static file directory
+  file:
+    path: /var/www/static
+    state: directory
+    owner: root
+    group: www-data
+    mode: 0755
+
+- name: Set directory permissions on subfolders
+  command: find /var/www/static -type d -exec chmod 0755 {} \;

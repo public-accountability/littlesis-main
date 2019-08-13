@@ -1,0 +1,105 @@
+---
+- name: Install nginx
+  apt:
+    name: nginx
+
+- name: Create /etc/nginx/certs folder
+  file:
+    path: /etc/nginx/certs
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Copy TLS Cert
+  copy:
+    content: "{{ tls_certificate }}"
+    dest: /etc/nginx/certs/certificate.pem
+    owner: root
+    group: root
+    mode: 0600
+  no_log: true
+
+- name: Copy TLS Key
+  copy:
+    content: "{{ tls_key }}"
+    dest: /etc/nginx/certs/key.pem
+    owner: root
+    group: root
+    mode: 0600
+  no_log: true
+
+- name: Copy nginx configuration
+  template:
+    src: "{{ nginx_conf_template | default('nginx.conf.j2') }}"
+    dest: /etc/nginx/nginx.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart nginx
+  
+- name: Copy realip configuration
+  copy:
+    src: realip.conf
+    dest: /etc/nginx/conf.d/realip.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart nginx
+
+- name: Copy nginx ssl configuration
+  template:
+    src: ssl.conf.j2
+    dest: /etc/nginx/ssl.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart nginx
+
+- name: Copy littlesis.org nginx configuration
+  template:
+    src: littlesis.org.j2
+    dest: /etc/nginx/sites-enabled/littlesis.org
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart nginx
+
+- name: Copy api.littlesis.org nginx configuration
+  copy:
+    src: api.littlesis.org
+    dest: /etc/nginx/sites-enabled/api.littlesis.org
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart nginx
+  
+- name: Copy Puma systemd service file
+  template:
+    src: littlesis.service.j2
+    dest: /etc/systemd/system/littlesis.service
+    owner: root
+    group: root
+    mode: 0644
+  tags: systemd
+
+- name: Copy Puma systemd socket file
+  template:
+    src: littlesis.socket.j2
+    dest: /etc/systemd/system/littlesis.socket
+    owner: root
+    group: root
+    mode: 0644
+  tags: systemd
+
+- name: Reread systemd configs
+  systemd:
+    daemon_reload: yes
+  tags: systemd
+
+- name: Start LittleSis service
+  service:
+    name: littlesis
+    enabled: yes
+    state: started
+  tags: systemd
