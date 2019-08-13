@@ -16,11 +16,7 @@
       become: yes
       become_user: mysql
       mysql_db:
-        login_user: "{{ database_littlesis_name }}"
-        login_password: "{{ database_littlesis_password }}"
+        login_unix_socket: "{{ database_unix_socket }}"
         name: "{{ database_littlesis_name }}"
         state: import
         target: "/tmp/{{ littlesis_sql_dump_file | basename }}"
-
-
-        
