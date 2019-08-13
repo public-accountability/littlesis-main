@@ -1,0 +1,9 @@
+#!/bin/sh
+set -e
+
+if [ -z "$1" ]; then
+    echo "Missing argument: rake task"
+    exit 1
+fi
+
+{{ scripts_directory }}/rails-command bundle exec rake "$@"
