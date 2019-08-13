@@ -1,4 +1,4 @@
-RAILS_DOCKER_VERSION := 0.8.12
+RAILS_DOCKER_VERSION := 0.9.0
 
 help:
 	@echo "Welcome to the LittleSis Dev Environment"
@@ -32,7 +32,7 @@ build-rails-docker:
 ansible-galaxy-roles:
 	ansible-galaxy install rvm.ruby DavidWittman.redis geerlingguy.nodejs dev-sec.ssh-hardening dev-sec.os-hardening geerlingguy.docker geerlingguy.composer
 
-realip_conf := ./ansible/roles/littlesis/files/realip.conf
+realip_conf := ./ansible/roles/app/files/realip.conf
 
 cloudflare-ips:
 	curl -sSL "https://www.cloudflare.com/ips-v4" > /tmp/cloudflare-ips.txt

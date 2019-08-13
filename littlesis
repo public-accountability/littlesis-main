@@ -71,7 +71,7 @@ littlesis travis-log
 EOF
 }
 
-web_app_exec="docker-compose exec -u app web /bin/bash -l -c"
+web_app_exec="docker-compose exec app /bin/bash -l -c"
 
 short_help() {
     echo "Usage: ./littlesis [COMMAND]"
@@ -82,7 +82,7 @@ short_help() {
 nginx_logs() {
     if [[ "$1" == access || "$1" == error ]]; then
 	local log_file="/var/log/nginx/${1}.log"
-	docker-compose exec web /bin/bash -c "tail -f ${log_file}"
+	docker-compose exec nginx /bin/bash -c "tail -f ${log_file}"
     else
 	echo 'There are only two nginx logs available: access and error'
 	exit 1
@@ -169,15 +169,15 @@ case $1 in
 	mysql_shell
 	;;
     login)
-	docker-compose exec -u app web /bin/bash --login
+	docker-compose exec app /bin/bash --login
 	;;
     login-root)
-	docker-compose exec web /bin/bash --login
+	docker-compose exec app /bin/bash --login
 	;;
     test)
 	shift
 	# $web_app_exec "RAILS_ENV=test CODACY_RUN_LOCAL=true COVERAGE=true bundle exec rspec ${@}"
-	$web_app_exec "RAILS_ENV=test CODACY_RUN_LOCAL=true COVERAGE=true bundle exec rspec ${@}"
+	$web_app_exec "RAILS_ENV=test bundle exec rspec ${@}"
 	;;
     rspec)
 	shift

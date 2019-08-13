@@ -1,51 +1,38 @@
-FROM phusion/passenger-customizable:1.0.6
+FROM ruby:2.6.3-buster
 LABEL maintainer="ziggy@littlesis.org"
 
-# Use baseimage-docker's init system.
-CMD ["/sbin/my_init"]
+ENV RAILS_ENV=development
+ENV RAILS_SERVE_STATIC_FILES=true
 
-RUN /pd_build/utilities.sh
-RUN rm -f /etc/service/nginx/down  # enable nginx
-
-RUN apt-get update && \
-	apt-get upgrade -y -o Dpkg::Options::="--force-confold" && \
+RUN apt-get update && apt-get upgrade -y && \
 	apt-get -y install \
 	git \
 	coreutils \
-	build-essential \
 	software-properties-common \
-	tzdata \
+	build-essential \
 	curl \
 	lsof \
 	grep \
 	gnupg \
 	iproute2 \
-	libcurl4-gnutls-dev \
-	imagemagick libmagickwand-dev \
-	automake \
-	libffi-dev \
-	firefox \
-	xvfb \
+	imagemagick \
+	libmagickwand-dev \
+	sqlite3 \
+	libsqlite3-dev \
 	redis-tools \
 	zip \
 	unzip
 
-# set time
-ENV TZ America/New_York
-RUN echo $TZ > /etc/timezone && \
-    rm /etc/localtime && \
-    ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
-    dpkg-reconfigure -f noninteractive tzdata
-
-# Mariadb 10.3 client
+# MariaDB client
 RUN apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xF1656F24C74CD1D8
-RUN add-apt-repository 'deb [arch=amd64,i386,ppc64el] http://nyc2.mirrors.digitalocean.com/mariadb/repo/10.3/ubuntu bionic main'
+RUN add-apt-repository 'deb [arch=amd64,i386,ppc64el] http://nyc2.mirrors.digitalocean.com/mariadb/repo/10.4/debian buster main'
 RUN apt-get update && apt-get -y install mariadb-client libmariadb-dev
 
 # Manticore
-RUN curl -sSL https://github.com/manticoresoftware/manticoresearch/releases/download/2.7.5/manticore_2.7.5-181204-4a31c54-release-stemmer.bionic_amd64-bin.deb > /tmp/manticore.deb
-RUN echo '4df0d04e729f380d2bd68c6b485b17aa81fc4fc9afc935d4d822724cd17d6953 /tmp/manticore.deb' | sha256sum -c
+RUN curl -sSL https://github.com/manticoresoftware/manticoresearch/releases/download/3.1.0/manticore_3.1.0-190801-0a40d582-release.buster_amd64-bin.deb > /tmp/manticore.deb
+RUN echo '1039deeb79eb2069165be586d72373e4735fbb7fc1cdc65696bf596c7e7ed8c7 /tmp/manticore.deb' | sha256sum -c
 RUN dpkg -i /tmp/manticore.deb
+RUN rm /tmp/manticore.deb
 
 # NODE
 RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
@@ -56,36 +43,19 @@ RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
 RUN add-apt-repository "deb https://dl.yarnpkg.com/debian/ stable main"
 RUN apt-get update && apt-get -y install yarn
 
-# Geckodriver
-RUN curl -sSL https://github.com/mozilla/geckodriver/releases/download/v0.20.1/geckodriver-v0.20.1-linux64.tar.gz | tar -C /usr/local/bin/ -xzf - geckodriver
-
-## APP
-RUN mkdir -p /home/app && mkdir -p /home/app/rails
-
-COPY ./rails/Gemfile /home/app/rails/Gemfile
-COPY ./rails/Gemfile.lock /home/app/rails/Gemfile.lock
-COPY ./rails/.ruby-version /home/app/rails/.ruby-version
-
-RUN chown -R app:app /home/app
-
-# Ensure correct version of ruby is installed
-RUN bash -lc 'rvm install $(cat /home/app/rails/.ruby-version)'
-# Remove other ruby versions
-RUN bash -lc "rvm list | egrep -o 'ruby-[0-9\.]{5}' | grep -v $(cat /home/app/rails/.ruby-version) | xargs -I ruby_version rvm remove ruby_version"
-# Set default ruby version
-RUN bash -lc 'rvm --default use $(cat /home/app/rails/.ruby-version)'
-# Clean up rvm
-run bash -lc 'rvm cleanup all'
-
-# Install Gems
-RUN su - app -l -c "cd /home/app/rails && rvm use && gem install --no-document bundler"
-RUN su - app -l -c "cd /home/app/rails && rvm use && bundle install"
-
-# copy app bash profile
-COPY --chown=app:app ./bash_profile /home/app/.bash_profile
-
-# some weird usermod thing
-RUN usermod -u 1000 app
-
-# Clean up APT when done.
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+RUN gem install bundler
+
+RUN mkdir -p /littlesis
+WORKDIR /littlesis
+
+COPY ./rails/Gemfile /littlesis/Gemfile
+COPY ./rails/Gemfile.lock /littlesis/Gemfile.lock
+COPY ./rails/.ruby-version /littlesis/.ruby-version
+
+RUN bundle install --jobs=2 --retry=5
+
+EXPOSE 8080
+
+CMD ["bundle", "exec", "puma"]
