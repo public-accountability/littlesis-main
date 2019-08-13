@@ -54,7 +54,7 @@ defaults: &defaults
   donation_banner_display: false # use 'everywhere' to display on all pages and 'homepage' for just the homepage
   donation_banner_html: |
     <b>LittleSis</b> is turning <b>10</b> years old! <a href="https://littlesis.org/donate/">Become a $10/month sustaining donor</a> and we’ll send you an anniversary t-shirt!
-  oligrapher_version: 0.4.1
+  oligrapher_version: 0.4.3
   image_host: "https://littlesis.org"
   image_root: public/images
 
