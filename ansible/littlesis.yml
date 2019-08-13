@@ -1,12 +1,15 @@
-# ---
-# - hosts: app
-#   vars_files:
-#     - "vars.yml"
-#   handlers:
-#     - include: handlers/main.yml
-#   roles:
-#     - common
-#   tags: app
+---
+- hosts: app
+  become: true
+  vars_files:
+    - "vars.yml"
+  handlers:
+    - include: handlers/main.yml
+  roles:
+    - common
+    - app
+    - aws
+  tags: app
     
 - hosts: database
   vars_files:
@@ -14,12 +17,11 @@
   handlers:
     - include: handlers/main.yml
   roles:
-#    - common
+    - common
     - database
   tags: database
 
-
-# - hosts: littlesis:wordpress
+# - Hosts: littlesis:wordpress
 #   roles: ["wordpress"]
 #   handlers: include=handlers/main.yml
 

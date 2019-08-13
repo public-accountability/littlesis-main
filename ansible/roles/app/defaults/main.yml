@@ -2,6 +2,8 @@
 littlesis_app_packages:
   - imagemagick
   - libmariadb-dev
+  - sqlite3
+  - libsqlite3-dev
 
 # geckodriver_url: "https://github.com/mozilla/geckodriver/releases/download/v0.19.1/geckodriver-v0.19.1-linux64.tar.gz"  
 
@@ -11,3 +13,6 @@ manticore_checksum: "sha256:1039deeb79eb2069165be586d72373e4735fbb7fc1cdc65696bf
 manticore_reinstall: false
 
 scripts_directory: /home/maintainer/scripts
+
+# nginx
+nginx_ssl_ciphers: "'ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256'"

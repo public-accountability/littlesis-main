@@ -31,9 +31,9 @@
 - import_tasks: deploy.yml
   tags: deploy
 
-- import_tasks: nginx.yml
-  tags:
-    - nginx
-    - passenger    
+- import_tasks: server.yml
+  become: true
+  tags: server
 
-  
+- import_tasks: static.yml
+  tags: static
