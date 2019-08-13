@@ -4,11 +4,8 @@ export ANSIBLE_INVENTORY = ./inventory.yml
 
 VARS_FILE = ./vars.yml
 
-default:
-	@echo 'LittleSis ansible shortcuts'
-
 inventory:
-	@ansible-inventory --graph --vars
+	@ansible-inventory --graph
 
 inventory-edit:
 	@ansible-vault edit $(ANSIBLE_INVENTORY)
@@ -16,9 +13,17 @@ inventory-edit:
 vars-edit:
 	@ansible-vault edit $(VARS_FILE)
 
-app:
-	@ansible-playbook littlesis.yml --verbose
+run:
+	@ansible-playbook littlesis.yml
 
+app:
+	@ansible-playbook littlesis.yml --tags=app
+
+database:
+	@ansible-playbook littlesis.yml --tags=database
+
+ping:
+	@ansible all -m ping
 
 .PHONY: inventory inventory-edit vars-edit
-.PHONY: app
+.PHONY: run app database ping
