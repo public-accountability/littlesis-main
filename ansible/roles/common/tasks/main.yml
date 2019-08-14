@@ -1,42 +1,50 @@
 ---
 - name: update apt packages
+  become: yes
   apt:
     update_cache: yes
     cache_valid_time: 3600
   tags: packages
 
 - name: upgrade apt packages
+  become: yes
   apt: upgrade=yes
   tags: packages
 
 - name: Install common Packages
+  become: yes
   apt:
     pkg: "{{ littlesis_common_packages }}"
   tags: packages
 
 - name: Add MariaDB apt key (F1656F24C74CD1D8)
+  become: yes
   apt_key:
     data: "{{ lookup('file', 'F1656F24C74CD1D8.asc') }}"
     state: present
 
 - name: Add Mariadb repo
+  become: yes
   apt_repository:
     repo: 'deb http://nyc2.mirrors.digitalocean.com/mariadb/repo/10.4/debian buster main'
     state: present
     update_cache: yes
 
 - name: Install mariadb client
+  become: yes
   apt:
     update_cache: yes
     name: mariadb-client
 
 - import_tasks: swap.yml
+  become: yes
   tags: swap
 
 - import_tasks: user.yml
+  become: yes
   tags: user
 
 - import_tasks: security.yml
+  become: yes
   tags: security
-
 
