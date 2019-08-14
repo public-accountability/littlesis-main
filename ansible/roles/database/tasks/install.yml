@@ -4,7 +4,6 @@
     name: python3-pymysql
     state: present
 
-# The "common" 
 - name: Install mariadb
   apt:
     update_cache: yes
@@ -22,4 +21,5 @@
     owner: root
     group: root
     mode: 0644
+  tags: my-cnf
   notify: restart mariadb

@@ -16,7 +16,12 @@ nice		= 0
 user		= mysql
 port		= 3306
 
+{% if role_name == 'database' %}
 bind-address    = {{ database_bind_address }}
+{% else %}
+bind-address    = 127.0.0.1
+{% endif %}
+
 socket		= {{ database_unix_socket }}
 
 pid-file	= /var/run/mysqld/mysqld.pid
@@ -37,7 +42,7 @@ character-set-server = utf8mb4
 #
 # * Fine Tuning
 #
-max_connections		= 100
+max_connections		= 50
 connect_timeout		= 5
 wait_timeout		= 600
 max_allowed_packet	= 16M
@@ -52,10 +57,9 @@ max_heap_table_size	= 32M
 aria_pagecache_buffer_size = {{ aria_pagecache_buffer_size }}
 innodb_buffer_pool_size = {{ innodb_buffer_pool_size }}
 innodb_buffer_pool_instances = {{ innodb_buffer_pool_instances }}
-innodb_read_io_threads  = {{ innodb_read_io_threads }}
-innodb_write_io_threads = {{ innodb_write_io_threads }}
-# Size in bytes of the buffer for writing InnoDB redo log files to disk.
-# Increasing this means larger transactions can run without needing to perform disk I/O before committing. 
+innodb_read_io_threads = 8
+innodb_write_io_threads = 8
+innodb_thread_concurrency = 0
 innodb_log_buffer_size = 64M
 
 # innodb_flush_method	= O_DIRECT
@@ -85,36 +89,32 @@ log_slow_verbosity	= query_plan
 
 log-queries-not-using-indexes
 #log_slow_admin_statements
-#
-# The following can be used as easy to replay backup logs or for replication.
-# note: if you are setting up a replication slave, see README.Debian about
-#       other settings you may need to change.
 
-#server-id		= 1
-#report_host		= master1
-#auto_increment_increment = 2
-#auto_increment_offset	= 1
+expire_logs_days	= 7
+max_binlog_size         = 500M
+
+{% if role_name == 'database' %}
+server-id		= 1
+log-basename            = main1
 log_bin			= /var/log/mysql/mariadb-bin
 log_bin_index		= /var/log/mysql/mariadb-bin.index
-# not fab for performance, but safer
-#sync_binlog		= 1
-expire_logs_days	= 10
-max_binlog_size         = 200M
+{% endif %}
 
-# slaves
-#relay_log		= /var/log/mysql/relay-bin
-#relay_log_index	= /var/log/mysql/relay-bin.index
-#relay_log_info_file	= /var/log/mysql/relay-bin.info
+{% if role_name == 'replicant' %}
+server-id		= 2
+log-basename            = replicant1
+relay_log		= /var/log/mysql/relay-bin
+relay_log_index	        = /var/log/mysql/relay-bin.index
+relay_log_info_file	= /var/log/mysql/relay-bin.info
 #log_slave_updates
 #read_only
+{% endif %}
 
-#
-# If applications support it, this stricter sql_mode prevents some
-# mistakes like inserting invalid dates etc.
-#sql_mode		= NO_ENGINE_SUBSTITUTION,TRADITIONAL
-#
-# * InnoDB
-#
+#auto_increment_increment = 2
+#auto_increment_offset	= 1
+# not fab for performance, but safer
+#sync_binlog		= 1
+
 default_storage_engine	= InnoDB
 
 # ssl-ca=/etc/mysql/cacert.pem
