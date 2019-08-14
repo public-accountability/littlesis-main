@@ -15,7 +15,11 @@ database_littlesis_name: littlesis
 database_littlesis_password:
 database_wordpress_name: wordpress
 database_wordpress_password:
+database_replicant_name: replicant
+database_replicant_password:
 database_pool: 10
+
+
 
 # files to restore production database
 littlesis_sql_dump_file:

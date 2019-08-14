@@ -1,4 +1,12 @@
 ---
+- name: Validate variable database_role
+  fail:
+    msg: "database role is not set or incorrect"
+  when: database_role is not defined or database_role not in ['main', 'replicant']
+  tags:
+    - mysql-setup
+    - mysql-install
+
 - import_tasks: install.yml
   become: true
   tags: mysql-install

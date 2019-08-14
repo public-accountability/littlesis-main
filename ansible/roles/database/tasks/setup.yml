@@ -12,6 +12,7 @@
     name: "{{ database_littlesis_name }}"
     state: present
     login_unix_socket: "{{ database_unix_socket }}"
+  when: database_role == 'main'
   tags: mysql-config
 
 - name: Create wordpress database
@@ -19,6 +20,7 @@
     name: "{{ database_wordpress_name }}"
     state: present
     login_unix_socket: "{{ database_unix_socket }}"
+  when: database_role == 'main'
   tags: mysql-config
 
 - name: Create littlesis database user
@@ -29,11 +31,24 @@
     login_unix_socket: "{{ database_unix_socket }}"
     priv: "{{ database_littlesis_name }}.*:ALL"
     state: present
+  when: database_role == 'main'
 
-- name: Create wordpress database user
+# - name: Create wordpress database user
+#   mysql_user:
+#     host: "{{ internal_ip_wordpress }}"
+#     name: "{{ database_wordpress_name }}"
+#     password: "{{ database_wordpress_password }}"
+#     login_unix_socket: "{{ database_unix_socket }}"
+#     priv: "{{ database_wordpress_name }}.*:ALL"
+#     state: present
+#   when: database_role == 'main'
+
+- name: Create replicant database user
   mysql_user:
-    name: "{{ database_wordpress_name }}"
-    password: "{{ database_wordpress_password }}"
+    host: "{{ internal_ip_replicant }}"
+    name: "{{ database_replicant_name }}"
+    password: "{{ database_replicant_password }}"
     login_unix_socket: "{{ database_unix_socket }}"
-    priv: "{{ database_wordpress_name }}.*:ALL"
+    priv: "*.*:REPLICATION SLAVE"
     state: present
+  when: database_role == 'main'

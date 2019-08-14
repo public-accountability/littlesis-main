@@ -1,5 +1,5 @@
 database_unix_socket: /var/run/mysqld/mysqld.sock
 database_bind_address: 127.0.0.1
 aria_pagecache_buffer_size: "512M"
-innodb_buffer_pool_size: "2G"
-innodb_buffer_pool_instances: "4"
+innodb_buffer_pool_size: "4G"
+innodb_buffer_pool_instances: "3"

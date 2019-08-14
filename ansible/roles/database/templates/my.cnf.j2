@@ -16,7 +16,7 @@ nice		= 0
 user		= mysql
 port		= 3306
 
-{% if role_name == 'database' %}
+{% if database_role == 'main' %}
 bind-address    = {{ database_bind_address }}
 {% else %}
 bind-address    = 127.0.0.1
@@ -93,14 +93,14 @@ log-queries-not-using-indexes
 expire_logs_days	= 7
 max_binlog_size         = 500M
 
-{% if role_name == 'database' %}
+{% if database_role == 'main' %}
 server-id		= 1
 log-basename            = main1
 log_bin			= /var/log/mysql/mariadb-bin
 log_bin_index		= /var/log/mysql/mariadb-bin.index
 {% endif %}
 
-{% if role_name == 'replicant' %}
+{% if database_role == 'replicant' %}
 server-id		= 2
 log-basename            = replicant1
 relay_log		= /var/log/mysql/relay-bin
