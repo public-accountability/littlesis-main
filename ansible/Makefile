@@ -22,6 +22,9 @@ app:
 database:
 	@ansible-playbook littlesis.yml --tags=database
 
+replicant:
+	@ansible-playbook littlesis.yml --tags=replicant
+
 ping:
 	@ansible all -m ping
 
