@@ -8,11 +8,11 @@ LittleSis runs on 4 servers.
 
 *app*  Runs the LittleSis rails app. 
 
-*database* is a mariadb database server. 
+*database* is a mariadb database server. Both the rails app and the wordpress use this database.
 
 *replicant* is a replication of the database, primarily used as a backup.
 
-*wordpress* run our two wordpress sites.
+*wordpress* runs our two wordpress sites.
 
 ## Setting up your own computer
 
