@@ -1,99 +1,91 @@
 ---
-- name: Add php ppa:odrej/php
-  apt_repository:
-    repo: ppa:ondrej/php
-    state: present
-    update_cache: yes
-  tags: php
-
-- name: Install required packages
-  apt:
-    update_cache: yes
-    name: "{{ littlesis_php_packages }}"
-  tags: php
-
-- name: Install python3-pymysql (required for ansible's mysql tasks)
-  apt:
-    name: python3-pymysql
-    state: present
-
 - name: Create wordpress group
+  become: yes
   group:
     name: wordpress
     state: present
 
 - name: Create wordpress user
+  become: yes
   user:
     name: wordpress
     group: wordpress
     shell: /bin/bash
 
-- name: Create wordpress database
-  mysql_db:
-    name: "{{ wordpress_db_name }}"
-    state: present
-    login_user: "{{ database_username }}"
-    login_host: "{{ database_host }}"
-    login_password: "{{ database_password }}"
-  tags: database
+- name: Install php packages
+  become: yes
+  apt:
+    update_cache: yes
+    name: "{{ littlesis_php_packages }}"
 
-- name: Copy database dump file
-  copy:
-    src: "{{ wordpress_database_dump_file }}"
-    dest: /tmp
-  when: wordpress_restore_from_dump and wordpress_database_dump_file is defined
-  tags: database
+- name: Remove stock www php pool configuration
+  become: yes
+  file:
+    state: absent
+    path: /etc/php/7.3/fpm/pool.d/www.conf
+  notify: restart php-fpm
+  tags: fpm
 
-- name: Restore database
-  mysql_db:
-    name: "{{ wordpress_db_name }}"
-    state: import
-    login_user: "{{ database_username }}"
-    login_host: "{{ database_host }}"
-    login_password: "{{ database_password }}"
-    target: /tmp/{{ wordpress_database_dump_file | basename }}
-  when: wordpress_restore_from_dump and wordpress_database_dump_file is defined
-  tags: database
+- name: Update weird path thingy in php.ini
+  become: yes
+  lineinfile:
+    regexp: 'cgi.fix_pathinfo='
+    line: 'cgi.fix_pathinfo=0'
+    path: /etc/php/7.3/fpm/php.ini
+  notify: restart php-fpm
+  tags: fpm
 
-- name: create wordpress database user
-  mysql_user:
-    name: "{{ wordpress_db_user }}"
-    password: "{{ wordpress_db_password }}"
-    priv: "{{ wordpress_db_name }}.*:ALL"
-    host: '%'
-    state: present
-    login_user: "{{ database_username }}"
-    login_host: "{{ database_host }}"
-    login_password: "{{ database_password }}"
-  tags: database
+- name: Copy wordpress fpm pool configuration
+  become: yes
+  template:
+    src: pool.conf.j2
+    dest: /etc/php/7.3/fpm/pool.d/wordpress.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart php-fpm
+  tags: fpm
 
 - name: Download WP-CLI
+  become: yes
   get_url:
     url: https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
     dest: /usr/local/bin/wp
     owner: root
     group: root
     mode: 0755
-  tags:
-    - wp-cli
-    - install
 
 - name: Install Composer
-  become: yes
-  become_user: root
   script: ./scripts/composer_setup.sh
-  tags:
-    - composer
-    - install
+  tags: composer
 
 - name: create /var/www/wordpress
+  become: yes
   file:
     path: /var/www/wordpress
     state: directory
     owner: wordpress
     group: www-data
     mode: 0755
+
+- name: Download WordPress
+  become: yes
+  get_url:
+    url: "{{ wordpress_url }}"
+    dest: "/tmp/{{ wordpress_url | basename }}"
+    checksum: "{{ wordpress_checksum }}"
   tags: install
+
+- name: Extract wordpress
+  become: yes
+  unarchive:
+    src: "/tmp/{{ wordpress_url | basename }}"
+    dest: /var/www/wordpress
+    owner: wordpress
+    group: wordpress
+    mode: 0755
+    remote_src: yes
+    creates: /var/www/wordpress/wordpress
 
 - name: Setup littlesis-packages repo
   become: yes
@@ -103,27 +95,6 @@
     dest: /var/www/wordpress/pai-packages
     force: yes
     version: master
-  tags: install  
-
-- name: Download WordPress
-  get_url:
-    url: "{{ wordpress_url }}"
-    dest: /tmp/wordpress.tar.gz
-    checksum: "{{ wordpress_checksum }}"
-  when: install_wordpress
-  tags: install
-
-- name: Extract wordpress
-  unarchive:
-    src: /tmp/wordpress.tar.gz
-    dest: /var/www/wordpress
-    owner: wordpress
-    group: wordpress
-    mode: 0755
-    remote_src: yes
-    creates: /var/www/wordpress/wordpress
-  when: install_wordpress
-  tags: install
 
 - name: Install PHP Packages with Composer
   become: yes
@@ -132,21 +103,32 @@
     command: install
     no_dev: true
     working_dir: /var/www/wordpress/pai-packages
-  tags:
-    - install
-    - composer
+
+- name: Change ownership of WordPress installation
+  become: yes
+  file:
+    path: /var/www/wordpress
+    owner: wordpress
+    group: wordpress
+    mode: 0755
+    state: directory
+    recurse: yes
+  tags: wordpress-permissions
 
 - name: create /var/www/wordpress/wordpress/wp-content/uploads
+  become: yes
+  become_user: wordpress
   file:
     path: /var/www/wordpress/wordpress/wp-content/uploads
     state: directory
     owner: wordpress
     group: wordpress
     mode: 0755
-  tags:
-    - install
+
 
 - name: Copy wp-config.php
+  become: yes
+  become_user: wordpress
   template:
     src: wp-config.php.j2
     dest: /var/www/wordpress/wordpress/wp-config.php
@@ -156,62 +138,21 @@
   notify: restart php-fpm
   tags: config
 
-- name: Change ownership of WordPress installation
-  file:
-    path: /var/www/wordpress
-    owner: wordpress
-    group: wordpress
-    mode: 0755
-    state: directory
-    recurse: yes
-  tags: chmod
-
-- name: Change ownership of WordPress installation
-  file:
-    path: /var/www/wordpress
-    owner: wordpress
-    group: wordpress
-    mode: 0755
-    state: directory
-    recurse: yes
-  tags: chmod
-
 - name: set wordpress directory permissions
+  become: yes
+  become_user: wordpress
   command: find /var/www/wordpress -type d -exec chmod 755 {} +
-  tags: chmod
-
-- name: Remove stock www php pool configuration
-  file:
-    state: absent
-    path: /etc/php/7.2/fpm/pool.d/www.conf
-  notify: restart php-fpm
-  tags: fpm
-
-- name: update weird path thingy in php.ini
-  lineinfile:
-    regexp: 'cgi.fix_pathinfo='
-    line: 'cgi.fix_pathinfo=0'
-    path: /etc/php/7.2/fpm/php.ini
-  notify: restart php-fpm
-  tags: fpm
-
-- name: Copy wordpress fpm pool configuration
-  template:
-    src: pool.conf.j2
-    dest: /etc/php/7.2/fpm/pool.d/wordpress.conf
-    owner: root
-    group: root
-    mode: 0644
-  notify: restart php-fpm
-  tags: fpm
+  tags: wordpress-permissions
 
 - name: Install nginx
+  become: yes
   apt:
     update_cache: yes
     name: nginx
   tags: nginx
 
 - name: Create /etc/nginx/certs folder
+  become: yes
   file:
     path: /etc/nginx/certs
     state: directory
@@ -221,6 +162,7 @@
   tags: nginx
 
 - name: Copy news TLS Cert
+  become: yes
   copy:
     content: "{{ news_tls_certificate }}"
     dest: /etc/nginx/certs/news_certificate.pem
@@ -228,9 +170,9 @@
     group: root
     mode: 0640
   no_log: true
-  tags: nginx
 
 - name: Copy new TLS Key
+  become: yes
   copy:
     content: "{{ news_tls_key }}"
     dest: /etc/nginx/certs/news_key.pem
@@ -238,9 +180,9 @@
     group: root
     mode: 0640
   no_log: true
-  tags: nginx
 
 - name: Copy pai TLS Cert
+  become: yes
   copy:
     content: "{{ pai_tls_certificate }}"
     dest: /etc/nginx/certs/pai_certificate.pem
@@ -248,9 +190,9 @@
     group: root
     mode: 0640
   no_log: true
-  tags: nginx
-
+  
 - name: Copy pai TLS Key
+  become: yes
   copy:
     content: "{{ pai_tls_key }}"
     dest: /etc/nginx/certs/pai_key.pem
@@ -258,9 +200,9 @@
     group: root
     mode: 0640
   no_log: true
-  tags: nginx
 
 - name: Copy wordress server shared configuration
+  become: yes
   template:
     src: wordpress_server.conf.j2
     dest: /etc/nginx/wordpress_server.conf
@@ -270,8 +212,8 @@
   notify: restart nginx
   tags: nginx
 
-
-- name: Copy nginx site configuration
+- name: Copy nginx site configurations
+  become: yes
   template:
     src: wordpress-nginx.conf.j2
     dest: /etc/nginx/sites-enabled/wordpress.conf
@@ -291,27 +233,20 @@
   notify: restart nginx
   tags: nginx
 
-- name: aws cli
-  import_role:
-    name: littlesis
-    tasks_from: awscli
-  tags: awscli
+# - name: Install backup script
+#   become: true
+#   template:
+#     src: wordpress-backup.sh.j2
+#     dest: /usr/local/bin/wordpress-backup.sh
+#     owner: root
+#     group: root
+#     mode: 0755
+#   tags: scripts
 
-- name: Install backup script
-  become: true
-  template:
-    src: wordpress-backup.sh.j2
-    dest: /usr/local/bin/wordpress-backup.sh
-    owner: root
-    group: root
-    mode: 0755
-  tags: scripts
-
-- name: Setup wordpress-backup cron
-  cron:
-    name: "Backup Wordpress"
-    minute: "0"
-    hour: "08"
-    job: "/usr/local/bin/wordpress-backup.sh"
-  tags: cron
-
+# - name: Setup wordpress-backup cron
+#   cron:
+#     name: "Backup Wordpress"
+#     minute: "0"
+#     hour: "08"
+#     job: "/usr/local/bin/wordpress-backup.sh"
+#   tags: cron

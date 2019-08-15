@@ -2,6 +2,8 @@ upstream wordpress_php {
     server unix:{{ wordpress_fpm_socket }};
 }
 
+# redirect requests without tls 
+
 server {
     listen 80;
     server_name {{ news_server_name }} blog.littlesis.org;
@@ -14,7 +16,8 @@ server {
     return 301 https://$host$request_uri;
 }
 
-# redirect blog.littlesis.org
+
+# redirect blog.littlesis.org to news.littlesis.org
 server {
     listen 443 ssl http2;
     listen [::]:443 ssl http2;
@@ -24,7 +27,8 @@ server {
     return 301 https://{{news_server_name }}$request_uri;
 }
 
-# news #
+
+# news.littlesis.org server #
 
 server {
     listen 443 ssl http2;
@@ -35,7 +39,7 @@ server {
     include /etc/nginx/wordpress_server.conf;
 }
 
-# PAI # 
+# public-accountability server #
 
 server {
     listen 443 ssl http2;

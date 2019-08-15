@@ -1,27 +1,29 @@
 ---
 littlesis_php_packages:
-  - php7.2
-  - php7.2-cli
-  - php7.2-common
-  - php7.2-json
-  - php7.2-opcache
-  - php7.2-mysql
-  - php7.2-readline
-  - php7.2-zip
-  - php7.2-xml
-  - php7.2-fpm
-  - php7.2-gd
+  - php7.3
+  - php7.3-cli
+  - php7.3-common
+  - php7.3-json
+  - php7.3-opcache
+  - php7.3-mysql
+  - php7.3-readline
+  - php7.3-zip
+  - php7.3-xml
+  - php7.3-fpm
+  - php7.3-gd
 
-
-wordpress_restore_from_dump: false
-install_wordpress: false
-
-wordpress_url: https://wordpress.org/wordpress-4.9.8.tar.gz
-wordpress_checksum: "sha1:0945bab959cba127531dceb2c4fed81770812b4f"
+wordpress_url: https://wordpress.org/wordpress-5.2.2.tar.gz
+wordpress_checksum: "sha1:3605bcbe9ea48d714efa59b0eb2d251657e7d5b0"
 
 wordpress_memory_limit: 256M
-
-wordpress_fpm_socket: /var/run/fpm-wordpress.sock
-
 news_server_name: news.littlesis.org
 pai_server_name:  public-accountability.org
+
+wordpress_fpm_socket: /run/fpm-wordpress.sock
+
+# wordpress_restore_from_dump: false
+# install_wordpress: false
+
+
+
+
