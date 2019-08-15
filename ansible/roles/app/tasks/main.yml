@@ -1,0 +1,39 @@
+---
+- name: Create littlesis group
+  group:
+    name: littlesis
+    state: present
+
+- name: Create littlesis user
+  user:
+    name: littlesis
+    group: littlesis
+    shell: /bin/bash
+
+- import_tasks: packages.yml
+  tags: packages
+
+- name: Install Redis
+  include_role:
+    name: DavidWittman.redis
+  vars:
+    redis_bind: 127.0.0.1
+    redis_version: 5.0.5
+    redis_verify_checksum: true
+    redis_checksum: "sha256:2139009799d21d8ff94fc40b7f36ac46699b9e1254086299f8d3b223ca54a375"
+    
+- import_tasks: manticore.yml
+  tags: manticore
+
+- import_tasks: ruby.yml
+  tags: ruby
+
+- import_tasks: deploy.yml
+  tags: deploy
+
+- import_tasks: server.yml
+  become: true
+  tags: server
+
+- import_tasks: static.yml
+  tags: static

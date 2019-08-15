@@ -1,7 +1,0 @@
-server {
-    listen 80;
-    include /etc/nginx/ssl.conf;
-    server_name blog.littlesis.org;
-    return 301 https://{{ blog_server_name }}$request_uri;
-    access_log off;
-}

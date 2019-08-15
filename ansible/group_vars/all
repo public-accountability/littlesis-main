@@ -1,9 +1,32 @@
 ---
-# ruby
-ruby_version: 'ruby-2.6.3'
+maintainer_user_name: maintainer
+maintainer_user_password: 
+# this should be a ssh ed25519 public key
+maintainer_user_key:
 
-# node
-nodejs_version: '8.x'
+# server names
+server_name: littlesis.org
+blog_server_name: news.littlesis.org
+
+# database
+database_unix_socket: /var/run/mysqld/mysqld.sock
+database_host: localhost
+database_littlesis_name: littlesis
+database_littlesis_password:
+database_wordpress_name: wordpress
+database_wordpress_password:
+database_replicant_name: replicant
+database_replicant_password:
+database_pool: 10
+
+# Software Versions
+ruby_version: '2.6.3'
+nodejs_version: '10.x'
+
+littlesis_rails_version: 'master'
+
+# nginx
+nginx_ssl_ciphers: "'ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256'"
 
 # redis config
 redis_maxmemory: 1.5gb
@@ -11,23 +34,68 @@ redis_maxmemory_policy: allkeys-lru
 redis_save:
   - 900 1
 
-# server
-server_name: littlesis.org
-blog_server_name: news.littlesis.org
+# api keys
+cloudflare_api:
 
-# database
-database_host: localhost
-database_name: littlesis
-database_username: littlesis
-database_pool: 10
-
-# Wordpress
-wordpress_db_name: eyes_on_the_ties
-wordpress_db_user: wp_blog
-wordpress_memory_limit: 256M
-wordpress_docker_image: wordpress:4.9.1-php7.1-apache
+# certs & other server secrets
+wordpress_authentication_keys_and_salts:
+rails_secret_key_base:
+tls_certificate:
+tls_key:
+news_tls_certificate:
+news_tls_key:
+pai_tls_certificate:
+pai_tls_key:
 
 # lilsis.yml defaults
+# redis_url: "redis://127.0.0.1:6379/0/cache"
+# nginx_ssl_ciphers: 'ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256'
+aws_key: 
+aws_secret: 
+aws_s3_base:
+aws_s3_bucket: 'pai-littlesis'
+aws_region: 'us-east-1'
+asset_host: "littlesis.org"
+image_asset_host: "littlesis.org"
+cloudfront_distribtion_id:
+google_custom_search_engine_id:
+google_custom_news_search_engine_id:
+google_custom_search_key:
+google_street_view_key: 
+verticalresponse_username:
+verticalresponse_password:
+research_from_email:
+netmap_api_key:
+twitter_consumer_key:
+twitter_consumer_secret:
+twitter_access_token:
+twitter_access_token_secret:
+twitter_list_id:
+google_site_verification:
+google_analytics_id:
+bing_maps_key:
+default_from_email:
+smtp_address:
+smtp_port:
+smtp_domain:
+smtp_user_name:
+smtp_password: 
+smtp_authentication: 'plain'
+notification_email:
+notification_user_name:
+notification_password:
+notification_to:
+carousel_list_id: 1257
+recaptcha_site_key:
+recaptcha_secret_key:
+restricted_ips: []
+action_network_api_key:
 redis_url: "redis://127.0.0.1:6379/0/cache"
+# Image configuration
+image_host: "https://littlesis.org"
+image_root: public/images
+# donation banner
+donation_banner_display: false
+donation_banner_html: "<b>LittleSis</b> is turning <b>10</b> years old! <a href=\"https://littlesis.org/donate/\">Become a $10/month sustaining donor</a> and we’ll send you an anniversary t-shirt!"
 
-nginx_ssl_ciphers: 'ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256'
+oligrapher_version: 0.4.5

@@ -6,5 +6,6 @@ wordpress
 rails/log
 rails/tmp
 rails/public
+rails/data
 ansible
 static

@@ -1,0 +1,23 @@
+---
+- name: Install Ruby with rbenv
+  vars:
+    rbenv:
+      env: user
+      version: v1.1.2
+      default_ruby: "{{ ruby_version }}"
+      rubies:
+        - version: "{{ ruby_version }}"
+    rbenv_users:
+      - littlesis
+  import_role:
+    name: zzet.rbenv
+
+- name: Install bundler
+  become: yes
+  become_user: littlesis
+  gem:
+    executable: ~/.rbenv/shims/gem
+    name: bundler
+    state: latest
+    user_install: no
+  tags: bundler

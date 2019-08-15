@@ -1,0 +1,25 @@
+---
+- name: Install python3-pymysql (required for ansible's mysql tasks)
+  apt:
+    name: python3-pymysql
+    state: present
+
+- name: Install mariadb
+  apt:
+    update_cache: yes
+    name:
+      - mariadb-client
+      - mariadb-server
+      - libmariadb3
+      - mariadb-backup
+      - mariadb-common
+
+- name: Configure mariadb
+  template:
+    src: my.cnf.j2
+    dest: /etc/mysql/my.cnf
+    owner: root
+    group: root
+    mode: 0644
+  tags: my-cnf
+  notify: restart mariadb

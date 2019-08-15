@@ -1,0 +1,28 @@
+[Unit]
+Description=Puma HTTP Server Serving LittleSis
+After=network.target
+
+Requires=littlesis.socket
+
+[Service]
+# Foreground process (do not use --daemon in ExecStart or config.rb)
+Type=simple
+
+# Preferably configure a non-privileged user
+User=littlesis
+
+# The path to the your application code root directory.
+# Also replace the "<YOUR_APP_PATH>" place holders below with this path.
+# Example /home/username/myapp
+WorkingDirectory=/var/www/littlesis
+
+# Helpful for debugging socket activation, etc.
+# Environment=PUMA_DEBUG=1
+Environment=RAILS_ENV=production
+Environment=LITTLESIS_SOCKET=unix:///run/littlesis.sock
+ExecStart=/home/littlesis/.rbenv/shims/bundle exec puma
+Restart=always
+PIDFile=/run/puma.pid
+
+[Install]
+WantedBy=multi-user.target

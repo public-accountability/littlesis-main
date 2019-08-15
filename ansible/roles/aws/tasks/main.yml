@@ -1,0 +1,21 @@
+---
+- name: Install awscli
+  pip:
+    name: awscli
+    executable: /usr/bin/pip3  
+
+- name: create ~/.aws dir
+  file:
+    path: /home/maintainer/.aws
+    state: directory
+    owner: maintainer
+    group: maintainer
+    mode: 0760
+
+- name: Configure awscli
+  template:
+    src: awscli.j2
+    dest: /home/maintainer/.aws/config
+    owner: maintainer
+    group: maintainer
+    mode: 0600

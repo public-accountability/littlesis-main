@@ -1,0 +1,53 @@
+#!/bin/bash
+
+exit_status=0
+
+run-script() {
+    sh -c "{{ scripts_directory }}/$1"
+}
+
+print_section () {
+    echo '-----------------------'
+    echo "       ${1}            "
+    echo '-----------------------'
+}
+
+print_ok () {
+    printf "[✓] \e[32m$1\e[0m\n"
+}
+
+print_error () {
+    exit_status=1
+    printf "[x] \e[31m$1\e[0m\n"
+}
+
+check_service () {
+    if eval "$2" &> /dev/null
+    then
+	print_ok "$1"
+    else
+	print_error "$1"
+    fi
+    
+}
+
+print_section "services"
+
+for service in nginx fail2ban redis_6379
+do
+    check_service $service "sudo systemctl is-active $service"
+done
+    
+check_service 'Mysql connection' '{{ scripts_directory }}/mysql-test'
+check_service 'Delayed job' 'run-script rails-delayed-job-status' 
+check_service 'Sphinx' 'run-script rails-sphinx-status'
+check_service 'Puma' 'systemctl is-active --quiet littlesis'
+
+print_section "stats"
+
+free | grep Mem | awk '{ printf("Memory used: %.1f% \n", $3/$2 * 100) }'
+top -b -n 1 -p `pidof redis-server` | tail -n 1 | awk '{ printf("Redis memory used: %0.1f%\n", $10) }'
+mpstat | grep 'all' | awk '{ printf("Avg. CPU load: %.2f%\n", (100 - $13)) }'
+mpstat 1 2 | grep 'Average' | awk '{ printf("Current CPU load: %.2f%\n", (100 - $12)) }'
+
+exit $exit_status

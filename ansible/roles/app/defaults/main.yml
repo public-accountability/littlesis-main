@@ -1,0 +1,15 @@
+---
+littlesis_app_packages:
+  - imagemagick
+  - libmariadb-dev
+  - sqlite3
+  - libsqlite3-dev
+
+# geckodriver_url: "https://github.com/mozilla/geckodriver/releases/download/v0.19.1/geckodriver-v0.19.1-linux64.tar.gz"  
+
+# manticore
+manticore_url: https://github.com/manticoresoftware/manticoresearch/releases/download/3.1.0/manticore_3.1.0-190801-0a40d582-release.buster_amd64-bin.deb
+manticore_checksum: "sha256:1039deeb79eb2069165be586d72373e4735fbb7fc1cdc65696bf596c7e7ed8c7"
+manticore_reinstall: false
+
+scripts_directory: /home/maintainer/scripts

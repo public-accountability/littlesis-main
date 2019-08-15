@@ -20,16 +20,16 @@
 
 // ** MySQL settings ** //
 /** The name of the database for WordPress */
-define( 'DB_NAME', '{{ wordpress_db_name }}' );
+define( 'DB_NAME', '{{ database_wordpress_name }}' );
 
 /** MySQL database username */
-define( 'DB_USER', '{{ wordpress_db_user }}' );
+define( 'DB_USER', '{{ database_wordpress_name }}' );
 
 /** MySQL database password */
-define( 'DB_PASSWORD', '{{ wordpress_db_password }}' );
+define( 'DB_PASSWORD', '{{ database_wordpress_password }}' );
 
 /** MySQL hostname */
-define( 'DB_HOST', '{{ wordpress_db_host }}' );
+define( 'DB_HOST', '{{ database_host }}' );
 
 /** Database Charset to use in creating database tables. */
 define( 'DB_CHARSET', 'utf8' );
@@ -61,13 +61,12 @@ define("CONCATENATE_SCRIPTS", false);
 $table_prefix = 'wp_';
 
 /* Debugging */
-define( 'WP_DEBUG', true );
-define( 'WP_DEBUG_LOG', true );
+define( 'WP_DEBUG', false );
+define( 'WP_DEBUG_LOG', false );
 define( 'WP_DEBUG_DISPLAY', false );
 define( 'SCRIPT_DEBUG', false );
 define( 'SAVEQUERIES', false );
 define( 'JETPACK_DEV_DEBUG', false );
-
 
 /** Multisite **/
 define( 'WP_ALLOW_MULTISITE', true );
