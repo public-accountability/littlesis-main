@@ -25,8 +25,13 @@ database:
 replicant:
 	@ansible-playbook littlesis.yml --tags=replicant
 
+wordpress:
+	@ansible-playbook littlesis.yml --tags=wordpress,config
+
 ping:
 	@ansible all -m ping
 
-.PHONY: inventory inventory-edit vars-edit
-.PHONY: run app database ping
+.PHONY: inventory inventory-edit vars-edit run ping
+.PHONY: app database replicant wordpress
+
+

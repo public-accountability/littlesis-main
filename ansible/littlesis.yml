@@ -44,10 +44,14 @@
         database_role: replicant
   tags: replicant
 
-# - Hosts: littlesis:wordpress
-#   roles: ["wordpress"]
-#   handlers: include=handlers/main.yml
-
-# - hosts: littlesis:replicant
-#   roles: ["replicant"]
-#   handlers: include=handlers/main.yml
+- hosts: wordpress
+  vars_files:
+    - "vars.yml"
+  handlers:
+    - include: handlers/main.yml
+  tasks:
+    # - import_role:
+    #     name: common
+    - import_role:
+        name: wordpress
+  tags: wordpress
