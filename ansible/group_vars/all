@@ -19,17 +19,14 @@ database_replicant_name: replicant
 database_replicant_password:
 database_pool: 10
 
-
-
-# files to restore production database
-littlesis_sql_dump_file:
-wordpress_sql_dump_file:
-
 # Software Versions
 ruby_version: '2.6.3'
 nodejs_version: '10.x'
 
 littlesis_rails_version: 'master'
+
+# nginx
+nginx_ssl_ciphers: "'ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256'"
 
 # redis config
 redis_maxmemory: 1.5gb
@@ -37,13 +34,6 @@ redis_maxmemory_policy: allkeys-lru
 redis_save:
   - 900 1
 
-# Wordpress
-
-wordpress_db_name:
-wordpress_db_user:
-wordpress_db_password:
-wordpress_db_host:
-  
 # api keys
 cloudflare_api:
 
