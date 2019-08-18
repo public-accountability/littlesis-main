@@ -1,0 +1,86 @@
+#!/usr/bin/env python3
+import argparse
+import datetime
+import getpass
+import os
+import subprocess
+import sys
+
+# if getpass.getuser() != 'root':
+#     sys.exit("LittleSis database backup script must be run as root")
+
+parser = argparse.ArgumentParser(description='Backup LittleSis Database')
+
+parser.add_argument('database',
+                    choices=['littlesis', 'wordpress'],
+                    default='littlesis',
+                    nargs='?',
+                    help='which database to backup')
+
+parser.add_argument('--all',
+                    action='store_true',
+                    help='backup all tables that are not often updated')
+
+parser.add_argument('--backup-dir',
+                    default='/srv/backup',
+                    help='location to save the backup')
+                    
+
+args = parser.parse_args()
+
+TODAY = datetime.date.today()
+
+# On the first of every month backup all files
+if TODAY.day == 1:
+    args.all = True
+
+MYSQLDUMP = ["mysqldump", "--single-transaction", "--quick"]
+
+if args.database == 'littlesis' and not args.all:
+    MYSQLDUMP.append('--ignore-table=littlesis.os_donations')
+    MYSQLDUMP.append('--ignore-table=littlesis.version')
+    MYSQLDUMP.append('--ignore-table=littlesis.ny_disclosures')
+    MYSQLDUMP.append('--ignore-table=littlesis.modification_field')
+    MYSQLDUMP.append('--ignore-table=littlesis.modification')
+    MYSQLDUMP.append('--ignore-table=littlesis.ny_disclosures')
+    MYSQLDUMP.append('--ignore-table=littlesis.api_request')
+
+# This sets the correct filename and database at end of the mysql dump command.
+# The littlesis database is named "littlesis' the wordpress database is named 'littlesis_wordpress'
+# If a full backup (--all) is indicated the filename will look like "littlesis-backup-all-2019-08-15.sql"
+
+if args.database == 'wordpress':
+    filename = "wordpress-backup-{}.sql".format(TODAY.strftime('%F'))
+    path = os.path.join(args.backup_dir, filename)
+    MYSQLDUMP.append('--result-file={}'.format(path))
+    MYSQLDUMP.append('littlesis')
+    
+if args.database == 'littlesis':
+
+    if args.all:
+        filename = "littlesis-backup-all-{}.sql".format(TODAY.strftime('%F'))
+    else:
+        filename = "littlesis-backup-most-{}.sql".format(TODAY.strftime('%F'))
+
+    path = os.path.join(args.backup_dir, filename)
+
+    MYSQLDUMP.append('--result-file={}'.format(path))
+    MYSQLDUMP.append('littlesis_wordpress')
+
+# Run mysqldump. Files are saved to /srv/backup 
+subprocess.run(MYSQLDUMP, check=True)
+# Compress with gzip
+subprocess.run(['gzip', path], check=True)
+
+gzip_path = "{}.gz".format(path)
+
+# Upload to s3
+subprocess.run([
+    'aws',
+    's3',
+    'cp',
+    gzip_path,
+    "s3://pai-littlesis/backups/{}".format(os.path.basename(gzip_path))
+])
+
+# Upload to google drive

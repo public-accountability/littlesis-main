@@ -17,3 +17,12 @@
   vars:
     ansible_ssh_pipelining: true
   tags: mysql-setup
+
+- name: Create /srv/backup
+  become: true
+  file:
+    path: /srv/backup
+    state: directory
+    owner: root
+    group: root
+    mode: 0700
