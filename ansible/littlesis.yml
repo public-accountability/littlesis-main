@@ -20,8 +20,8 @@
   handlers:
     - include: handlers/main.yml
   tasks:
-    # - import_role:
-    #     name: common
+    - import_role:
+        name: common
     - import_role:
         name: aws
     - import_role:
@@ -50,8 +50,8 @@
   handlers:
     - include: handlers/main.yml
   tasks:
-    # - import_role:
-    #     name: common
+    - import_role:
+        name: common
     - import_role:
         name: wordpress
   tags: wordpress

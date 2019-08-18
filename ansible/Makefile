@@ -26,7 +26,7 @@ replicant:
 	@ansible-playbook littlesis.yml --tags=replicant
 
 wordpress:
-	@ansible-playbook littlesis.yml --tags=wordpress,config
+	@ansible-playbook littlesis.yml --tags=wordpress
 
 ping:
 	@ansible all -m ping
