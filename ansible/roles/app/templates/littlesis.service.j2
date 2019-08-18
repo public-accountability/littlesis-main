@@ -21,8 +21,8 @@ WorkingDirectory=/var/www/littlesis
 Environment=RAILS_ENV=production
 Environment=LITTLESIS_SOCKET=unix:///run/littlesis.sock
 ExecStart=/home/littlesis/.rbenv/shims/bundle exec puma
-Restart=always
-PIDFile=/run/puma.pid
+Restart=on-failure
+PIDFile=/var/www/littlesis/tmp/puma.pid
 
 [Install]
 WantedBy=multi-user.target

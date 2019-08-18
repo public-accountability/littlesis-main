@@ -18,6 +18,15 @@
     version: "{{ littlesis_rails_version }}"
   tags: clone
 
+- name: Create /var/www/littlesis/tmp
+  file:
+    path: /var/www/littlesis/tmp
+    state: directory
+    owner: littlesis
+    group: littlesis
+    mode: 0755
+  tags: tmp-folder
+
 - name: Install Gems
   become: yes
   become_user: littlesis

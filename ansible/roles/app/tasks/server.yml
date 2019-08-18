@@ -81,6 +81,7 @@
     owner: root
     group: root
     mode: 0644
+  notify: restart littlesis
   tags: systemd
 
 - name: Copy Puma systemd socket file
