@@ -1,4 +1,16 @@
 #!/usr/bin/env python3
+#
+# LittleSis backup script
+#
+# This uses rclone (https://rclone.org) to backup our database to
+# these locations:
+# 
+#   - digital ocean spaces
+#   - AWS S3
+#   - Google Drive
+#
+# rclone backends were created manually  using rclone's interactive configuration tool: `rclone config`
+
 import argparse
 import datetime
 import getpass
@@ -74,13 +86,17 @@ subprocess.run(['gzip', path], check=True)
 
 gzip_path = "{}.gz".format(path)
 
-# Upload to s3
-subprocess.run([
-    'aws',
-    's3',
-    'cp',
-    gzip_path,
-    "s3://pai-littlesis/backups/{}".format(os.path.basename(gzip_path))
-])
+def rclone_command(backend, path):
+    return [
+        '/usr/bin/rclone'
+        'copy',
+        path,
+        "{}:/backups/{}".format(backend, os.path.basename(path))
+    ]
 
-# Upload to google drive
+
+subprocess.run(rclone_command('digitalocean', gzip_path))
+
+subprocess.run(rclone_command('aws', gzip_path))
+
+subprocess.run(rclone_command('gdrive', gzip_path))
