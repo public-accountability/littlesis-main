@@ -36,18 +36,18 @@ print_section "services"
 for service in nginx fail2ban redis_6379
 do
     check_service $service "sudo systemctl is-active $service"
+
 done
     
 check_service 'Mysql connection' '{{ scripts_directory }}/mysql-test'
 check_service 'Delayed job' 'run-script rails-delayed-job-status' 
 check_service 'Sphinx' 'run-script rails-sphinx-status'
-check_service 'Puma' 'systemctl is-active --quiet littlesis'
+check_service 'Puma/LittleSis' 'systemctl is-active --quiet littlesis'
 
 print_section "stats"
 
-free | grep Mem | awk '{ printf("Memory used: %.1f% \n", $3/$2 * 100) }'
-top -b -n 1 -p `pidof redis-server` | tail -n 1 | awk '{ printf("Redis memory used: %0.1f%\n", $10) }'
-mpstat | grep 'all' | awk '{ printf("Avg. CPU load: %.2f%\n", (100 - $13)) }'
-mpstat 1 2 | grep 'Average' | awk '{ printf("Current CPU load: %.2f%\n", (100 - $12)) }'
+free -h | grep "Mem:" | awk '{ print "Used " $3 " out of " $2 }'
+top -b -n 1 -p `pidof redis-server` | tail -n 1 | awk '{ print "Redis memory: "$10"%" }'
+mpstat | tail -n 2
 
 exit $exit_status
