@@ -79,8 +79,8 @@ Run ` make vars-edit `. You'll need to change the `internal_ip` variables to cor
 
 Obtain a full LittleSis backup, copy it to server (i.e. via scp) and then load the database:
 
-```
-zcat path/to/littlesis.sql | mysql -D littlesis
+``` sh
+mysql -D littlesis < path/to/littlesis.sql
 ```
 
 ## Setup replication
@@ -104,11 +104,11 @@ Now create the backup:
 ``` sh
 mariabackup --backup --user=root --socket=/var/run/mysqld/mysqld.sock --target-dir=/mnt/backup/mariabackup --binlog-info=ON
 ```
-When the backup is complete remove the drive mount ` umount /mnt/backup ` and detach the volume via DigitalOcean's dashbaord.
+When the backup is complete remove the drive mount ` umount /mnt/backup ` and detach the volume via DigitalOcean's dashboard.
 
 ### Copy the backup and restore the replicant
 
-Then attach the volume to the replicant droplet and repeat the mounting process on the server.
+Attach the volume to the replicant droplet and repeat the mounting process on that server.
 
 To restore the backup on the replicant server:
 
