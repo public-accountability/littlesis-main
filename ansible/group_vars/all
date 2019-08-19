@@ -37,6 +37,10 @@ redis_save:
 # api keys
 cloudflare_api:
 
+digitalocean_spaces_access_key_id:
+digitalocean_spaces_secret_access_key:
+
+
 # certs & other server secrets
 wordpress_authentication_keys_and_salts:
 rails_secret_key_base:

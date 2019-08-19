@@ -3,9 +3,7 @@
   fail:
     msg: "database role is not set or incorrect"
   when: database_role is not defined or database_role not in ['main', 'replicant']
-  tags:
-    - mysql-setup
-    - mysql-install
+  tags: all
 
 - import_tasks: install.yml
   become: true
@@ -18,11 +16,7 @@
     ansible_ssh_pipelining: true
   tags: mysql-setup
 
-- name: Create /srv/backup
+- import_tasks: replicant.yml
   become: true
-  file:
-    path: /srv/backup
-    state: directory
-    owner: root
-    group: root
-    mode: 0700
+  tags: mysql-setup
+  when: database_role == 'replicant'

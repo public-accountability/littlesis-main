@@ -7,9 +7,10 @@
 # 
 #   - digital ocean spaces
 #   - AWS S3
-#   - Google Drive
 #
-# rclone backends were created manually  using rclone's interactive configuration tool: `rclone config`
+# rclone backends were created manually using rclone's interactive configuration tool: `rclone config`
+#
+# Each backend should have a folder at root level called "/backups"
 
 import argparse
 import datetime
@@ -18,8 +19,8 @@ import os
 import subprocess
 import sys
 
-# if getpass.getuser() != 'root':
-#     sys.exit("LittleSis database backup script must be run as root")
+if getpass.getuser() != 'root':
+    sys.exit("LittleSis database backup script must be run as root")
 
 parser = argparse.ArgumentParser(description='Backup LittleSis Database')
 
@@ -37,66 +38,66 @@ parser.add_argument('--backup-dir',
                     default='/srv/backup',
                     help='location to save the backup')
                     
-
 args = parser.parse_args()
 
-TODAY = datetime.date.today()
+today = datetime.date.today()
+today_str = today.strftime('%F')
 
-# On the first of every month backup all files
-if TODAY.day == 1:
+# On the first of every month backup all tables
+if today.day == 1:
     args.all = True
 
-MYSQLDUMP = ["mysqldump", "--single-transaction", "--quick"]
+# Set filename of the sql dump
+if args.database == 'wordpress':
+    filename = "wordpress-backup-{}.sql.xz".format(today_str)
+elif args.database == 'littlesis':
+    if all_tables:
+        filename = "littlesis-backup-all-{}.sql.xz".format(today_str)
+    else:
+        filename = "littlesis-backup-most-{}.sql.xz".format(today_str)
+else:
+    sys.exit("Invalid database")
+
+PATH = os.path.join(args.backup_dir, filename)
+
+MYSQLDUMP = ["/usr/bin/mysqldump", "--single-transaction", "--quick", "--routines"]
 
 if args.database == 'littlesis' and not args.all:
     MYSQLDUMP.append('--ignore-table=littlesis.os_donations')
-    MYSQLDUMP.append('--ignore-table=littlesis.version')
+    MYSQLDUMP.append('--ignore-table=littlesis.versions')
     MYSQLDUMP.append('--ignore-table=littlesis.ny_disclosures')
     MYSQLDUMP.append('--ignore-table=littlesis.modification_field')
     MYSQLDUMP.append('--ignore-table=littlesis.modification')
     MYSQLDUMP.append('--ignore-table=littlesis.ny_disclosures')
     MYSQLDUMP.append('--ignore-table=littlesis.api_request')
 
-# This sets the correct filename and database at end of the mysql dump command.
-# The littlesis database is named "littlesis' the wordpress database is named 'littlesis_wordpress'
-# If a full backup (--all) is indicated the filename will look like "littlesis-backup-all-2019-08-15.sql"
+MYSQLDUMP.append(args.database)
 
-if args.database == 'wordpress':
-    filename = "wordpress-backup-{}.sql".format(TODAY.strftime('%F'))
-    path = os.path.join(args.backup_dir, filename)
-    MYSQLDUMP.append('--result-file={}'.format(path))
-    MYSQLDUMP.append('littlesis')
-    
-if args.database == 'littlesis':
+MYSQLDUMP.extend(['|', 'xz', '>', PATH])
 
-    if args.all:
-        filename = "littlesis-backup-all-{}.sql".format(TODAY.strftime('%F'))
-    else:
-        filename = "littlesis-backup-most-{}.sql".format(TODAY.strftime('%F'))
-
-    path = os.path.join(args.backup_dir, filename)
-
-    MYSQLDUMP.append('--result-file={}'.format(path))
-    MYSQLDUMP.append('littlesis_wordpress')
-
-# Run mysqldump. Files are saved to /srv/backup 
-subprocess.run(MYSQLDUMP, check=True)
-# Compress with gzip
-subprocess.run(['gzip', path], check=True)
-
-gzip_path = "{}.gz".format(path)
+# Run mysqldump
+# Files are saved to /srv/backup unless option '--backup-dir' is set
+subprocess.run(' '.join(MYSQLDUMP), check=True, shell=True)
 
 def rclone_command(backend, path):
+    bucket_name = {
+        'digitalocean': 'littlesis',
+        'aws': 'pai-littlesis'
+    }[backend]
+
     return [
-        '/usr/bin/rclone'
+        '/usr/bin/rclone',
         'copy',
         path,
-        "{}:/backups/{}".format(backend, os.path.basename(path))
+        "{backend}:{bucket}/backups/{filename}".format(backend=backend,
+                                                       bucket=bucket_name,
+                                                       filename=os.path.basename(path))
     ]
 
+subprocess.run(
+    rclone_command('digitalocean', PATH)
+)
 
-subprocess.run(rclone_command('digitalocean', gzip_path))
-
-subprocess.run(rclone_command('aws', gzip_path))
-
-subprocess.run(rclone_command('gdrive', gzip_path))
+subprocess.run(
+    rclone_command('aws', PATH)
+)
