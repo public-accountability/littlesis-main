@@ -25,13 +25,14 @@
 
 - name: Create littlesis database user
   mysql_user:
-    host: "{{ internal_ip_app }}"
+    host: '%'
     name: "{{ database_littlesis_name }}"
     password: "{{ database_littlesis_password }}"
     login_unix_socket: "{{ database_unix_socket }}"
     priv: "{{ database_littlesis_name }}.*:ALL"
     state: present
   when: database_role == 'main'
+  tags: littlesis-db-user
 
 # - name: Create wordpress database user
 #   mysql_user:
