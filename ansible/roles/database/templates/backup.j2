@@ -51,7 +51,7 @@ if today.day == 1:
 if args.database == 'wordpress':
     filename = "wordpress-backup-{}.sql.xz".format(today_str)
 elif args.database == 'littlesis':
-    if all_tables:
+    if args.all:
         filename = "littlesis-backup-all-{}.sql.xz".format(today_str)
     else:
         filename = "littlesis-backup-most-{}.sql.xz".format(today_str)
