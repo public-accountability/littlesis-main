@@ -34,15 +34,16 @@
   when: database_role == 'main'
   tags: littlesis-db-user
 
-# - name: Create wordpress database user
-#   mysql_user:
-#     host: "{{ internal_ip_wordpress }}"
-#     name: "{{ database_wordpress_name }}"
-#     password: "{{ database_wordpress_password }}"
-#     login_unix_socket: "{{ database_unix_socket }}"
-#     priv: "{{ database_wordpress_name }}.*:ALL"
-#     state: present
-#   when: database_role == 'main'
+- name: Create wordpress database user
+  mysql_user:
+    host: '%'
+    name: "{{ database_wordpress_name }}"
+    password: "{{ database_wordpress_password }}"
+    login_unix_socket: "{{ database_unix_socket }}"
+    priv: "{{ database_wordpress_name }}.*:ALL"
+    state: present
+  when: database_role == 'main'
+  tags: wordpress-db-user
 
 - name: Create replicant database user
   mysql_user:
