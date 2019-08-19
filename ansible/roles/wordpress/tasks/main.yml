@@ -224,6 +224,7 @@
   tags: nginx
 
 - name: Copy nginx configuration
+  become: yes
   template:
     src: "{{ nginx_conf_template | default('nginx.conf.j2') }}"
     dest: /etc/nginx/nginx.conf
