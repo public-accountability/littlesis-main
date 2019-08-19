@@ -9,11 +9,18 @@ server {
     
     root /var/www/littlesis/public;
 
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header Host $http_host;
+    proxy_redirect off;
+
     location / {
         proxy_pass http://app;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header Host $http_host;
-        proxy_redirect off;
+    }
+
+    # rate limit the api
+    location /api {
+        limit_req zone=api burst=2 nodelay;
+        proxy_pass http://app;
     }
     
     # Various rewrites and redirects #
@@ -43,21 +50,18 @@ server {
         return 301 https://littlesis.org/$1;
     }
 
-    # rate limit the api
-    location /api {
-        limit_req zone=api burst=2 nodelay;
-    }
-
     ##
     # Static assets
     #
 
     # These two empty location blocks are expections to the general /images location
-    # The are rails routes that should be handled as a regular passenger route
+    # The routes that should be handled as a regular rails route
     location ~ ^/images/[0-9]+/(crop|crop_remote|request_deletion) {
+        proxy_pass http://app;
     }
 
     location ~ ^/images/(approve_deletion|deny_deletion|deletion_request)/(.+)$ {
+        proxy_pass http://app;
     }
     
     # Images
@@ -73,6 +77,7 @@ server {
         expires 1y;
         add_header Cache-Control "public";
         add_header ETag "";
+        try_files $uri =404;
     }
 
     # compiled Rails assets (via webpack)

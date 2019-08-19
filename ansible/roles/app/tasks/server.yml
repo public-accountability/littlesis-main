@@ -63,6 +63,7 @@
     owner: root
     group: root
     mode: 0644
+  tags: nginx-config
   notify: restart nginx
 
 - name: Copy api.littlesis.org nginx configuration
