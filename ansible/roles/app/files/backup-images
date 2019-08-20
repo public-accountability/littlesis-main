@@ -1,0 +1,26 @@
+#!/usr/bin/env python3
+
+import getpass
+import subprocess
+import sys
+
+if getpass.getuser() != 'root':
+    sys.exit('Image backup script must be run as root')
+
+images_dir = '/var/www/littlesis/public/images'
+
+
+rclone_sync_to_aws = [ '/usr/bin/rclone',
+                       'sync',
+                       images_dir,
+                       'aws:littlesis-images-backup' ]
+                       
+rclone_sync_to_digitalocean = [ '/usr/bin/rclone',
+                                'sync',
+                                images_dir,
+                                'digitalocean:littlesis/images' ]
+
+subprocess.run(rclone_sync_to_aws)
+subprocess.run(rclone_sync_to_digitalocean)
+
+sudo /usr/bin/rclone sync /var/www/littlesis/public/images aws:littlesis-images-backup --dry-run

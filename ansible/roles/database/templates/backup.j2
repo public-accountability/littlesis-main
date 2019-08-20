@@ -89,9 +89,7 @@ def rclone_command(backend, path):
         '/usr/bin/rclone',
         'copy',
         path,
-        "{backend}:{bucket}/backups/{filename}".format(backend=backend,
-                                                       bucket=bucket_name,
-                                                       filename=os.path.basename(path))
+        "{backend}:{bucket}/backups/".format(backend=backend, bucket=bucket_name)
     ]
 
 subprocess.run(

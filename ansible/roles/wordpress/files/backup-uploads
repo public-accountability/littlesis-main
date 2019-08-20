@@ -13,9 +13,7 @@ wordpress_uploads_dir = '/var/www/wordpress/wordpress/wp-content/uploads'
 
 date = datetime.date.today().strftime('%F')
 
-archive_filename = 'wordpress-uploads-{}.tar.xz'.format(date)
-
-archive_path = '/tmp/{}'.format(archive_filename)
+archive_path = '/tmp/wordpress-uploads-{}.tar.xz'.format(date)
 
 tar_cmd = [ '/usr/bin/tar',
             '--create',
@@ -26,9 +24,9 @@ tar_cmd = [ '/usr/bin/tar',
 
 rclone_cmd = [ '/usr/bin/rclone', 'copy', archive_path ]
     
-rclone_aws =  rclone_cmd + [ "aws:pai-littlesis/backups/{}".format(archive_filename) ]
+rclone_aws =  rclone_cmd + [ "aws:pai-littlesis/backups/" ]
 
-rclone_digitalocean = rclone_cmd + [ "digitalocean:littlesis/backups/{}".format(archive_filename) ]
+rclone_digitalocean = rclone_cmd + [ "digitalocean:littlesis/backups/" ]
                
 shred_cmd = ['/usr/bin/shred', '-u', archive_path]
 
