@@ -10,8 +10,6 @@
         name: common
     - import_role:
         name: app
-    - import_role:
-        name: aws
   tags: app
     
 - hosts: database
@@ -22,8 +20,6 @@
   tasks:
     - import_role:
         name: common
-    - import_role:
-        name: aws
     - import_role:
         name: database
       vars:
