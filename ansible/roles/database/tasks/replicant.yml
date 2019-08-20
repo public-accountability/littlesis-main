@@ -10,18 +10,6 @@
     mode: 0700
   tags: backup
 
-- name: Create rclone configuration
-  become: true
-  template:
-    src: rclone.conf.j2
-    dest: /root/.config/rclone/rclone.conf
-    owner: root
-    group: root
-    mode: 0600
-  tags:
-     - rclone
-     - backup
-
 - name: Copy backup script
   become: true
   template:

@@ -1,0 +1,25 @@
+---
+- name: Install rclone
+  become: true
+  apt:
+    update_cache: yes
+    name: rclone
+    state: present
+
+- name: Create rclone directory
+  become: true
+  file:
+    path: /root/.config/rclone
+    state: directory
+    owner: root
+    group: root
+    mode: 0700
+
+- name: Create rclone configuration
+  become: true
+  template:
+    src: rclone.conf.j2
+    dest: /root/.config/rclone/rclone.conf
+    owner: root
+    group: root
+    mode: 0600

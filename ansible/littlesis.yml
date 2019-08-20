@@ -9,6 +9,9 @@
     - import_role:
         name: common
     - import_role:
+        name: rclone
+      tags: rclone
+    - import_role:
         name: app
   tags: app
     
@@ -35,6 +38,8 @@
     - import_role:
         name: common
     - import_role:
+        name: rclone
+    - import_role:
         name: database
       vars:
         database_role: replicant
@@ -48,6 +53,8 @@
   tasks:
     - import_role:
         name: common
+    - import_role:
+        name: rclone
     - import_role:
         name: wordpress
   tags: wordpress
