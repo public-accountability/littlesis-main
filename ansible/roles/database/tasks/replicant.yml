@@ -19,3 +19,24 @@
     group: root
     mode: 0755
   tags: backup
+
+# note: our server is set to UTC, which is 5 hours
+# ahead of East coast time.
+
+- name: LittleSis database backup job
+  become: true
+  cron:
+    name: "Backup littlesis database"
+    minute: "0"
+    hour: "7"
+    job: "/usr/local/bin/backup littlesis"
+  tags: cron
+    
+- name: Wordpress database backup job
+  become: true
+  cron:
+    name: "Backup wordpress database"
+    minute: "0"
+    hour: "6"
+    job: "/usr/local/bin/backup wordpress"
+  tags: cron

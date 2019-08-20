@@ -18,5 +18,7 @@
 
 - import_tasks: replicant.yml
   become: true
-  tags: mysql-setup
+  tags:
+    - mysql-setup
+    - backup
   when: database_role == 'replicant'
