@@ -9,7 +9,6 @@ if getpass.getuser() != 'root':
 
 images_dir = '/var/www/littlesis/public/images'
 
-
 rclone_sync_to_aws = [ '/usr/bin/rclone',
                        'sync',
                        images_dir,
@@ -22,5 +21,3 @@ rclone_sync_to_digitalocean = [ '/usr/bin/rclone',
 
 subprocess.run(rclone_sync_to_aws)
 subprocess.run(rclone_sync_to_digitalocean)
-
-sudo /usr/bin/rclone sync /var/www/littlesis/public/images aws:littlesis-images-backup --dry-run

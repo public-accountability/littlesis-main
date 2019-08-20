@@ -37,3 +37,6 @@
 
 - import_tasks: static.yml
   tags: static
+
+- import_tasks: images-backup.yml
+  tags: backup

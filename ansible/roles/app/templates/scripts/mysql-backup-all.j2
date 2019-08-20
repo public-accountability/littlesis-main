@@ -1,8 +1,0 @@
-#!/bin/bash
-set -e
-
-DATE=`date +'%m%d%y'`
-
-mysqldump -u {{ database_littlesis_name }} -p{{ database_littlesis_password}} -h {{ database_host }} --single-transaction --quick littlesis | gzip > ~/littlesis-backup-all-$DATE.sql.gz
-
-/usr/local/bin/aws s3 cp ~/littlesis-backup-all-$DATE.sql.gz s3://{{ aws_s3_bucket }}/backups/littlesis-backup-all-$DATE.sql.gz
