@@ -55,6 +55,7 @@
         name: common
     - import_role:
         name: rclone
+      tags: rclone
     - import_role:
         name: wordpress
   tags: wordpress

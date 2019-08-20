@@ -234,20 +234,22 @@
   notify: restart nginx
   tags: nginx
 
-# - name: Install backup script
-#   become: true
-#   template:
-#     src: wordpress-backup.sh.j2
-#     dest: /usr/local/bin/wordpress-backup.sh
-#     owner: root
-#     group: root
-#     mode: 0755
-#   tags: scripts
+- name: Install wp-content/uploads backup script
+  become: true
+  copy:
+    src: backup-uploads
+    dest: /usr/local/bin/backup-uploads
+    owner: root
+    group: root
+    mode: 0755
+  tags: backup
 
-# - name: Setup wordpress-backup cron
-#   cron:
-#     name: "Backup Wordpress"
-#     minute: "0"
-#     hour: "08"
-#     job: "/usr/local/bin/wordpress-backup.sh"
-#   tags: cron
+- name: Setup wordpress-backup cron
+  become: true
+  cron:
+    name: "backup wp-content/uploads"
+    minute: "0"
+    hour: "6"
+    weekday: "0"
+    job: "/usr/local/bin/backup-uploads"
+  tags: backup
