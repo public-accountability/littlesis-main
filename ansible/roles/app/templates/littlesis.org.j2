@@ -6,7 +6,7 @@ server {
     include /etc/nginx/ssl.conf;
     # server_name littlesis.org www.littlesis.org;
     server_name {{ server_name }};
-    
+
     root /var/www/littlesis/public;
 
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -63,26 +63,28 @@ server {
     location ~ ^/images/(approve_deletion|deny_deletion|deletion_request)/(.+)$ {
         proxy_pass http://app;
     }
-    
+
     # Images
     location /images {
-        root /var/www/littlesis/public;
         expires 6M;
         add_header Cache-Control "public";
         try_files $uri =404;
     }
+
+    location = /robots.txt {
+        expires 5d;
+        add_header Cache-Control "public";
+    }
     
     # compiled Rails assets (via sprockets)
     location /assets {
-        expires 1y;
+        expires  max;
         add_header Cache-Control "public";
-        add_header ETag "";
         try_files $uri =404;
     }
-
     # compiled Rails assets (via webpack)
     location /packs/js {
-        expires 1y;
+        expires  max;
         add_header Cache-Control "public";
         try_files $uri =404;
     }
@@ -94,10 +96,10 @@ server {
         add_header Cache-Control public;
         try_files $uri =404;
     }
-    
+
     location /js {
         root /var/www/static;
-        expires 1y;
+        expires 7d;
         add_header Cache-Control public;
         try_files $uri =404;
     }
@@ -105,13 +107,14 @@ server {
     location /static/ {
         root /var/www/;
         expires 2h;
-        add_header Cache-Control public;
+        add_header Cache-Control "public";
         try_files $uri =404;
     }
+
     
     location ~ \.pdf {
         root /var/www/static;
-        add_header Cache-Control public;
+        add_header Cache-Control "public";
         try_files $uri =404;
     }
     
@@ -123,7 +126,7 @@ server {
 
     location ~ /apple-touch-icon(.*)\.png {
         root /var/www/static;
-        add_header Cache-Control public;
+        add_header Cache-Control "public";
         try_files $uri =404;
         expires 6M;
         access_log off;

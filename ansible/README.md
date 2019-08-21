@@ -148,3 +148,17 @@ CHANGE MASTER TO
 
 START SLAVE;
 ```
+
+
+### Common ansible tasks
+
+
+update nginx configuration:
+
+
+``` sh
+ansible-playbook littlesis.yml --limit=app --tags=nginx-config
+
+```
+
+
