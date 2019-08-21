@@ -26,17 +26,17 @@ server {
     # Various rewrites and redirects #
 
     location ~ ^/(org|person)/([0-9]+)/.+/recipients$ {
-	rewrite ^/(org|person)/([0-9]+)/.+/recipients$ /entities/$2?relationships=donation_recipients break;
+	rewrite ^/(org|person)/([0-9]+)/.+/recipients$ /entities/$2?relationships=donation_recipients last;
     }
 
     # http://littlesis.org/list/852/Top_Fortune_500_companies_in_NYC
     location ~ ^/list/([0-9]+)/(.+)$ {
-        rewrite ^/list/([0-9]+)/(.+)$ /lists/$1 break;
+        rewrite ^/list/([0-9]+)/(.+)$ /lists/$1 permanent;
     }
 
     # rewrite relationship view page from legacy url
     location /relationship/view {
-        rewrite ^/relationship/view/id/([0-9]+)$ /relationships/$1 break;
+        rewrite ^/relationship/view/id/([0-9]+)$ /relationships/$1 last;
     }
 
     location /news {
@@ -146,22 +146,14 @@ server {
         return 403;
     }
 
+    location ~ \.php$ {
+        return 404;
+        access_log off;
+    }
+
     location = /ads.txt {
         return 404;
         access_log off;
-        log_not_found off;
-    }
-    
-    # Prevents those random requests from going to PHP
-    location = /wp-login.php {
-        return 404;
-        access_log off;
-        log_not_found off;
     }
 
-    location = /xmlrpc.php {
-         deny all;
-         access_log off;
-         log_not_found off;
-     }
 }
