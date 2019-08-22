@@ -1,0 +1,24 @@
+#!/usr/bin/env python3
+
+# This sets the remote_addr, http_referer, and http_user_agent to null
+# if the request is more than 7 days old
+
+import os
+import sqlite3
+
+DATABASE_PATH = os.getenv('LITTLESIS_LOG_DATABASE', '/var/log/nginx.db')
+TABLE_NAME = 'requests'
+
+con = sqlite3.connect(DATABASE_PATH)
+
+con.execute(f'''
+UPDATE {TABLE_NAME}
+SET remote_addr = NULL,
+    http_referer = NULL,
+    http_user_agent = NULL
+WHERE remote_addr IS NOT NULL
+      AND time >= datetime('now', '-7 days')
+''')
+
+con.commit()
+con.close()
