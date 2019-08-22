@@ -30,7 +30,6 @@ import sys
 from urllib.parse import urlparse, parse_qs
 
 DATABASE_PATH = os.getenv('LITTLESIS_LOG_DATABASE', '/var/log/nginx.db')
-
 TABLE_NAME = 'requests'
 
 INSERT_SQL = f"INSERT INTO {TABLE_NAME} VALUES ({', '.join(13 * ['?'])})"
@@ -38,7 +37,7 @@ INSERT_SQL = f"INSERT INTO {TABLE_NAME} VALUES ({', '.join(13 * ['?'])})"
 CREATE_TABLE_SQL = f'''
 CREATE TABLE IF NOT EXISTS {TABLE_NAME} (
     remote_addr      TEXT,
-    time             TEXT,
+    time             DATETIME,
     host             TEXT,
     target           TEXT,
     method           TEXT,
@@ -76,7 +75,6 @@ def main(logfile):
                 con.execute(INSERT_SQL, entry)
 
     con.close()
-
 
 if __name__ == '__main__':
     if not os.path.isfile(sys.argv[1]):
