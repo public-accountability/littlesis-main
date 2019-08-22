@@ -1,0 +1,85 @@
+#!/usr/bin/env python3
+
+# LittleSis's nginx logs contains 9 variables:
+#   remote_addr, time, host, request, status, body_bytes_sent, request_time, http_referer, http_user_agent
+# This script further breaks down "request" into components
+#       target, method, path, query, http_version
+#
+# Columns in sqlite database:
+#---------------------------------
+# 0) remote address
+# 1) time
+# 2) host
+# 3) target
+# 4) method
+# 5) path
+# 6) query
+# 7) http version
+# 8) status
+# 9) body bytes sent
+# 10) request_time
+# 11) http referer
+# 12) http user agent
+
+import csv
+import json
+import os
+import sqlite3
+import sys
+
+from urllib.parse import urlparse, parse_qs
+
+DATABASE_PATH = os.getenv('LITTLESIS_LOG_DATABASE', '/var/log/nginx.db')
+
+TABLE_NAME = 'requests'
+
+INSERT_SQL = f"INSERT INTO {TABLE_NAME} VALUES ({', '.join(13 * ['?'])})"
+
+CREATE_TABLE_SQL = f'''
+CREATE TABLE IF NOT EXISTS {TABLE_NAME} (
+    remote_addr      TEXT,
+    time             TEXT,
+    host             TEXT,
+    target           TEXT,
+    method           TEXT,
+    path             TEXT,
+    query            JSON,
+    http_version     TEXT,
+    status           INTEGER,
+    body_bytes_sent  INTEGER,
+    request_time     NUMERIC,
+    http_referer     TEXT,
+    http_user_agent  TEXT
+)'''
+
+csv.register_dialect('nginx', delimiter=' ', quotechar='"')
+
+def parse_row(row):
+    assert len(row[3].split(' ')) == 3
+
+    method, full_path, http_version = row[3].split(' ')
+    url = urlparse(full_path)
+
+    return row[0:4] + [method, url.path, json.dumps(parse_qs(url.query)), http_version] + row[4:]
+
+
+def main(logfile):
+    con = sqlite3.connect(DATABASE_PATH)
+
+    with con:
+        con.execute(CREATE_TABLE_SQL)
+
+    with open(logfile, 'r') as f:
+        for row in csv.reader(f, dialect='nginx'):
+            entry = parse_row(row)
+            with con:
+                con.execute(INSERT_SQL, entry)
+
+    con.close()
+
+
+if __name__ == '__main__':
+    if not os.path.isfile(sys.argv[1]):
+        sys.exit('logfile is not a file')
+
+    main(sys.argv[1])
