@@ -77,7 +77,12 @@ def main(logfile):
     con.close()
 
 if __name__ == '__main__':
-    if not os.path.isfile(sys.argv[1]):
+    logfile = sys.argv[1]
+
+    if not os.path.isfile(logfile):
         sys.exit('logfile is not a file')
 
-    main(sys.argv[1])
+    if os.path.basename(logfile) != 'access.log':
+        sys.exit
+
+    main(logfile)

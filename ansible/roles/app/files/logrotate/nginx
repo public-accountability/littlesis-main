@@ -1,0 +1,15 @@
+/var/log/nginx/*.log {
+    daily
+    rotate 7
+    compress
+    delaycompress
+    notifempty
+    create 0640 www-data adm
+    prerotate
+	/usr/local/bin/littlesis-logrotate-nginx $1
+    endscript
+    shred
+    postrotate
+	kill -USR1 `cat /run/nginx.pid`
+    endscript
+}

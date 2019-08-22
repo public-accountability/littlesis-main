@@ -1,0 +1,37 @@
+---
+- name: Copy nginx logroate script
+  become:  true
+  copy:
+    src: logrotate/nginx
+    dest: /etc/logrotate.d/nginx
+    user: root
+    group: root
+    mode: 0640
+  
+- name: Copy nginx processing script
+  copy:
+    src: logrotate/littlesis-logrotate-nginx
+    dest: /usr/local/bin/littlesis-logrotate-nginx
+    user: root
+    group: root
+    mode: 0755
+
+- name: Copy nginx database cleaning script
+  become: true
+  copy:
+    src: logrotate/littlesis-log-database-clean
+    dest: /usr/local/bin/littlesis-log-database-clean
+    user: root
+    group: root
+    mode: 0755
+
+- name: LittleSis log database cleaning
+  become: true
+  cron:
+    name: "clean nginx.db"
+    minute: "0"
+    hour: "7"
+    job: "/usr/local/bin/littlesis-log-database-clean"
+  tags: cron
+    
+    

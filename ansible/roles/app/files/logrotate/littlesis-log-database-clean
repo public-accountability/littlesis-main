@@ -5,13 +5,9 @@
 
 import os
 import sqlite3
-import sys
 
 DATABASE_PATH = os.getenv('LITTLESIS_LOG_DATABASE', '/var/log/nginx.db')
 TABLE_NAME = 'requests'
-
-if not os.path.isfile(DATABASE_PATH)
-    sys.exit(f'{DATABASE_PATH} is not a file')
 
 con = sqlite3.connect(DATABASE_PATH)
 
