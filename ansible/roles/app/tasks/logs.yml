@@ -1,18 +1,19 @@
 ---
 - name: Copy nginx logroate script
-  become:  true
+  become: true
   copy:
     src: logrotate/nginx
     dest: /etc/logrotate.d/nginx
-    user: root
+    owner: root
     group: root
     mode: 0640
   
 - name: Copy nginx processing script
+  become: true
   copy:
     src: logrotate/littlesis-logrotate-nginx
     dest: /usr/local/bin/littlesis-logrotate-nginx
-    user: root
+    owner: root
     group: root
     mode: 0755
 
@@ -21,7 +22,7 @@
   copy:
     src: logrotate/littlesis-log-database-clean
     dest: /usr/local/bin/littlesis-log-database-clean
-    user: root
+    owner: root
     group: root
     mode: 0755
 
@@ -33,5 +34,3 @@
     hour: "7"
     job: "/usr/local/bin/littlesis-log-database-clean"
   tags: cron
-    
-    

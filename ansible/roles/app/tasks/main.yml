@@ -40,3 +40,6 @@
 
 - import_tasks: images-backup.yml
   tags: backup
+
+- import_tasks: logs.yml
+  tags: logs

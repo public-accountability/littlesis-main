@@ -54,12 +54,13 @@ CREATE TABLE IF NOT EXISTS {TABLE_NAME} (
 csv.register_dialect('nginx', delimiter=' ', quotechar='"')
 
 def parse_row(row):
-    assert len(row[3].split(' ')) == 3
-
-    method, full_path, http_version = row[3].split(' ')
-    url = urlparse(full_path)
-
-    return row[0:4] + [method, url.path, json.dumps(parse_qs(url.query)), http_version] + row[4:]
+    # row[3] is the HTTP target string which is parsed into 4 components
+    if len(row[3].split(' ')) == 3:
+        method, full_path, http_version = row[3].split(' ')
+        url = urlparse(full_path)
+        return row[0:4] + [method, url.path, json.dumps(parse_qs(url.query)), http_version] + row[4:]
+    # The TARGET is sometimes a blank string
+    return row[0:4] + ([None] * 4) + row[4:]
 
 
 def main(logfile):
