@@ -7,5 +7,6 @@ rails/log
 rails/tmp
 rails/public
 rails/data
+rails/db/sphinx
 ansible
 static
