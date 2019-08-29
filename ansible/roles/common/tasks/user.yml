@@ -23,3 +23,11 @@
     state: present
     key: "{{ maintainer_user_key }}"
 
+- name: Add additional authorized keys
+  become: true
+  authorized_key:
+    user: "{{ maintainer_user_name }}"
+    state: present
+    key: "{{ item }}"
+  loop: "{{ maintainer_authorized_keys }}"
+  when: maintainer_authorized_keys|length > 0

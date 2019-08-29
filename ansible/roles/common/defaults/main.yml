@@ -4,6 +4,8 @@ swapfile_location: /swapfile
 
 maintainer_user_name: maintainer
 
+maintainer_authorized_keys: []
+
 littlesis_common_packages:
   - build-essential
   - sudo
