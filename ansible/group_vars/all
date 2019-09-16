@@ -20,7 +20,7 @@ database_replicant_password:
 database_pool: 10
 
 # Software Versions
-ruby_version: '2.6.3'
+ruby_version: '2.6.4'
 nodejs_version: '10.x'
 
 littlesis_rails_version: 'master'
