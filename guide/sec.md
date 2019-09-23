@@ -35,16 +35,16 @@ lib/scripts/sec --list-example-ciks
 lib/scripts/sec  --cik 0001018724 --print-forms --forms=8-K
 ```
 
-###  Roaster
+###  Roster
 
 
-View roaster of names
+View roster of names
 
 ```
 lib/scripts/sec --cik 0001018724 --roster
 ```
 
-View roaster in json format
+View roster in json format
 
 ```
 lib/scripts/sec --cik 0001018724 --roster --json
