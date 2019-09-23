@@ -69,7 +69,7 @@ You can update the ansible inventory via ` make inventory-edit `
 
 ### Update the vars
 
-Run ` make vars-edit `. You'll need to change the `internal_ip` variables to correspend to the private networking IP from digital ocean. If setting up the app for development, you'll likely also want to change the server_name and TLS certs.
+Run ` make vars-edit `. You'll need to change the `internal_ip` variables to correspond to the private networking IP from digital ocean. If setting up the app for development, you'll likely also want to change the server_name and TLS certs.
 
 ### run the playbook
 
@@ -152,8 +152,12 @@ START SLAVE;
 
 ### Common ansible tasks
 
+Depending how you configured ansible, you'll likely have to add these two flags when running `ansible-playbook`
 
-update nginx configuration:
+``` ansible-playbook --ask-become-pass --ask-vault-pass ```
+
+
+**Update nginx configuration:**
 
 
 ``` sh
