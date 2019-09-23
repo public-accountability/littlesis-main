@@ -23,7 +23,11 @@ This creates a sqlite3 database (`sec_filings.db`) from the index files.
 
 ## CLI examples
 
-These examples use Amazon's CIK 0001018724.
+These examples use Amazon's CIK 0001018724. You can use any CIK or predefined example CIK. View available examples:
+
+``` 
+lib/scripts/sec --list-example-ciks
+```
 
 ### List forms by type
  
