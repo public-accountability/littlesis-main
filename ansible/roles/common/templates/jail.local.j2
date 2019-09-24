@@ -13,13 +13,6 @@ findtime  = 600
 #
 
 [sshd]
+mode    = aggressive
 enabled = true
 port    = ssh
-
-[sshd-ddos]
-enabled = true
-
-[nginx-noscript]
-enabled = true
-port    = http,https
-logpath = /var/log/nginx/access.log
