@@ -1,6 +1,6 @@
 ---
 maintainer_user_name: maintainer
-maintainer_user_password: 
+maintainer_user_password:
 # this should be a ssh ed25519 public key
 maintainer_user_key:
 
@@ -20,7 +20,7 @@ database_replicant_password:
 database_pool: 10
 
 # Software Versions
-ruby_version: '2.6.4'
+ruby_version: '2.6.5'
 nodejs_version: '10.x'
 
 littlesis_rails_version: 'master'
@@ -54,8 +54,8 @@ pai_tls_key:
 # lilsis.yml defaults
 # redis_url: "redis://127.0.0.1:6379/0/cache"
 # nginx_ssl_ciphers: 'ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256'
-aws_key: 
-aws_secret: 
+aws_key:
+aws_secret:
 aws_s3_base:
 aws_s3_bucket: 'pai-littlesis'
 aws_region: 'us-east-1'
@@ -65,7 +65,7 @@ cloudfront_distribtion_id:
 google_custom_search_engine_id:
 google_custom_news_search_engine_id:
 google_custom_search_key:
-google_street_view_key: 
+google_street_view_key:
 verticalresponse_username:
 verticalresponse_password:
 research_from_email:
@@ -83,7 +83,7 @@ smtp_address:
 smtp_port:
 smtp_domain:
 smtp_user_name:
-smtp_password: 
+smtp_password:
 smtp_authentication: 'plain'
 notification_email:
 notification_user_name:

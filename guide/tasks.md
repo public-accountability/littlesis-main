@@ -34,7 +34,7 @@ bundle exec rake common_names:warm_cache
 
 ## Database
 
-### development Database 
+### development Database
 
 Create a new copy of the development database. Saves file to `data/development_db_[DATE].sql`
 
@@ -52,7 +52,7 @@ To dreate a new copy of public data dataset, run
 bundle exect rake mysql:public_data
 ```
 
-which will create the file: ls_public_data_raw.sql. 
+which will create the file: ls_public_data_raw.sql.
 
 
 Then copy that file to another computer with docker installed.
@@ -79,7 +79,13 @@ In the rails console:
 User.find_by(username: <OLD_USERNAME>).update!(username: <NEW_USERNAME>)
 ```
 
-## Dependencies Updates 
+### Reset a user's password
+
+``` ruby
+User.find_by(email: <EMAIL>).send_reset_password_instructions
+```
+
+## Dependencies Updates
 
 ### Updating Oligrapher
 
@@ -113,11 +119,12 @@ cd static/js/oligrapher && download_oli $OLIGRAPHER_VERSION
 - `rails/.travis.yml`
 - FROM line of `littlesis.docker`
 
-2) **Run tests on new ruby version** 
+2) **Run tests on new ruby version**
 
 This can be done locally, but it's easier to just push the changes to a branch and let travis run with the new version.
 
 3) **Create new docker image**
+
 
 #### In production
 
@@ -128,9 +135,9 @@ Change **ruby_version** in `ansible/group_vars/all`.
 2) **Update server**
 
 ``` sh
-ansible-playbook littlesis.yml --limit-app --tags=ruby
-ansible-playbook littlesis.yml --limit-app --tags=clone
-ansible-playbook littlesis.yml --limit-app --tags=gems
+ansible-playbook littlesis.yml --limit=app --tags=ruby
+ansible-playbook littlesis.yml --limit=app --tags=clone
+ansible-playbook littlesis.yml --limit=app --tags=gems
 ```
 
 then ssh-into the server and run:
