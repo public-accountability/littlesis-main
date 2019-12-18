@@ -1,12 +1,16 @@
 # Running LittleSis in production
 
-This document contains instructions for setting up LittleSis for production. It was created in Summer 2019 while moving our system from AWS to Digital Ocean. Although the document contains some Digital Ocean specific instructions, the ansible playbooks themselves are generic to Debian. It wouldn't be too hard to tweak these instructions to run on other service providers. I detest using the words "master" and "slave" when referring the database and instead I generally use the terms "main" database and "replicant" database.
+This document contains instructions for setting up servers to run LittleSis .
+
+## History
+
+Until 2019 LittleSis ran on Amazon Web Services until it was moved to Digital Ocean. Although the document contains some Digital Ocean specific instructions, the ansible playbooks themselves do not contain any hosting-provider specific features. It wouldn't be too hard to tweak these instructions to run on other hosting providers.
 
 ## Architecture
 
-LittleSis runs on 4 servers.
+LittleSis runs on 4 servers with the Debian operating system.
 
-*app*  Runs the LittleSis rails app. 
+*app*  Runs the LittleSis rails app.
 
 *database* is a mariadb database server. Both the rails app and the wordpress use this database.
 
@@ -14,30 +18,29 @@ LittleSis runs on 4 servers.
 
 *wordpress* runs our two wordpress sites.
 
-## Setting up your own computer
+## Developer computer setup
+### Requirements and SSH key creation
 
 You'll need ansible installed and an SSH key.
 
-* To install ansible [see this guide](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html). 
+* To install ansible [see this guide](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html).
 
-* Create an ssh key to use just for LittleSis's deployment ```  ssh-keygen -t ed25519 ``` located at ` ~/.ssh/id_littlesis `
+* Create an ssh key to that will be used for LittleSis's deployment ```  ssh-keygen -t ed25519 ``` located at ` ~/.ssh/id_littlesis `
 
-You are welcome to use an ssh key located elsewhere, but the default ansible variables assumes that location.
+You are welcome to use an ssh key located elsewhere, but the default ansible variables assumes that location. It is important to keep this file safe and backed-up because it is your password to the server.
 
 There is a Makefile in this folder with helpful shortcuts.
 
-## Ansible vault
+### Ansible vault
 
-Two files -- inventory.yml and vars.yml -- are stored using ansible-vault.
+Ansible vault is used to store variable secrets -- passwords, api keys, etc. Only wwo files, inventory.yml and vars.yml, are stored using ansible-vault.
 
-edit these files with ` make inventory-edit ` and ` make vars-edit `.
+Edit these files with ` make inventory-edit ` and ` make vars-edit `.
 
+## Setup new production servers
+### Create 4 debian buster servers
 
-## Create and setup servers
-
-###  Create 4 debian buster servers
-
-Currently at LittleSis.org, we use 2-4CPUs and 4-8GB RAM for the app, database, and replicant  servers. The wordpress servers can be smaller. To make matters easier the replicant server is kept as the same size of the main database server, but it could be smaller given that it's main function to operate as a backup.
+Currently LittleSis.org uses 2-4CPUs and 4-8GB RAM servers for the app, database, and replicant servers. The wordpress server can be smaller. For simplicity's sake, the replicant server is kept as the same size of the main database server, which could probably be smaller given that it's main function to operate as a backup and it mostly sits idle.
 
 Example inventory:
 
@@ -59,11 +62,11 @@ littlesis:
   vars:
     ansible_python_interpreter: /usr/bin/python3
     ansible_ssh_common_args: '-o IdentitiesOnly=yes'
-	ansible_user: root
+    ansible_user: root
     ansible_private_key_file: ~/.ssh/id_littlesis
 ```
 
-Note that after the initial run, the host variable `ansible_user` should be changed from _root_ to _maintainer_.
+After the initial run, the host variable `ansible_user` should be changed from _root_ to _maintainer_.
 
 You can update the ansible inventory via ` make inventory-edit `
 
@@ -71,11 +74,11 @@ You can update the ansible inventory via ` make inventory-edit `
 
 Run ` make vars-edit `. You'll need to change the `internal_ip` variables to correspond to the private networking IP from digital ocean. If setting up the app for development, you'll likely also want to change the server_name and TLS certs.
 
-### run the playbook
+### Run the playbook
 
 ` ansible-playbook littlesis.yml ` or ` make run `
 
-## Load the production database
+## Transferring the production database to a new server
 
 Obtain a full LittleSis backup, copy it to server (i.e. via scp) and then load the database:
 
@@ -83,11 +86,11 @@ Obtain a full LittleSis backup, copy it to server (i.e. via scp) and then load t
 mysql -D littlesis < path/to/littlesis.sql
 ```
 
-## Setup replication
+### Setup replication
 
-### Prepare a backup 
+#### Prepare a backup
 
-To transfer a backup from the main database to the replicant we will transfer the files via a Digital Ocean volume, using the volume much like an external harddrive.
+To transfer a backup from the main database to the replicant, I used a Digital Ocean volume like an external harddrive.
 
 First create a DigitalOcean volume to store the backup on (~100gb), and then attach it to the main database droplet.
 
@@ -106,7 +109,7 @@ mariabackup --backup --user=root --socket=/var/run/mysqld/mysqld.sock --target-d
 ```
 When the backup is complete remove the drive mount ` umount /mnt/backup ` and detach the volume via DigitalOcean's dashboard.
 
-### Copy the backup and restore the replicant
+#### Copy the backup and restore the replicant
 
 Attach the volume to the replicant droplet and repeat the mounting process on that server.
 
@@ -132,37 +135,46 @@ unmount the backup drive ` umount /mnt/backup `
 
 You may now detach the Digital Ocean volume and delete it.
 
-### Start the replication
+#### Start the replication
 
-Start mysql shell on replicant database and run:
+Start a mysql shell on replicant database and run:
 
-replace "0-1-331130" with the actual number from the xtrabackup_binlog_info file and the host 
+replace "0-1-331130" with the actual number from the xtrabackup_binlog_info file and the host
 ```
 SET GLOBAL gtid_slave_pos = "0-1-331130";
 
-CHANGE MASTER TO 
-   MASTER_HOST="[internal_ip_database]", 
+CHANGE MASTER TO
+   MASTER_HOST="[internal_ip_database]",
    MASTER_USER="replicant"
-   MASTER_PASSWORD="[database_replicant_password]", 
+   MASTER_PASSWORD="[database_replicant_password]",
    MASTER_USE_GTID=slave_pos;
 
 START SLAVE;
 ```
 
 
-### Common ansible tasks
+## Ansible tasks and tips
 
 Depending how you configured ansible, you'll likely have to add these two flags when running `ansible-playbook`
 
-``` ansible-playbook --ask-become-pass --ask-vault-pass ```
+``` sh
+ansible-playbook --ask-become-pass --ask-vault-pass
+```
 
+### Configuration Update
+
+It's common to have to update our webserver configuration.
 
 **Update nginx configuration:**
 
 
 ``` sh
 ansible-playbook littlesis.yml --limit=app --tags=nginx-config
-
 ```
 
+**Update rails configuration**
 
+
+``` sh
+ansible-playbook littlesis.yml --limit=app --tags=rail-app
+```
