@@ -21,7 +21,7 @@ database_pool: 10
 
 # Software Versions
 ruby_version: '2.6.5'
-nodejs_version: '10.x'
+nodejs_version: '12.x'
 
 littlesis_rails_version: 'master'
 
@@ -100,6 +100,5 @@ image_host: "https://littlesis.org"
 image_root: public/images
 # donation banner
 donation_banner_display: false
-donation_banner_html: "<b>LittleSis</b> is turning <b>10</b> years old! <a href=\"https://littlesis.org/donate/\">Become a $10/month sustaining donor</a> and we’ll send you an anniversary t-shirt!"
-
+donation_banner_html: Will you <a href="https://littlesis.org/donate/">pitch in</a> to support LittleSis's power mapping tools?
 oligrapher_version: 0.4.5
