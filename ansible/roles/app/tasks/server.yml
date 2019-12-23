@@ -10,6 +10,7 @@
     owner: root
     group: root
     mode: 0755
+  tags: nginx-config
 
 - name: Copy TLS Cert
   copy:
@@ -18,6 +19,7 @@
     owner: root
     group: root
     mode: 0600
+  tags: nginx-config
   no_log: true
 
 - name: Copy TLS Key
@@ -27,6 +29,7 @@
     owner: root
     group: root
     mode: 0600
+  tags: nginx-config
   no_log: true
 
 - name: Copy nginx configuration
