@@ -35,7 +35,7 @@ RUN dpkg -i /tmp/manticore.deb
 RUN rm /tmp/manticore.deb
 
 # NODE
-RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
+RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
 RUN apt-get install -y nodejs
 
 # YARN

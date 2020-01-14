@@ -1,5 +1,4 @@
-export ANSIBLE_VAULT_PASSWORD_FILE = /tmp/littlesis_vault_pass
-# export ANSIBLE_ASK_VAULT_PASS = TRUE
+export ANSIBLE_ASK_VAULT_PASS = TRUE
 export ANSIBLE_INVENTORY = ./inventory.yml
 
 VARS_FILE = ./vars.yml
@@ -17,21 +16,19 @@ run:
 	@ansible-playbook littlesis.yml
 
 app:
-	@ansible-playbook littlesis.yml --tags=app
+	@ansible-playbook littlesis.yml --limit=app --tags=app
 
 database:
-	@ansible-playbook littlesis.yml --tags=database
+	@ansible-playbook littlesis.yml --limit=database --tags=database
 
 replicant:
-	@ansible-playbook littlesis.yml --tags=replicant
+	@ansible-playbook littlesis.yml --limit=replicant --tags=replicant
 
 wordpress:
-	@ansible-playbook littlesis.yml --tags=wordpress
+	@ansible-playbook littlesis.yml --limit=wordpress --tags=wordpress
 
 ping:
 	@ansible all -m ping
 
 .PHONY: inventory inventory-edit vars-edit run ping
 .PHONY: app database replicant wordpress
-
-
