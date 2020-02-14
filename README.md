@@ -1,11 +1,8 @@
 # littlesis-main
 
-This repo contains instructions and configurations for running littlesis in development mode with docker and an ansible playbook for running littlesis in production on an ubuntu server.
+This repo contains instructions for running LittleSis in development with docker and an ansible playbook for running LittleSis in production.
 
-Littlesis's code can be found here: [github.com/public-accountability/littlesis-rails](https://github.com/public-accountability/littlesis-rails)
-
-Our javascript interactive mapping tool: [Oligrapher](https://github.com/skomputer/oligrapher)
-
+The source code for LittleSis's can be found here: [github.com/public-accountability/littlesis-rails](https://github.com/public-accountability/littlesis-rails)
 
 ## Installation
 
