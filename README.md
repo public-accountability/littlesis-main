@@ -64,11 +64,17 @@ The rest of these commands assumes that your working directory is the root of th
 
 7) Setup the database:  ` make db-setup `
 
+8) Load a copy of the development database
+
+```
+mysql -u littlesis -pthemanbehindthemanbehindthethrone -h 127.0.0.1 littlesis < /path/to/dev_db.sql
+```
+
 ### Setup rails tests
 
 Setup the testing database: ` littlesis reset-test-db `
 
-Rnun the tests: ` littlesis rspec `
+Run the tests: ` littlesis test `
 
 ### Setup and start Sphinx
 
