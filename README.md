@@ -48,34 +48,33 @@ Steps for a fully functional LittleSis Development environment:
 
 ## Initial setup
 
-1) Pull down the rails repo and configure it: ``` make setup```
+1) Clone this repo. `git clone https://github.com/public-accountability/littlesis-main`.
 
-2) Pull down the containers: ``` make docker-pull ```
+The rest of these commands assumes that your working directory is the root of this repository.
 
-3) [optional] Edit the configuration files in ./config and run: ``` make config ```
+2) Pull down the rails repo and configure it: ``` make setup```
 
-4) run app: ` ./littlesis up `
+3) Pull down the containers: ``` make docker-pull ```
 
-5) Setup the database:  ` make db-setup `
+4) [optional] Edit the configuration files in ./config
+
+5) Run ` make config `
+
+6) run app: ` ./littlesis up `
+
+7) Setup the database:  ` make db-setup `
 
 ### Setup rails tests
 
 Setup the testing database: ` littlesis reset-test-db `
 
-Run the tests: ` littlesis rspec `
+Rnun the tests: ` littlesis rspec `
 
 ### Setup and start Sphinx
 
 The first time you create the containers (and anytime you rebuild a container) you'll have to re-index Sphinx. _Everytime_ you start the docker app, you will have to start sphinx. If you get a sphinx error page on a profile page, make sure that sphinx is started.
 
 To start and index sphinx: ` littlesis rake ts:rebuild `
-
-### View Javascript tests:
-
-Start Jasmine server: ` littlesis jasmine `
-
-and go to _localhost:8888_
-
 
 ### Docker images
 
