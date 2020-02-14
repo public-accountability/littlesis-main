@@ -21,7 +21,7 @@ When complete you should have a folder structure that looks like this:
 
 ### Requirements:
 
-* [Docker](https://www.docker.com/community-edition) and [docker-compose](https://docs.docker.com/compose/install/)
+* [Docker](https://www.docker.com/community-edition) and [docker-compose](https://docs.docker.com/compose/install/). See the [Debian installation guide](https://docs.docker.com/install/linux/docker-ce/debian/).
 
 * mysql/mariadb client. on debian get this via: ` sudo apt install mariadb-client `
 
