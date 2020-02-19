@@ -45,12 +45,6 @@ server {
         access_log off;
     }
 
-    # Sometimes requests intended for our asset server get sent here.
-    # This redirects those requests.
-    location ~ ^//?dfl6orqdcqt4f.cloudfront.net/(.*) {
-        return 301 https://littlesis.org/$1;
-    }
-
     ##
     # Static assets
     #
@@ -148,6 +142,10 @@ server {
     location = /robots.txt {
         expires 5d;
         add_header Cache-Control "public";
+    }
+
+    location = /api/robots.txt {
+        return 301 $scheme://$http_host/robots.txt;
     }
 
     # Deny  #
