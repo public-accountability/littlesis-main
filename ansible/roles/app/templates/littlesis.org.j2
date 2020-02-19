@@ -71,7 +71,7 @@ server {
         add_header Cache-Control "public";
         try_files $uri =404;
     }
-    
+
     # Compiled Rails assets (via sprockets)
     location /assets {
         expires  max;
@@ -94,10 +94,17 @@ server {
         try_files $uri =404;
     }
 
-    # /var/www/static/js/oligrapher contains complied versions of oligrapher
+    # /var/www/static/js/oligrapher contains complied versions of oligrapher (legacy)
     location /js {
         root /var/www/static;
         expires 7d;
+        add_header Cache-Control public;
+        try_files $uri =404;
+    }
+
+    # Compiled Oligrapher 3.0 Assets
+    location ~ ^/oligrapher/oligrapher-.*\.js$ {
+        expires 1h;
         add_header Cache-Control public;
         try_files $uri =404;
     }
@@ -120,7 +127,7 @@ server {
         add_header Cache-Control "public";
         try_files $uri =404;
     }
-    
+
     location = /favicon.ico {
         root /var/www/static;
         add_header Cache-Control "public";
@@ -142,8 +149,8 @@ server {
         expires 5d;
         add_header Cache-Control "public";
     }
-    
-    # Deny  # 
+
+    # Deny  #
 
     # list 79 is used as the U.S. network
     # and should not be accessible.
