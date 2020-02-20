@@ -17,10 +17,34 @@ server {
         proxy_pass http://app;
     }
 
-    # Rate limit the api
     location /api {
+        # Rate limit the api
+        # see nginx.conf for limit_req_zone configuration
         limit_req zone=api burst=2 nodelay;
-        proxy_pass http://app;
+
+        # Our API only accepts GET requests
+        if ($request_method = 'POST') {
+            return 405;
+        }
+
+        # CORS preflight request
+        if ($request_method = 'OPTIONS') {
+            add_header 'Access-Control-Allow-Origin' *;
+            add_header 'Access-Control-Allow-Methods' 'GET, OPTIONS, HEAD';  # 'GET, POST, OPTIONS';
+            add_header 'Access-Control-Max-Age' 86400; # cache for one day
+            add_header 'Content-Type' 'text/plain; charset=utf-8';
+            add_header 'Content-Length' 0;
+            return 204;
+        }
+
+        # Allow any cross origin GET request
+        # API requests are public and cacheable
+        if ($request_method = 'GET') {
+            add_header 'Access-Control-Allow-Origin' *;
+            add_header Cache-Control "public";
+            expires 120s;
+            proxy_pass http://app;
+        }
     }
 
     # Rewrites and redirects #
