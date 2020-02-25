@@ -32,6 +32,7 @@ services:
       - "127.0.0.1:8081:80"
     volumes:
       - ./rails:/littlesis
+      - ./static:/var/www/static
       - ./ls_dev.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       - app
