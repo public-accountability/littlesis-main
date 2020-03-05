@@ -66,7 +66,7 @@ littlesis:
     ansible_private_key_file: ~/.ssh/id_littlesis
 ```
 
-After the initial run, the host variable `ansible_user` should be changed from _root_ to _maintainer_.
+**After the initial run, the host variable `ansible_user` should be changed from _root_ to _maintainer_.**
 
 You can update the ansible inventory via ` make inventory-edit `
 
