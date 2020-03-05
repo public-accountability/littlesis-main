@@ -169,12 +169,27 @@ It's common to have to update our webserver configuration.
 
 
 ``` sh
-ansible-playbook littlesis.yml --limit=app --tags=nginx-config
+ansible-playbook --ask-vault-pass --inventory ./inventory.yml littlesis.yml --limit=app --tags=nginx-config
 ```
 
 **Update rails configuration**
 
 
 ``` sh
-ansible-playbook littlesis.yml --limit=app --tags=rail-app
+ansible-playbook --ask-vault-pass --inventory ./inventory.yml littlesis.yml --limit=app --tags=rail-app
+```
+
+
+**Add new maintainer ssh key**
+
+Add the new ssh public key to the list stored in variable `maintainer_authorized_keys` :
+
+``` sh
+make vars-edit
+```
+
+Then run:
+
+``` sh
+ansible-playbook --ask-vault-pass --inventory ./inventory.yml littlesis.yml --tags=user
 ```
