@@ -91,7 +91,7 @@ User.find_by(email: <EMAIL>).send_reset_password_instructions
 
 1) Release a new version with a numeric tag -- i.e. `0.4.1`
 
-2) Download latest version to static folder
+2) In local dev environment, download latest version to static folder
 
 ``` fish
 set OLIGRAPHER_VERSION [VERSION]
