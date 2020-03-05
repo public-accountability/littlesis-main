@@ -119,7 +119,7 @@ cd /path/to/littlesis-main
 ./littlesis rake ts:start
 ```
 
-2. Point your favorite browser to `localhost:8008`
+2. Point your favorite browser to `localhost:8080`
 
 3. If desired, login with:
 
