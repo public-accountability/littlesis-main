@@ -33,7 +33,7 @@ There is a Makefile in this folder with helpful shortcuts.
 
 ### Ansible vault
 
-Ansible vault is used to store variable secrets -- passwords, api keys, etc. Only wwo files, inventory.yml and vars.yml, are stored using ansible-vault.
+Ansible vault is used to store variable secrets -- passwords, api keys, etc. Only two files, inventory.yml and vars.yml, are stored using ansible-vault.
 
 Edit these files with ` make inventory-edit ` and ` make vars-edit `.
 
