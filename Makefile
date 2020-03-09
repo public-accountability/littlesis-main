@@ -1,4 +1,4 @@
-RAILS_DOCKER_VERSION := 0.9.20
+RAILS_DOCKER_VERSION := 1.0.0
 
 help:
 	@echo "Welcome to the LittleSis Dev Environment"
@@ -27,7 +27,7 @@ clone-wordpress-repos:
 	cd wordpress && $(foreach repo,$(WORDPRESS_REPOS), git clone $(CLONE_URL)/$(repo).git;})
 
 build-rails-docker:
-	docker build --no-cache -t aepyornis/ls-rails:$(RAILS_DOCKER_VERSION) -f littlesis.docker .
+	docker build --no-cache -t littlesis/littlesis:$(RAILS_DOCKER_VERSION) -f littlesis.docker .
 
 ansible-galaxy-roles:
 	ansible-galaxy install rvm.ruby DavidWittman.redis geerlingguy.nodejs dev-sec.ssh-hardening dev-sec.os-hardening geerlingguy.docker geerlingguy.composer

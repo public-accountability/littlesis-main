@@ -1,5 +1,5 @@
 FROM ruby:2.6.5-buster
-LABEL maintainer="ziggy@littlesis.org"
+LABEL maintainer="dev@littlesis.org"
 
 ENV RAILS_ENV=development
 ENV RAILS_SERVE_STATIC_FILES=true
