@@ -87,7 +87,7 @@ User.find_by(email: <EMAIL>).send_reset_password_instructions
 
 ## Dependencies Updates
 
-### Updating Oligrapher
+### Updating Oligrapher (OUTDATED)
 
 1) Release a new version with a numeric tag -- i.e. `0.4.1`
 
@@ -125,6 +125,11 @@ This can be done locally, but it's easier to just push the changes to a branch a
 
 3) **Create new docker image**
 
+- bump `RAILS_DOCKER_VERSION` version in Makfile
+- change version `docker-compose.yml`:
+- build new docker: `make build rails docker`
+- push docker images to docker hub: `docker push littlesis/littlesis:<RAILS_DOCKER_VERSION>`
+
 
 #### In production
 
@@ -139,6 +144,8 @@ ansible-playbook littlesis.yml --limit=app --tags=ruby
 ansible-playbook littlesis.yml --limit=app --tags=clone
 ansible-playbook littlesis.yml --limit=app --tags=gems
 ```
+
+3) **restart puma on server**
 
 then ssh-into the server and run:
 
