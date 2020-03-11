@@ -116,7 +116,7 @@ mysql_shell() {
 
 rails_coverage() {
     local cov_file=rails/coverage/index.html
-    
+
     if [ -x "$(command -v chromium)" ];then
 	chromium --new-window $cov_file > /dev/null 2>&1
     elif [ -x "$(command -v firefox)" ];then
@@ -127,23 +127,20 @@ rails_coverage() {
     fi
 }
 
-rvm_use() {
-    source ~/.rvm/scripts/rvm
-    cd rails && rvm use > /dev/null
-}
-
-if [ -f ./.travis_api_token ]
-then
-    travis_api_token=$(cat ./.travis_api_token)
-fi
-
-travis_repo_id=12307754
-
 travis_curl() {
+    if [ -f ./.travis_api_token ]
+    then
+        travis_api_token=$(cat ./.travis_api_token)
+    else
+        echo "Missing file '.travis_api_token'" 1>&2
+        exit 1
+    fi
+
     curl -s -S -L -H "Travis-API-Version: 3" -H "Authorization: token $travis_api_token" "https://api.travis-ci.org/$1"
 }
 
 travis_build_log() {
+    local travis_repo_id=12307754
     latest_build_id=$(travis_curl "repo/$travis_repo_id/builds?limit=1" | jq '.builds[0].id')
     latest_job_id=$(travis_curl "build/$latest_build_id" | jq '.jobs[0].id')
     travis_curl "job/$latest_job_id/log.txt" > "littlesis-travis-log-$latest_job_id.txt"
