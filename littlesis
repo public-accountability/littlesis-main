@@ -241,6 +241,10 @@ case $1 in
     ps)
 	docker ps
 	;;
+    logs)
+	shift
+	docker logs "$@"
+	;;
     -h|help|--help)
 	show_help
 	;;
