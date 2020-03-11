@@ -238,12 +238,19 @@ case $1 in
     travis-log)
 	travis_build_log
 	;;
+    ps)
+	docker ps
+	;;
+    logs)
+	shift
+	docker logs "$@"
+	;;
     -h|help|--help)
 	show_help
 	;;
     ?*) # End of all options.
 	echo 'Invalid option'
-        echo 'all options: rspec, up, down, ps, logs, nginx, mysql, login, test, rspec, spec, cmd, console, rails-logs, rake, restart-rails, jasmine, reset-test-db, search, spec-search, cov, help'
+        echo 'all options: up, down, ps, logs, nginx, mysql, login, test, rspec, spec, cmd, console, rails-logs, rake, restart-rails, reset-test-db, search, spec-search, cov, help'
         exit 1
 	;;
     *)
