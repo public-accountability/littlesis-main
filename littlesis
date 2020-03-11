@@ -238,6 +238,9 @@ case $1 in
     travis-log)
 	travis_build_log
 	;;
+    ps)
+	docker ps
+	;;
     -h|help|--help)
 	show_help
 	;;
