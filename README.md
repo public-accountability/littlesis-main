@@ -73,7 +73,7 @@ mysql -u littlesis -pthemanbehindthemanbehindthethrone -h 127.0.0.1 littlesis < 
 ### Setup rails tests
 
 Setup the testing database: ` littlesis reset-test-db `
-
+Compile test assets: `littlesis rake-test assets:precompile `
 Run the tests: ` littlesis test `
 
 ### Setup and start Sphinx
