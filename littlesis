@@ -187,6 +187,10 @@ case $1 in
 	shift
 	$web_app_exec "${@}"
 	;;
+    cmd-test)
+	shift
+	$web_app_exec "RAILS_ENV=test ${@}"
+	;;
     runner)
 	shift
 	$web_app_exec "RAILS_ENV=development bin/rails runner ${@}"
@@ -201,6 +205,10 @@ case $1 in
 	tail -f rails/log/test.log
 	;;
     rake)
+	shift
+	$web_app_exec "RAILS_ENV=development bundle exec rake ${@}"
+	;;
+    rake-test)
 	shift
 	$web_app_exec "RAILS_ENV=development bundle exec rake ${@}"
 	;;
