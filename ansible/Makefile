@@ -27,6 +27,9 @@ replicant:
 wordpress:
 	@ansible-playbook littlesis.yml --limit=wordpress --tags=wordpress
 
+ansible-galaxy-roles:
+	ansible-galaxy install zzet.rbenv DavidWittman.redis geerlingguy.nodejs dev-sec.ssh-hardening dev-sec.os-hardening geerlingguy.docker geerlingguy.composer
+
 ping:
 	@ansible all -m ping
 

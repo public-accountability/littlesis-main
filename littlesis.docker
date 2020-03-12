@@ -29,8 +29,8 @@ RUN add-apt-repository 'deb [arch=amd64,i386,ppc64el] http://nyc2.mirrors.digita
 RUN apt-get update && apt-get -y install mariadb-client libmariadb-dev
 
 # Manticore
-RUN curl -sSL https://github.com/manticoresoftware/manticoresearch/releases/download/3.1.0/manticore_3.1.0-190801-0a40d582-release.buster_amd64-bin.deb > /tmp/manticore.deb
-RUN echo '1039deeb79eb2069165be586d72373e4735fbb7fc1cdc65696bf596c7e7ed8c7 /tmp/manticore.deb' | sha256sum -c
+RUN curl -sSL https://github.com/manticoresoftware/manticoresearch/releases/download/3.3.0/manticore_3.3.0-200204-01fc8ad1-release.buster_amd64-bin.deb > /tmp/manticore.deb
+RUN echo '7a344c511fb3ed635ee34fc0f7df6a655f003ad755744c17fbadf9e2c68b45c7 /tmp/manticore.deb' | sha256sum -
 RUN dpkg -i /tmp/manticore.deb
 RUN rm /tmp/manticore.deb
 
