@@ -210,7 +210,7 @@ case $1 in
 	;;
     rake-test)
 	shift
-	$web_app_exec "RAILS_ENV=development bundle exec rake ${@}"
+	$web_app_exec "RAILS_ENV=test bundle exec rake ${@}"
 	;;
     restart-rails)
 	docker-compose exec web /bin/bash -c 'passenger-config restart-app /home/app'
