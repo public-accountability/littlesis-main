@@ -75,7 +75,7 @@ server {
 
     # These two location blocks are exceptions to the general /images location,
     # that should be handled as a regular rails route.
-    location ~ ^/images/[0-9]+/(crop|crop_remote|request_deletion) {
+    location ~ ^/images/[0-9]+/(crop|crop_remote|request_deletion|update) {
         proxy_pass http://app;
     }
 
