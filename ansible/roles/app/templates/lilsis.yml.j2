@@ -1,31 +1,17 @@
 defaults: &defaults
   aws_key: {{ aws_key }}
   aws_secret: {{ aws_secret }}
-  aws_region: {{ aws_region }} 
+  aws_region: {{ aws_region }}
   aws_s3_base: {{ aws_s3_base }}
   aws_s3_bucket: {{ aws_s3_bucket }}
-  square_image_file_type: jpg
-  imagemagick_binary_path: "/usr/bin/convert"
-  google_custom_search_engine_id:  {{ google_custom_search_engine_id }}
-  google_custom_news_search_engine_id: {{ google_custom_news_search_engine_id }}
-  google_custom_search_key: {{ google_custom_search_key }}
-  google_street_view_key: {{ google_street_view_key }}
   admins_only: false
-  convert_new_legacy_notes: true
-  research_from_email: {{ research_from_email }}
   netmap_api_key: {{ netmap_api_key }}
   netmap_default_width: 960
   netmap_default_height: 550
-  twitter_consumer_key: {{ twitter_consumer_key }}
-  twitter_consumer_secret: {{ twitter_consumer_secret }}
-  twitter_access_token: {{ twitter_access_token }}
-  twitter_access_token_secret: {{ twitter_access_token_secret }}
-  twitter_list_id: {{ twitter_list_id }}
   google_site_verification: {{ google_site_verification }}
   google_analytics_id: {{ google_analytics_id }}
   default_image_file_type: jpg
   system_user_id: 1
-  bing_maps_key: {{ bing_maps_key }}
   default_network_id: 79
   asset_host: {{ asset_host }}
   image_asset_host: {{ image_asset_host }}
@@ -57,7 +43,7 @@ defaults: &defaults
   oligrapher_version: {{ oligrapher_version }}
   image_host: {{ image_host }}
   image_root: {{ image_root }}
- 
+
 test:
   <<: *defaults
 
