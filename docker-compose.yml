@@ -15,7 +15,7 @@ services:
       - LITTLESIS_BIND=tcp://0.0.0.0:8080
 
   redis:
-    image: redis:5.0.5
+    image: redis:5.0.8
 
   mysql:
     image: mariadb:10.4
