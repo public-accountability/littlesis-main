@@ -9,3 +9,4 @@ ansible/*.retry
 /wordpress
 .travis_api_token
 littlesis-travis-log*.txt
+docker/tmp/*

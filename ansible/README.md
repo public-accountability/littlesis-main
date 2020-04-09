@@ -176,7 +176,7 @@ ansible-playbook --ask-vault-pass --inventory ./inventory.yml littlesis.yml --li
 
 
 ``` sh
-ansible-playbook --ask-vault-pass --inventory ./inventory.yml littlesis.yml --limit=app --tags=rail-app
+ansible-playbook --ask-vault-pass --inventory ./inventory.yml littlesis.yml --limit=app --tags=rails-config
 ```
 
 
