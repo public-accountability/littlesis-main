@@ -8,5 +8,6 @@ rails/tmp
 rails/public
 rails/data
 rails/db/sphinx
+docker/tmp
 ansible
 static
