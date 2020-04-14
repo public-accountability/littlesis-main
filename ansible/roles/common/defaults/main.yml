@@ -7,6 +7,7 @@ maintainer_user_name: maintainer
 maintainer_authorized_keys: []
 
 littlesis_common_packages:
+  - acl
   - build-essential
   - sudo
   - curl

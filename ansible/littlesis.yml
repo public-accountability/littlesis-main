@@ -14,7 +14,7 @@
     - import_role:
         name: app
   tags: app
-    
+
 - hosts: database
   vars_files:
     - "vars.yml"
@@ -28,7 +28,7 @@
       vars:
         database_role: main
   tags: database
-  
+
 - hosts: replicant
   vars_files:
     - "vars.yml"
