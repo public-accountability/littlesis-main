@@ -3,6 +3,7 @@ LABEL maintainer="dev@littlesis.org"
 
 ENV RAILS_ENV=development
 ENV RAILS_SERVE_STATIC_FILES=true
+ENV WEB_CONCURRENCY=1
 
 RUN apt-get update && apt-get upgrade -y && \
 	apt-get -y install \
