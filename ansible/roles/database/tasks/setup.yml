@@ -54,3 +54,13 @@
     priv: "*.*:REPLICATION SLAVE"
     state: present
   when: database_role == 'main'
+
+- name: Create readonly database user
+  mysql_user:
+    host: '%'
+    name: "{{ database_readonly_name }}"
+    password: "{{ database_readonly_password }}"
+    login_unix_socket: "{{ database_unix_socket }}"
+    priv: "*.*:SELECT"
+    state: present
+  when: database_role == 'main'

@@ -1,6 +1,4 @@
-export ANSIBLE_ASK_VAULT_PASS = TRUE
-export ANSIBLE_INVENTORY = ./inventory.yml
-
+ANSIBLE_INVENTORY = ./inventory.yml
 VARS_FILE = ./vars.yml
 
 inventory:

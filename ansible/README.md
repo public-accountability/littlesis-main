@@ -169,14 +169,14 @@ It's common to have to update our webserver configuration.
 
 
 ``` sh
-ansible-playbook --ask-vault-pass --inventory ./inventory.yml littlesis.yml --limit=app --tags=nginx-config
+ansible-playbook littlesis.yml --limit=app --tags=nginx-config
 ```
 
 **Update rails configuration**
 
 
 ``` sh
-ansible-playbook --ask-vault-pass --inventory ./inventory.yml littlesis.yml --limit=app --tags=rails-config
+ansible-playbook littlesis.yml --limit=app --tags=rails-config
 ```
 
 
@@ -191,5 +191,5 @@ make vars-edit
 Then run:
 
 ``` sh
-ansible-playbook --ask-vault-pass --inventory ./inventory.yml littlesis.yml --tags=user
+ansible-playbook littlesis.yml --tags=user
 ```

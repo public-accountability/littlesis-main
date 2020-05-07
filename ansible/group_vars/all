@@ -17,6 +17,8 @@ database_wordpress_name: wordpress
 database_wordpress_password:
 database_replicant_name: replicant
 database_replicant_password:
+database_readonly_name: readonly
+database_readonly_password:
 database_pool: 10
 
 # Software Versions
