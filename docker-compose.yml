@@ -2,7 +2,7 @@ version: '3'
 
 services:
   app:
-    image: littlesis/littlesis:1.0.9
+    image: littlesis/littlesis:1.0.10
     ports:
       - "127.0.0.1:8080:8080"
     volumes:
