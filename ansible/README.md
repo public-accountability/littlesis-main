@@ -91,9 +91,7 @@ Depending how you configured ansible, you'll likely have to add these two flags 
 ansible-playbook --ask-become-pass --ask-vault-pass
 ```
 
-### Configuration Update
-
-It's common to have to update our webserver configuration.
+### Common ansible tasks after install:
 
 **Update nginx configuration:**
 
@@ -107,6 +105,13 @@ ansible-playbook littlesis.yml --limit=app --tags=nginx-config
 
 ``` sh
 ansible-playbook littlesis.yml --limit=app --tags=rails-config
+```
+
+**Add or Update static files**
+
+
+``` sh
+ansible-playbook littlesis.yml --limit=app --tags=static
 ```
 
 
