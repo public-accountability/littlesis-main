@@ -86,7 +86,15 @@ To start and index sphinx: ` littlesis rake ts:rebuild `
 
 The dockerfile is named 'littlesis.docker'
 
-After updating the dockerfile or after adding a new gem, change the version in the top of the Makefile and then build the docker images: ` make build-rails-docker ` and upload the new images to Docker Hub. See [here for dockerhub instructions](https://docs.docker.com/engine/getstarted/step_six/).
+After updating the dockerfile or after adding a new gem:
+
+1) change the docker image version number in the top in the Makefile and docker-compose.yml
+
+2) if you just have minor changes, such as adding a gem, you can just commit your changes to the docker container (`docker ps` to get the container ID, then: `docker commit <ID> <image>`)
+
+3) or, for larger-scale changes to the container itself you can rebuild the docker images: ` make build-rails-docker `
+
+4) upload the new images to Docker Hub. See [here for dockerhub instructions](https://docs.docker.com/engine/getstarted/step_six/).
 
 ### Nginx configuration
 
