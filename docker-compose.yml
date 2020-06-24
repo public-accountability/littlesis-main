@@ -4,8 +4,7 @@ services:
   app:
     image: littlesis/littlesis:1.0.14
     ports:
-      - 8080:8080
-      # - "127.0.0.1:8080:8080"
+      - "127.0.0.1:8080:8080"
     volumes:
       - ./rails:/littlesis
       - ./docker/tmp:/littlesis/tmp
@@ -23,16 +22,14 @@ services:
     volumes:
       - ./mysql-data:/var/lib/mysql
     ports:
-      - 3306:3306
-      # - '127.0.0.1:3306:3306'
+      - '127.0.0.1:3306:3306'
     environment:
       - MYSQL_ROOT_PASSWORD=root
 
   nginx:
     image: nginx:latest
     ports:
-      - 8081:80
-      # - "127.0.0.1:8081:80"
+       - "127.0.0.1:8081:80"
     volumes:
       - ./rails:/littlesis
       - ./static:/var/www/static
