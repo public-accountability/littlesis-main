@@ -114,6 +114,13 @@ ansible-playbook littlesis.yml --limit=app --tags=rails-config
 ansible-playbook littlesis.yml --limit=app --tags=static
 ```
 
+**Update maintainer scripts**
+
+
+``` sh
+ansible-playbook littlesis.yml --limit=app --tags=scripts
+```
+
 
 **Add new maintainer ssh key**
 
