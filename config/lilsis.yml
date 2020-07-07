@@ -15,7 +15,6 @@ defaults: &defaults
   default_image_file_type: jpg
   system_user_id: 1
   default_network_id: 79
-  asset_host: "127.0.0.1:8080"
   cloudfront_distribtion_id:
   smtp_address: "mail.littlesis.org"
   smtp_port: 465
@@ -39,6 +38,11 @@ defaults: &defaults
   donation_banner_html: |
     <b>LittleSis</b> is turning <b>10</b> years old! <a href="https://littlesis.org/donate/">Become a $10/month sustaining donor</a> and we’ll send you an anniversary t-shirt!
   oligrapher_version: 0.4.3
+  asset_host: "127.0.0.1:8080"
+  image_host: "https://littlesis.org"
+  image_root: public/images
+  host: littlesis.org
+  protocol: https
   image_host: "https://littlesis.org"
   image_root: public/images
 
@@ -50,10 +54,14 @@ test:
   donation_banner_display: false
   oligrapher_version: 0.0.1
   image_root: tmp
+  host: 'localhost:8080'
+  protocol: http
 
 development:
   <<: *defaults
   image_host: "http://127.0.0.1:8080"
+  host: 'localhost:8080'
+  protocol: http
 
 production:
   <<: *defaults

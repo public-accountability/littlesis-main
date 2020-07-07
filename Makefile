@@ -9,8 +9,7 @@ rails:
 	./scripts/clone.sh
 
 config:
-	cp config/database.yml rails/config/database.yml
-	cp config/lilsis.yml rails/config/lilsis.yml
+	rsync -a -v config/ rails/config/
 
 db-setup:
 	mysql -h 127.0.0.1 -u root -proot < ./scripts/mysql_setup.sql
