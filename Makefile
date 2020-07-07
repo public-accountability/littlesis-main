@@ -7,7 +7,7 @@ setup: rails config
 
 rails:
 	./scripts/clone.sh
-	mkdir -p docker docker/tmp docker/logs
+	mkdir -p docker docker/tmp docker/log
 
 config:
 	rsync -a config/ rails/config/

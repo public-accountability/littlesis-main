@@ -11,3 +11,4 @@ ansible/fact_cache
 .travis_api_token
 littlesis-travis-log*.txt
 docker/tmp/*
+docker/log/*
