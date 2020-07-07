@@ -7,9 +7,14 @@ setup: rails config
 
 rails:
 	./scripts/clone.sh
+	mkdir -p docker docker/tmp docker/logs
 
 config:
-	rsync -a -v config/ rails/config/
+	rsync -a config/ rails/config/
+
+sample_config:
+	cp config/lilsis.yml rails/config/lilsis.yml.sample
+	cp config/secrets.yml rails/config/secrets.yml.sample
 
 db-setup:
 	mysql -h 127.0.0.1 -u root -proot < ./scripts/mysql_setup.sql

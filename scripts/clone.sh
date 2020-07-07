@@ -1,6 +1,8 @@
-#!/bin/bash
+#!/bin/sh
 
 mkdir -p rails
+
+test -e rails/.git && exit
 
 if ssh -o StrictHostKeyChecking=no -T git@github.com 2>&1 | grep -q 'successfully authenticated';then
     URL="git@github.com:public-accountability/littlesis-rails.git"
