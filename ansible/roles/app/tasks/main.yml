@@ -30,6 +30,9 @@
 - import_tasks: manticore.yml
   tags: manticore
 
+- import_tasks: firefox.yml
+  tags: firefox
+
 - import_tasks: ruby.yml
   tags: ruby
 

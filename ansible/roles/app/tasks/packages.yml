@@ -5,11 +5,6 @@
     update_cache: yes
     name: "{{ littlesis_app_packages }}"
 
-# - name: Install geckodriver
-#   shell: "curl -sSL {{ geckodriver_url }} | tar -C /usr/local/bin/ -xzf - geckodriver"
-#   args:
-#     creates: /usr/local/bin/geckodriver
-
 - name: Install NodeJS
   include_role:
     name: geerlingguy.nodejs
