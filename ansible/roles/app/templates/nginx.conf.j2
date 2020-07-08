@@ -37,16 +37,16 @@ http {
     ssl_session_timeout 1d;
     ssl_session_cache shared:SSL:10m;
     ssl_session_tickets off;
-    
+
     ##
     # Logging Settings
     ##
 
-    log_format littlesis '$remote_addr "$time_iso8601" $host "$request" $status $body_bytes_sent $request_time "$http_referer" "$http_user_agent"';
+    log_format littlesis '$remote_addr "$time_iso8601" $host $request_method "$request_uri" $status $body_bytes_sent $request_time "$http_referer" "$http_user_agent" $request_id';
+    # log_format littlesis '$remote_addr "$time_iso8601" $host "$request" $status $body_bytes_sent $request_time "$http_referer" "$http_user_agent"';
 
     access_log /var/log/nginx/access.log littlesis;
     error_log /var/log/nginx/error.log;
-
 
     ##
     # Gzip Settings
@@ -65,7 +65,7 @@ http {
     ##
     # load conf dir
     ##
-    
+
     include /etc/nginx/conf.d/*.conf;
 
     ##
