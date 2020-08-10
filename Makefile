@@ -43,4 +43,4 @@ cloudflare-ips:
 
 
 .PHONY: help setup rails config db-setup docker-pull
-.PHONY: clone-wordpress-repos build-rails-docker ansible-galaxy-roles cloudflare-ips
+.PHONY: clone-wordpress-repos build-rails-docker cloudflare-ips

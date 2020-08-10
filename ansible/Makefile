@@ -26,10 +26,10 @@ wordpress:
 	@ansible-playbook littlesis.yml --limit=wordpress --tags=wordpress
 
 ansible-galaxy-roles:
-	ansible-galaxy install zzet.rbenv DavidWittman.redis geerlingguy.nodejs dev-sec.ssh-hardening dev-sec.os-hardening geerlingguy.docker geerlingguy.composer
+	ansible-galaxy install DavidWittman.redis geerlingguy.nodejs dev-sec.ssh-hardening dev-sec.os-hardening geerlingguy.docker geerlingguy.composer
 
 ping:
 	@ansible all -m ping
 
-.PHONY: inventory inventory-edit vars-edit run ping
-.PHONY: app database replicant wordpress
+.PHONY: inventory inventory-edit vars-edit run app database replicant wordpress
+.PHONY: ansible-galaxy-roles ping

@@ -14,7 +14,6 @@
     repo: https://github.com/public-accountability/littlesis-rails.git
     dest: /var/www/littlesis
     force: yes
-    recursive: yes
     version: "{{ littlesis_rails_version }}"
   tags: clone
 
@@ -48,7 +47,7 @@
     owner: littlesis
     group: littlesis
   tags: rails-config
-  
+
 - name: Setup database.yml configuration
   template:
     src: database.yml.j2

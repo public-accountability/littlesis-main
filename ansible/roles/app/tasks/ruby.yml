@@ -1,22 +1,86 @@
 ---
-- name: Install Ruby with rbenv
-  vars:
-    rbenv:
-      env: user
-      version: v1.1.2
-      default_ruby: "{{ ruby_version }}"
-      rubies:
-        - version: "{{ ruby_version }}"
-    rbenv_users:
-      - littlesis
-  import_role:
-    name: zzet.rbenv
+- name: Install rbenv build depends
+  become: yes
+  apt:
+    pkg:
+      - autoconf
+      - bison
+      - build-essential
+      - libssl-dev
+      - libyaml-dev
+      - libreadline6-dev
+      - zlib1g-dev
+      - libncurses5-dev
+      - libffi-dev
+      - libgdbm6
+      - libgdbm-dev
+      - libdb-dev
+    state: present
+    install_recommends: no
+
+- name: Create rbenv folders
+  become: yes
+  become_user: littlesis
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: littlesis
+    group: littlesis
+    recurse: yes
+  loop:
+    - /home/littlesis/.rbenv
+    - /home/littlesis/.rbenv/plugins
+    - /home/littlesis/.rbenv/plugins/ruby-build
+
+- name: Clone rbenv
+  become: yes
+  become_user: littlesis
+  git:
+    repo: https://github.com/rbenv/rbenv.git
+    dest: /home/littlesis/.rbenv
+    force: yes
+    version: master
+
+- name: configure + make rbenv
+  become: yes
+  become_user: littlesis
+  ignore_errors: yes
+  command:
+    cmd: src/configure && make -C src
+    chdir: /home/littlesis/.rbenv
+
+- name: Clone ruby-build
+  become: yes
+  become_user: littlesis
+  git:
+    repo: https://github.com/rbenv/ruby-build.git
+    dest: /home/littlesis/.rbenv/plugins/ruby-build
+    force: yes
+    version: master
+
+- name: Check if ruby version is installed
+  become: yes
+  become_user: littlesis
+  shell: "/home/littlesis/.rbenv/bin/rbenv versions | grep {{ ruby_version }}"
+  register: check_rbenv_versions
+  failed_when: check_rbenv_versions.rc > 1
+
+- name: Install new ruby version
+  become: yes
+  become_user: littlesis
+  shell: "/home/littlesis/.rbenv/bin/rbenv install {{ ruby_version }}"
+  when: check_rbenv_versions.rc == 1
+
+- name: Rbenv Rehash
+  become: yes
+  become_user: littlesis
+  shell: "/home/littlesis/.rbenv/bin/rbenv rehash"
 
 - name: Install bundler
   become: yes
   become_user: littlesis
   gem:
-    executable: ~/.rbenv/shims/gem
+    executable: "/home/littlesis/.rbenv/versions/{{ ruby_version }}/bin/gem"
     name: bundler
     state: latest
     user_install: no
