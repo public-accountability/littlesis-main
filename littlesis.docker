@@ -1,4 +1,4 @@
-FROM ruby:2.6.6-buster
+FROM ruby:2.7.1-buster
 LABEL maintainer="dev@littlesis.org"
 
 ENV RAILS_ENV=development
