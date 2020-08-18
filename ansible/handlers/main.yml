@@ -13,3 +13,6 @@
 
 - name: restart littlesis
   service: name=littlesis state=restarted
+
+- name: restart redis
+  service: name=redis state=restarted
