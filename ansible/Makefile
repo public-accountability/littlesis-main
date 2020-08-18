@@ -26,7 +26,7 @@ wordpress:
 	@ansible-playbook littlesis.yml --limit=wordpress --tags=wordpress
 
 ansible-galaxy-roles:
-	ansible-galaxy install DavidWittman.redis geerlingguy.nodejs dev-sec.ssh-hardening dev-sec.os-hardening geerlingguy.docker geerlingguy.composer
+	ansible-galaxy install geerlingguy.nodejs dev-sec.ssh-hardening dev-sec.os-hardening geerlingguy.docker geerlingguy.composer
 
 ping:
 	@ansible all -m ping
