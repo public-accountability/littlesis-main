@@ -1,0 +1,31 @@
+---
+- name: Copy Puma systemd service file
+  template:
+    src: littlesis.service.j2
+    dest: /etc/systemd/system/littlesis.service
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart littlesis
+  tags: systemd
+
+- name: Copy Puma systemd socket file
+  template:
+    src: littlesis.socket.j2
+    dest: /etc/systemd/system/littlesis.socket
+    owner: root
+    group: root
+    mode: 0644
+  tags: systemd
+
+- name: Reread systemd configs
+  systemd:
+    daemon_reload: yes
+  tags: systemd
+
+- name: Start LittleSis service
+  service:
+    name: littlesis
+    enabled: yes
+    state: started
+  tags: systemd

@@ -128,7 +128,6 @@
 
 - name: Copy wp-config.php
   become: yes
-  become_user: wordpress
   template:
     src: wp-config.php.j2
     dest: /var/www/wordpress/wordpress/wp-config.php
@@ -190,7 +189,7 @@
     group: root
     mode: 0640
   no_log: true
-  
+
 - name: Copy pai TLS Key
   become: yes
   copy:

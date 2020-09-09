@@ -26,7 +26,7 @@ socket		= {{ database_unix_socket }}
 
 pid-file	= /var/run/mysqld/mysqld.pid
 basedir		= /usr
-datadir		= /var/lib/mysql
+datadir		= {{ database_datadir }}
 tmpdir		= /tmp
 
 lc_messages_dir	= /usr/share/mysql
@@ -35,7 +35,7 @@ skip-external-locking
 
 #
 # * Character sets
-# 
+#
 collation-server = utf8mb4_unicode_ci
 character-set-server = utf8mb4
 
@@ -56,13 +56,9 @@ max_heap_table_size	= 32M
 
 aria_pagecache_buffer_size = {{ aria_pagecache_buffer_size }}
 innodb_buffer_pool_size = {{ innodb_buffer_pool_size }}
-innodb_buffer_pool_instances = {{ innodb_buffer_pool_instances }}
 innodb_read_io_threads = 8
 innodb_write_io_threads = 8
-innodb_thread_concurrency = 0
 innodb_log_buffer_size = 64M
-
-# innodb_flush_method	= O_DIRECT
 
 #
 # * Query Cache Configuration
@@ -91,7 +87,7 @@ log-queries-not-using-indexes
 #log_slow_admin_statements
 
 expire_logs_days	= 7
-max_binlog_size         = 500M
+max_binlog_size         = 2G
 
 {% if database_role == 'main' %}
 server-id		= 1
@@ -102,12 +98,12 @@ log_bin_index		= /var/log/mysql/mariadb-bin.index
 
 {% if database_role == 'replicant' %}
 server-id		= 2
-log-basename            = replicant1
+log-basename            = replicant2
 relay_log		= /var/log/mysql/relay-bin
 relay_log_index	        = /var/log/mysql/relay-bin.index
 relay_log_info_file	= /var/log/mysql/relay-bin.info
 #log_slave_updates
-#read_only
+read_only
 {% endif %}
 
 #auto_increment_increment = 2

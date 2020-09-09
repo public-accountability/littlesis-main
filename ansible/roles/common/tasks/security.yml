@@ -19,7 +19,8 @@
 - name: OS Hardening
   include_role:
     name: dev-sec.os-hardening
- 
+
+# use variable ssh_server_ports (example ['22']) to change ssh port
 - name: SSH Hardening
   include_role:
     name: dev-sec.ssh-hardening

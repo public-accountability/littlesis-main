@@ -21,9 +21,7 @@ pai_server_name:  public-accountability.org
 
 wordpress_fpm_socket: /run/fpm-wordpress.sock
 
+database_wordpress_name: wordpress
+
 # wordpress_restore_from_dump: false
 # install_wordpress: false
-
-
-
-

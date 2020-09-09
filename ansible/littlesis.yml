@@ -1,61 +1,12 @@
 ---
-- hosts: app
-  become: true
-  vars_files:
-    - "vars.yml"
-  handlers:
-    - include: handlers/main.yml
-  tasks:
-    - import_role:
-        name: common
-    - import_role:
-        name: rclone
-      tags: rclone
-    - import_role:
-        name: app
-  tags: app
+- name: App Server
+  import_playbook: app.yml
 
-- hosts: database
-  vars_files:
-    - "vars.yml"
-  handlers:
-    - include: handlers/main.yml
-  tasks:
-    - import_role:
-        name: common
-    - import_role:
-        name: database
-      vars:
-        database_role: main
-  tags: database
+- name: Database Server
+  import_playbook: database.yml
 
-- hosts: replicant
-  vars_files:
-    - "vars.yml"
-  handlers:
-    - include: handlers/main.yml
-  tasks:
-    - import_role:
-        name: common
-    - import_role:
-        name: rclone
-    - import_role:
-        name: database
-      vars:
-        database_role: replicant
-  tags: replicant
+- name: Replicant Server
+  import_playbook: replicant.yml
 
-- hosts: wordpress
-  vars_files:
-    - "vars.yml"
-  handlers:
-    - include: handlers/main.yml
-  tasks:
-    - import_role:
-        name: common
-    - import_role:
-        name: rclone
-      tags: rclone
-    - import_role:
-        name: wordpress
-  tags: wordpress
+- name: Wordpress Server
+  import_playbook: wordpress.yml

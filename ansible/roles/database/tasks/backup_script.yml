@@ -8,20 +8,17 @@
     owner: root
     group: root
     mode: 0700
-  tags: backup
 
 - name: Copy backup script
   become: true
   template:
-    src: backup.j2
-    dest: /usr/local/bin/backup
+    src: backup.sh.j2
+    dest: /usr/local/bin/backup.sh
     owner: root
     group: root
     mode: 0755
-  tags: backup
 
-# note: our server is set to UTC, which is 5 hours
-# ahead of East coast time.
+# note: our server is set to UTC, which is 5 hours ahead of East coast time.
 
 - name: LittleSis database backup job
   become: true
@@ -29,14 +26,12 @@
     name: "Backup littlesis database"
     minute: "0"
     hour: "7"
-    job: "/usr/local/bin/backup littlesis"
-  tags: cron
-    
+    job: "/usr/local/bin/backup.sh littlesis"
+
 - name: Wordpress database backup job
   become: true
   cron:
     name: "Backup wordpress database"
     minute: "0"
     hour: "6"
-    job: "/usr/local/bin/backup wordpress"
-  tags: cron
+    job: "/usr/local/bin/backup.sh wordpress"

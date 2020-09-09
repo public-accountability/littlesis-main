@@ -10,12 +10,15 @@
     group: littlesis
     shell: /bin/bash
 
-- import_tasks: packages.yml
+- name: Install required packages
+  apt:
+    cache_valid_time: 3600
+    update_cache: yes
+    name: "{{ littlesis_app_packages }}"
   tags: packages
 
-- name: Gather facts
-  tags: redis
-  setup:
+- import_tasks: scripts.yml
+  tags: scripts
 
 - import_tasks: redis.yml
   tags: redis
@@ -23,24 +26,30 @@
 - import_tasks: manticore.yml
   tags: manticore
 
-- import_tasks: firefox.yml
-  tags: firefox
+# - import_tasks: firefox.yml
+#   tags: firefox
 
 - import_tasks: ruby.yml
   tags: ruby
 
-- import_tasks: deploy.yml
+# the variable littlesis_rails_version sets the git branch or commit
+- import_tasks: rails.yml
   tags: deploy
 
-- import_tasks: server.yml
+- import_tasks: nginx.yml
   become: true
-  tags: server
+  tags:
+    - server
+    - nginx
+
+- import_tasks: puma.yml
+  become: true
+  tags:
+    - server
+    - puma
 
 - import_tasks: static.yml
   tags: static
-
-- import_tasks: images-backup.yml
-  tags: backup
 
 - import_tasks: logs.yml
   tags: logs

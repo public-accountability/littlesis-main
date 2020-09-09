@@ -9,14 +9,15 @@
   become: true
   tags: mysql-install
 
-- import_tasks: setup.yml
+- import_tasks: databases_and_users.yml
   become: true
   become_user: mysql
   vars:
     ansible_ssh_pipelining: true
   tags: mysql-setup
+  when: database_role == 'main'
 
-- import_tasks: replicant.yml
+- import_tasks: backup_script.yml
   become: true
   tags:
     - mysql-setup

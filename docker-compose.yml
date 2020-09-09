@@ -2,7 +2,7 @@ version: '3'
 
 services:
   app:
-    image: littlesis/littlesis:1.1.0
+    image: littlesis/littlesis:1.1.2
     stdin_open: true
     tty: true
     ports:
@@ -20,7 +20,7 @@ services:
     image: redis:6
 
   mysql:
-    image: mariadb:10.4
+    image: mariadb:10.5
     volumes:
       - ./mysql-data:/var/lib/mysql
     ports:
