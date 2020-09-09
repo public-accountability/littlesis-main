@@ -1,0 +1,86 @@
+#!/bin/sh
+# LittleSis Database backup script
+# Examples:
+#  backup.sh wordpress
+#  backup.sh littlesis
+#  backup.sh littlesis --all
+
+set -e
+
+if [ $(id -u) -ne 0 ]
+then
+    echo "LittleSis database backup script must be run as root"
+    exit 1
+fi
+
+DATABASE=
+BACKUP_TYPE=
+FILENAME=
+SUFFIX="sql.gz"
+COMPRESSION=gzip
+DATE=$(date +%F)
+BACKUP_DIR=/srv/backup
+MYSQLDUMP="/usr/bin/mysqldump --single-transaction --quick --routines"
+RCLONE="/usr/bin/rclone"
+LITTLESIS_IGNORE="--ignore-table=littlesis.os_donations --ignore-table=littlesis.versions --ignore-table=littlesis.ny_disclosures --ignore-table=littlesis.modification_field --ignore-table=littlesis.ny_disclosures --ignore-table=littlesis.external_data"
+
+
+# First argument is the database to be backed up. Can be littlesis or wordpress.
+if test "$1" = littlesis
+then
+    DATABASE=littlesis
+    BACKUP_TYPE=most
+    shift
+elif test "$1" = wordpress
+then
+     DATABASE=wordpress
+     BACKUP_TYPE=all
+     shift
+else
+    echo "Unknown database: $1"
+    exit 1
+fi
+
+# Some tables in the littlesis backup are skipped for the daily backups.
+# On the first of every month we run the full backup
+if test "$(date +%d)" = 01
+then
+    BACKUP_TYPE=all
+fi
+
+# The optional argument --all will force a complete backup
+while test "$#" -gt 0
+do
+    case $1 in
+        --all)
+            BACKUP_TYPE=all
+            shift
+            ;;
+        *)
+            echo "Unknown parameter passed: $1"
+            exit 1
+            ;;
+    esac
+done
+
+FILENAME="$BACKUP_DIR/$DATABASE-backup-$BACKUP_TYPE-$DATE.$SUFFIX"
+
+# Add the extra arguments to the mysqldump command when the backup type is "most"
+if test $BACKUP_TYPE = most && test $DATABASE = littlesis
+then
+    MYSQLDUMP="$MYSQLDUMP $LITTLESIS_IGNORE"
+fi
+
+# Don't run twice by accident
+if test -u $FILENAME
+then
+    echo "$FILENAME exists"
+    exit
+fi
+
+# run mysqldump
+$MYSQLDUMP $DATABASE | $COMPRESSION > $FILENAME
+# upload to digial ocean
+$RCLONE copy $FILENAME digitalocean:littlesis/backups/
+# upload to aws
+$RCLONE copy $FILENAME aws:pai-littlesis/backups/

@@ -12,8 +12,8 @@
 - name: Copy backup script
   become: true
   template:
-    src: backup.j2
-    dest: /usr/local/bin/backup
+    src: backup.sh.j2
+    dest: /usr/local/bin/backup.sh
     owner: root
     group: root
     mode: 0755
@@ -26,7 +26,7 @@
     name: "Backup littlesis database"
     minute: "0"
     hour: "7"
-    job: "/usr/local/bin/backup littlesis"
+    job: "/usr/local/bin/backup.sh littlesis"
 
 - name: Wordpress database backup job
   become: true
@@ -34,4 +34,4 @@
     name: "Backup wordpress database"
     minute: "0"
     hour: "6"
-    job: "/usr/local/bin/backup wordpress"
+    job: "/usr/local/bin/backup.sh wordpress"
