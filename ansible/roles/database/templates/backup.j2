@@ -2,9 +2,7 @@
 #
 # LittleSis backup script
 #
-# This uses rclone (https://rclone.org) to backup our database to
-# these locations:
-# 
+# This uses rclone (https://rclone.org) to backup our database to these locations:
 #   - digital ocean spaces
 #   - AWS S3
 #
@@ -37,7 +35,7 @@ parser.add_argument('--all',
 parser.add_argument('--backup-dir',
                     default='/srv/backup',
                     help='location to save the backup')
-                    
+
 args = parser.parse_args()
 
 today = datetime.date.today()

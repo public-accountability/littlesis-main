@@ -1,0 +1,57 @@
+---
+# Creates databases and users. Variables with the pattern database_XXX_name,
+# are used as the database name and the mysql username which can access that database.
+# Two special users are also created:
+#  replicant:  a user for the replicated database
+#  readonly:  a user that can access all databases with only the ability to SELECT
+#
+# This only needs to be run on the main database
+
+- name: Remove all anonymous mysql user accounts
+  mysql_user:
+    name: ''
+    host_all: yes
+    login_unix_socket: "{{ database_unix_socket }}"
+    state: absent
+
+- name: Create databases
+  mysql_db:
+    name: "{{ item }}"
+    state: present
+    login_unix_socket: "{{ database_unix_socket }}"
+  loop:
+    - "{{ database_littlesis_name }}"
+    - "{{ database_testing_name }}"
+    - "{{ database_wordpress_name }}"
+
+- name: Create database user roles
+  mysql_user:
+    host: '%'
+    name: "{{ item[0] }}"
+    password: "{{ item[1] }}"
+    login_unix_socket: "{{ database_unix_socket }}"
+    priv: "{{ item[0] }}.*:ALL"
+    state: present
+  loop:
+    - "{{ [database_littlesis_name, database_littlesis_password] }}"
+    - "{{ [database_wordpress_name, database_wordpress_password] }}"
+    - "{{ [database_testing_name, database_testing_password] }}"
+
+- name: Create replicant database user
+  mysql_user:
+    host: "{{ internal_ip_replicant }}"
+    name: "{{ database_replicant_name }}"
+    password: "{{ database_replicant_password }}"
+    login_unix_socket: "{{ database_unix_socket }}"
+    priv: "*.*:REPLICATION SLAVE"
+    state: present
+  tags: replicant-user
+
+- name: Create readonly database user
+  mysql_user:
+    host: '%'
+    name: "{{ database_readonly_name }}"
+    password: "{{ database_readonly_password }}"
+    login_unix_socket: "{{ database_unix_socket }}"
+    priv: "*.*:SELECT"
+    state: present

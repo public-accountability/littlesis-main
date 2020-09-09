@@ -14,16 +14,16 @@ run:
 	@ansible-playbook littlesis.yml
 
 app:
-	@ansible-playbook littlesis.yml --limit=app --tags=app
+	@ansible-playbook app.yml --limit=app --tags=scripts
 
 database:
-	@ansible-playbook littlesis.yml --limit=database --tags=database
+	@ansible-playbook database.yml --limit=database
 
 replicant:
-	@ansible-playbook littlesis.yml --limit=replicant --tags=replicant
+	@ansible-playbook replicant.yml --limit=replicant
 
 wordpress:
-	@ansible-playbook littlesis.yml --limit=wordpress --tags=wordpress
+	@ansible-playbook wordpress.yml --limit=wordpress
 
 ansible-galaxy-roles:
 	ansible-galaxy install geerlingguy.nodejs dev-sec.ssh-hardening dev-sec.os-hardening geerlingguy.docker geerlingguy.composer

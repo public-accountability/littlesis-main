@@ -14,3 +14,5 @@ manticore_checksum: "sha256:2e0af4aaf7b96934c9c71bffb83db2a51999b50ce463fb0c624b
 manticore_reinstall: false
 
 scripts_directory: /home/maintainer/scripts
+
+database_littlesis_name: littlesis

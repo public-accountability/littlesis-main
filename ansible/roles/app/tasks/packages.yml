@@ -1,10 +1,4 @@
 ---
-- name: Install required packages
-  apt:
-    cache_valid_time: 3600
-    update_cache: yes
-    name: "{{ littlesis_app_packages }}"
-
 - name: Install NodeJS
   include_role:
     name: geerlingguy.nodejs
