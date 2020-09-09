@@ -20,9 +20,6 @@
 - import_tasks: scripts.yml
   tags: scripts
 
-# - import_tasks: nodejs.yml
-#   tags: nodejs
-
 - import_tasks: redis.yml
   tags: redis
 

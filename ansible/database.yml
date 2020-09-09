@@ -8,7 +8,7 @@
   handlers:
     - include: handlers/main.yml
   tasks:
-    # - import_role:
-    #     name: common
+    - import_role:
+        name: common
     - import_role:
         name: database
