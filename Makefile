@@ -1,4 +1,4 @@
-RAILS_DOCKER_VERSION := 1.1.0
+RAILS_DOCKER_VERSION := 1.1.2
 
 help:
 	@echo "Welcome to the LittleSis Dev Environment"
