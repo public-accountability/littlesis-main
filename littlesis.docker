@@ -35,6 +35,41 @@ RUN echo '2e0af4aaf7b96934c9c71bffb83db2a51999b50ce463fb0c624b722ad489f07e /tmp/
 RUN dpkg -i /tmp/manticore.deb
 RUN rm /tmp/manticore.deb
 
+# Chrome & Chromedriver
+# First, all the Chrome dependencies; if only dpkg could handle this..
+RUN apt-get -y install \
+	fonts-liberation \
+	libappindicator3-1 \
+	libasound2 \
+	libatk-bridge2.0-0 \
+	libatk1.0-0 \
+	libatspi2.0-0 \
+	libcups2 \
+	libdrm2 \
+	libgbm1 \
+	libgtk-3-0 \
+	libnspr4 \
+	libnss3 \
+	libx11-xcb1 \
+	libxcb-dri3-0 \
+	libxcomposite1 \
+	libxcursor1 \
+	libxdamage1 \
+	libxfixes3 \
+	libxi6 \
+	libxrandr2 \
+	libxtst6 \
+	xdg-utils
+RUN curl -sSL https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb > /tmp/chrome.deb
+RUN dpkg -i /tmp/chrome.deb
+RUN curl -sSL https://chromedriver.storage.googleapis.com/85.0.4183.87/chromedriver_linux64.zip > /tmp/chromedriver.zip
+RUN unzip /tmp/chromedriver.zip
+RUN mv chromedriver /usr/bin/chromedriver
+RUN chown root:root /usr/bin/chromedriver
+RUN chmod +x /usr/bin/chromedriver
+RUN rm /tmp/chrome.deb
+RUN rm /tmp/chromedriver.zip
+
 # NODE
 RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
 RUN apt-get install -y nodejs
