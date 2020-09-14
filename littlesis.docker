@@ -26,14 +26,13 @@ RUN apt-get update && apt-get upgrade -y && \
 
 # MariaDB client
 RUN apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xF1656F24C74CD1D8
-RUN add-apt-repository 'deb [arch=amd64,i386,ppc64el] http://nyc2.mirrors.digitalocean.com/mariadb/repo/10.4/debian buster main'
+RUN add-apt-repository 'deb [arch=amd64,i386,ppc64el] http://nyc2.mirrors.digitalocean.com/mariadb/repo/10.5/debian buster main'
 RUN apt-get update && apt-get -y install mariadb-client libmariadb-dev
 
 # Manticore
 RUN curl -sSL https://github.com/manticoresoftware/manticoresearch/releases/download/3.4.2/manticore_3.4.2-200410-69033058-release.buster_amd64-bin.deb > /tmp/manticore.deb
 RUN echo '2e0af4aaf7b96934c9c71bffb83db2a51999b50ce463fb0c624b722ad489f07e /tmp/manticore.deb' | sha256sum -c -
-RUN dpkg -i /tmp/manticore.deb
-RUN rm /tmp/manticore.deb
+RUN apt-get install -y /tmp/manticore.deb
 
 # NODE
 RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
@@ -43,6 +42,13 @@ RUN apt-get install -y nodejs
 RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
 RUN add-apt-repository "deb https://dl.yarnpkg.com/debian/ stable main"
 RUN apt-get update && apt-get -y install yarn
+
+## Chrome and Chrome Driver
+RUN curl -L "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb" > /tmp/chrome.deb
+RUN apt-get install -y /tmp/chrome.deb && google-chrome --version
+RUN curl -L "https://chromedriver.storage.googleapis.com/85.0.4183.87/chromedriver_linux64.zip" > /tmp/chromedriver.zip
+RUN unzip /tmp/chromedriver.zip chromedriver -d /usr/bin
+RUN chown root:root /usr/bin/chromedriver && chmod +x /usr/bin/chromedriver && chromedriver --version
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
