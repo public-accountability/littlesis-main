@@ -1,0 +1,21 @@
+---
+- hosts: staging
+  become: true
+  vars_files:
+    - vars.yml
+    - vars-staging.yml
+  handlers:
+    - include: handlers/main.yml
+  vars:
+    database_role: main
+    aria_pagecache_buffer_size: "256M"
+    innodb_buffer_pool_size: "1G"
+  tasks:
+    - import_role:
+        name: common
+    - import_role:
+        name: rclone
+    - import_role:
+        name: app
+    - import_role:
+        name: database
