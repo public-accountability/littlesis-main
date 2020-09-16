@@ -133,13 +133,13 @@ Use `SHOW SLAVE STATUS\G` to see if it's running properly
 
 ## Using Ansible to manage running servers
 
-**Check if servers are online:** `ansible all -m ping`
+**Check if servers are online:** `ansible littlesis -m ping`
 
 **View inventory:** `ansible-inventory --graph`
 
 **Update nginx configuration:**  `ansible-playbook app.yml --tags=nginx-config`
 
-**Update rails configuration:**  `ansible-playbook app.yml --tags=app`
+**Update rails configuration:**  `ansible-playbook app.yml --tags=rails-config`
 
 **Add or Update static files:**  `ansible-playbook app.yml --tags=static`
 
