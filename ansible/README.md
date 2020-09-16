@@ -65,62 +65,51 @@ littlesis:
 
 **After the initial run, the host variable `ansible_user` should be changed from _root_ to _maintainer_.**
 
-### Database and Replication
+## Database and Replication
 
-## Transferring the production database to a new server
+### Transferring the production database to a new server
 
+Obtain a full backup of the database and load the file into mariadb: ` mysql -D littlesis < path/to/littlesis.sql `
 
-``` sh
-mysql -D littlesis < path/to/littlesis.sql
-```
-
-### Replication Setup
+### Replication
 
 ### Prepare a backup
 
-Before starting the replication, mariabackup is used to make a copy of the primary database files. To transfer the mysql data (~100gb), these instructions used a Digital Ocean volume like an external harddrive, but you could transfer those files using ssh or some other mechanism.
+Before starting the replication, mariabackup is used to make a copy of the primary database files. To transfer the mysql data (~100gb), these instructions use a Digital Ocean volume like an external harddrive, but you could transfer those files using rsync, scp, or some other mechanism.
 
-*create a DigitalOcean volume* to store the backup files on. Attach it to the main database droplet.
+- Create a DigitalOcean volume to store the backup files on. Attach it to the main database droplet.
 
-Mount the drive and create a backup folder, replacing __scsi-0DO_Volume_dev-backup__ with the name of the volume.
+- Mount the drive and create a backup folder, replacing __scsi-0DO_Volume_dev-backup__ with the name of the volume.
 
-``` sh
-mkdir -p /mnt/backup
-mount -o discard,defaults,noatime /dev/disk/by-id/scsi-0DO_Volume_dev-backup /mnt/backup
-mkdir -p /mnt/backup/mariabackup
-```
+    ``` sh
+    mkdir -p /mnt/backup
+    mount -o discard,defaults,noatime /dev/disk/by-id/scsi-0DO_Volume_dev-backup /mnt/backup
+    mkdir -p /mnt/backup/mariabackup
+    ```
 
-Run `mariabackup`
+- Run `mariabackup`
 
-``` sh
-mariabackup --backup --user=root --socket=/var/run/mysqld/mysqld.sock --target-dir=/mnt/backup/mariabackup --binlog-info=ON
-```
+    ``` sh
+    mariabackup --backup --user=root --socket=/var/run/mysqld/mysqld.sock --target-dir=/mnt/backup/mariabackup --binlog-info=ON
+    ```
 
-When the backup is complete remove the drive mount ` umount /mnt/backup ` and detach the volume via DigitalOcean's dashboard.
+- When the backup is complete remove the drive mount ` umount /mnt/backup ` and detach the volume via DigitalOcean's dashboard.
 
 ### Copy the backup and restore the replicant
 
-Attach the volume to the replicant droplet and repeat the mounting process on that server.
+- Attach the volume to the replicant droplet and repeat the mounting process on that server.
 
-To restore the backup on the replicant server:
+- Restore the backup on the replicant server:
+  - Stop the database ` systemctl stop mariadb `
+  - Empty the datadir `cd /var/lib/mysql/ && rm -r * ` (Note: the datadir *might* be at a different path)
+  - Restore the backup: ` mariabackup --copy-back --target-dir=/mnt/backup/mariabackup `
+  - Fix permissions: ` chown -R mysql:mysql /var/lib/mysql/ `
+  - Restart mysqld: ` systemctl start mariadb `
+  - Write down the replication coordinates from backup folder: ` cat /mnt/backup/mariabackup/xtrabackup_binlog_info `
+  - It should look something like this: ` mariadb-bin.000163      713     0-1-331130 `
+  - umount the backup drive ` umount /mnt/backup `
 
-Stop the database ` systemctl stop mariadb `
-
-Empty the datadir `cd /var/lib/mysql/ && rm -r * ` (Note: the datadir *might* be at a different path)
-
-Restore the backup: ` mariabackup --copy-back --target-dir=/mnt/backup/mariabackup `
-
-Fix permissions: ` chown -R mysql:mysql /var/lib/mysql/ `
-
-Restart mysqld: ` systemctl start mariadb `
-
-Write down the replication coordinates from backup folder: ` cat /mnt/backup/mariabackup/xtrabackup_binlog_info `
-
-It should look something like this: ` mariadb-bin.000163      713     0-1-331130 `
-
-umount the backup drive ` umount /mnt/backup `
-
-You may now detach the Digital Ocean volume and delete it.
+- You may now detach the Digital Ocean volume and delete it
 
 ### Start the replication
 
@@ -146,11 +135,11 @@ Use `SHOW SLAVE STATUS\G` to see if it's running properly
 
 **Check if servers are online:** `ansible all -m ping`
 
-**view inventory:** `ansible-inventory --graph`
+**View inventory:** `ansible-inventory --graph`
 
 **Update nginx configuration:**  `ansible-playbook app.yml --tags=nginx-config`
 
-**Update rails configuration:**  `ansible-playbook app.yml --tags=app.yml`
+**Update rails configuration:**  `ansible-playbook app.yml --tags=app`
 
 **Add or Update static files:**  `ansible-playbook app.yml --tags=static`
 
