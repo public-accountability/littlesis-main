@@ -102,3 +102,4 @@ donation_banner_html: Will you <a href="https://littlesis.org/donate/">pitch in<
 oligrapher_version: 0.4.5
 littlesis_host: littlesis.org
 littlesis_protocol: https
+littlesis_beta: false

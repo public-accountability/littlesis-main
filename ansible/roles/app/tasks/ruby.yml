@@ -18,30 +18,17 @@
     state: present
     install_recommends: no
 
-- name: Create rbenv folders
-  become: yes
-  become_user: littlesis
-  file:
-    path: "{{ item }}"
-    state: directory
-    owner: littlesis
-    group: littlesis
-    recurse: yes
-  loop:
-    - /home/littlesis/.rbenv
-    - /home/littlesis/.rbenv/plugins
-    - /home/littlesis/.rbenv/plugins/ruby-build
-
 - name: Clone rbenv
   become: yes
   become_user: littlesis
+  ignore_errors: yes
   git:
     repo: https://github.com/rbenv/rbenv.git
     dest: /home/littlesis/.rbenv
     force: yes
     version: master
 
-- name: configure + make rbenv
+- name: Configure + make rbenv
   become: yes
   become_user: littlesis
   ignore_errors: yes
@@ -49,9 +36,19 @@
     cmd: src/configure && make -C src
     chdir: /home/littlesis/.rbenv
 
+- name: Create rbenv/plugins folder
+  become: yes
+  file:
+    path: /home/littlesis/.rbenv/plugins
+    state: directory
+    owner: littlesis
+    group: littlesis
+    recurse: yes
+
 - name: Clone ruby-build
   become: yes
   become_user: littlesis
+  ignore_errors: yes
   git:
     repo: https://github.com/rbenv/ruby-build.git
     dest: /home/littlesis/.rbenv/plugins/ruby-build
