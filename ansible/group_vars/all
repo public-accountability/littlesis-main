@@ -58,7 +58,6 @@ aws_s3_base:
 aws_s3_bucket: 'pai-littlesis'
 aws_region: 'us-east-1'
 asset_host: "littlesis.org"
-image_asset_host: "littlesis.org"
 cloudfront_distribtion_id:
 google_custom_search_engine_id:
 google_custom_news_search_engine_id:
