@@ -17,6 +17,9 @@
     name: "{{ littlesis_app_packages }}"
   tags: packages
 
+- import_tasks: nodejs.yml
+  tags: nodejs
+
 - import_tasks: scripts.yml
   tags: scripts
 

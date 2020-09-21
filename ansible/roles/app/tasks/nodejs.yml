@@ -7,6 +7,7 @@
   apt_key:
     data: "{{ lookup('file', 'yarn_pubkey.asc') }}"
     state: present
+  tags: yarn
 
 - name: Add Yarn apt repository
   apt_repository:
