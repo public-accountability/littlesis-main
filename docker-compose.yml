@@ -2,9 +2,10 @@ version: '3'
 
 services:
   app:
-    image: littlesis/littlesis:1.1.4
+    image: littlesis/littlesis:1.1.5
     stdin_open: true
     tty: true
+    shm_size: '2gb'
     ports:
       - "127.0.0.1:8080:8080"
     volumes:
