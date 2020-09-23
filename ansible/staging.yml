@@ -7,6 +7,7 @@
   handlers:
     - include: handlers/main.yml
   vars:
+    littlesis_beta: true
     database_role: main
     aria_pagecache_buffer_size: "256M"
     innodb_buffer_pool_size: "1G"
