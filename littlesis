@@ -6,67 +6,45 @@ Usage: ./littlesis <command>
 Helpful shortcuts to the LittleSis development environment
 
 Start/pause/stop app:
-littlesis up
-littlesis pause/unpause
-littlesis down
+littlesis up/down/pause/unpause
+
+littlesis docker [any-docker-compose-command]
 
 Rails console: littlesis c
 
 Mysql shell: littlesis mysql
 
-Information:
-littlesis ps
-littlesis logs
+Information: littlesis ps, littlesis logs
 
-Login to the containers:
-littlesis login
-littlesis login-root
+Login to the app container: littlesis login
 
-Run all rails tests: littlesis test
-This runs inside docker and will work if you don't have rvm setup
+Testing:
+Run tests: littlesis test
+Run a single test: littlesis test path/to/specfile
+Open bash console in test environment: littlesis spec
+Reset the test database: littlesis reset-test-db
 
-Run a single test: littlesis rspec path/to/specfile
-example:
-   littlesis rspec spec/models/relationship_spec.rb
-This uses ruby/rvm outside of docker
+Commands:
+Run a command: littlesis cmd [...]
+Run a command in the test environment: littlesis cmd-test [...]
+Run a rake command: littlesis rake [...]
+Run a rake command in the test environment: littlesis rake-test [...]
+Rails runner: littlesis runner [...]
 
-Open bash console for easy test running:
-littlesis spec
-
-Reset the test database (littlesis_test)
-littlesis reset-test-db
-
+Logging:
 Rails logs: littlesis rails-logs
-
 Rails test logs: littlesis rails-test-logs
-
 Nginx logs: littlesis nginx access|error
 
 Restart rails: littlesis restart-rails
 
-Execute arbitrary rake command: littlesis rake [...]
+Search rails app: littlesis search <TERM>
 
-For instance, to restart sphinx: littlesis rake ts:restart
-
-Search rails app:
-littlesis search <TERM>
-littlesis rg <TERM>
-
-Search test files:
-littlesis spec-search <TERM>
-
-View rails coverage:
-littlesis coverage
-
-bash shell with dev env set:
-littlesis bash
+View rails coverage: littlesis coverage
 
 redis cli: littlesis redis
 
-download latest build log from travis:
-littlesis travis-log
-
-(store travis api token in file ./.travis_api_token)
+download latest build log from travis: littlesis travis-log
 
 EOF
 }
@@ -89,21 +67,6 @@ nginx_logs() {
     fi
 }
 
-rails_search() {
-    local grep_opts='-H --color -i -n'
-    cd rails
-    grep $grep_opts -r 'app' -e "${1}"
-    grep $grep_opts -r 'lib' -e "${1}"
-    grep $grep_opts -r 'config' -e "${1}"
-    grep $grep_opts -r 'Gemfile' -e "${1}"
-    #grep $grep_opts -r 'config' -e "${1}"
-}
-
-rails_spec_search() {
-    cd rails/spec
-    grep $grep_opts -r -H --color -i -n "${1}"
-}
-
 mysql_shell() {
     if [ -x "$(command -v mycli)" ];then
 	local MYSQL=mycli
@@ -113,9 +76,8 @@ mysql_shell() {
     $MYSQL -u littlesis -pthemanbehindthemanbehindthethrone -h 127.0.0.1 littlesis
 }
 
-
 rails_coverage() {
-    local cov_file=rails/coverage/index.html
+    local cov_file=file://$(pwd)/rails/coverage/index.html
 
     if [ -x "$(command -v chromium)" ];then
 	chromium --new-window $cov_file > /dev/null 2>&1
@@ -158,9 +120,20 @@ case $1 in
     down)
 	docker-compose down
 	;;
+    pause|unpause|ps|top)
+        docker-compose "$1"
+        ;;
+    logs)
+	shift
+	docker-compose logs $@
+	;;
     nginx)
 	shift
-	nginx_logs "$@"
+        if test -z "$1"; then
+	    nginx_logs access
+        else
+            nginx_logs "$1"
+        fi
 	;;
     mysql)
 	mysql_shell
@@ -168,20 +141,12 @@ case $1 in
     login)
 	docker-compose exec app /bin/bash --login
 	;;
-    login-root)
-	docker-compose exec app /bin/bash --login
-	;;
     test)
 	shift
-	# $web_app_exec "RAILS_ENV=test CODACY_RUN_LOCAL=true COVERAGE=true bundle exec rspec ${@}"
 	$web_app_exec "RAILS_ENV=test bundle exec rspec ${@}"
 	;;
-    rspec)
-	shift
-	bin/rspec "$@"
-	;;
     spec)
-	docker-compose exec -u app web /bin/bash --login
+	$web_app_exec "RAILS_ENV=test /bin/bash --login"
 	;;
     cmd)
 	shift
@@ -213,43 +178,24 @@ case $1 in
 	$web_app_exec "RAILS_ENV=test bundle exec rake ${@}"
 	;;
     restart-rails)
-	docker-compose exec web /bin/bash -c 'passenger-config restart-app /home/app'
+	$web_app_exec "bundle exec pumactl -p tmp/puma.pid restart"
 	;;
     reset-test-db)
 	$web_app_exec 'RAILS_ENV=test bundle exec rake db:reset'
 	;;
-    search)
-	shift
-	rails_search "$@"
-	;;
-    rg)
+    search|rg)
 	shift
 	cd rails && rg "$@"
-	;;
-    spec-search)
-	shift
-	rails_spec_search "$@"
 	;;
     cov|coverage)
 	rails_coverage
 	;;
     redis)
-	docker-compose exec -u app web /usr/bin/redis-cli -h redis
-	;;
-    bash)
-	export RAILS_ENV=development
-	cd rails && bash --login
+	 docker-compose exec app /usr/bin/redis-cli -h redis
 	;;
     travis-log)
 	travis_build_log
-	;;
-    ps)
-	docker ps
-	;;
-    logs)
-	shift
-	docker logs "$@"
-	;;
+        ;;
     -h|help|--help)
 	show_help
 	;;
