@@ -8,6 +8,8 @@ Helpful shortcuts to the LittleSis development environment
 Start/pause/stop app:
 littlesis up/down/pause/unpause
 
+littlesis status
+
 littlesis docker [any-docker-compose-command]
 
 Rails console: littlesis c
@@ -109,6 +111,22 @@ travis_build_log() {
     echo "log saved to: $(readlink -f littlesis-travis-log-$latest_job_id.txt)"
 }
 
+littlesis_status() {
+    if [[ "$(docker-compose ps --services --filter "status=running" | wc -l)" = '4' ]]
+    then
+        echo "Docker containers are running"
+    else
+        echo "One more docker containers are not running"
+    fi
+
+    local rails_git_commit=$(cd rails && git rev-parse --short HEAD)
+    local rails_git_branch=$(cd rails && git rev-parse --abbrev-ref HEAD)
+
+    echo "On Rails commit $rails_git_commit on branch $rails_git_branch"
+
+    # TODO check littlesis docker version
+}
+
 case $1 in
     docker|docker-compose)
 	shift
@@ -122,6 +140,9 @@ case $1 in
 	;;
     pause|unpause|ps|top)
         docker-compose "$1"
+        ;;
+    status)
+        littlesis_status
         ;;
     logs)
 	shift
