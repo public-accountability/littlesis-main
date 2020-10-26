@@ -2,7 +2,7 @@ version: '3'
 
 services:
   app:
-    image: littlesis/littlesis:1.1.5
+    image: littlesis/littlesis:1.1.6
     stdin_open: true
     tty: true
     shm_size: '2gb'

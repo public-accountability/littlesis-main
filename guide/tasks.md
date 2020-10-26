@@ -140,9 +140,9 @@ Change **ruby_version** in `ansible/group_vars/all`.
 2) **Update server**
 
 ``` sh
-ansible-playbook littlesis.yml --limit=app --tags=ruby
-ansible-playbook littlesis.yml --limit=app --tags=clone
-ansible-playbook littlesis.yml --limit=app --tags=gems
+ansible-playbook app.yml --tags=ruby
+ansible-playbook app.yml --tags=clone
+ansible-playbook app.yml --tags=gems
 ```
 
 3) **restart puma on server**

@@ -24,7 +24,7 @@ database_readonly_name: readonly
 database_pool: 10
 
 # Software Versions
-ruby_version: '2.7.1'
+ruby_version: '2.7.2'
 nodejs_version: '12.x'
 
 littlesis_rails_version: 'master'
