@@ -14,10 +14,10 @@
       - mariadb-backup
       - mariadb-common
 
-- name: Configure mariadb
+- name: Configure mariadb.cnf
   template:
     src: my.cnf.j2
-    dest: /etc/mysql/my.cnf
+    dest: /etc/mysql/mariadb.cnf
     owner: root
     group: root
     mode: 0644

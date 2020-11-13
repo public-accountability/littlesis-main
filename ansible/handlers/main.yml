@@ -1,18 +1,24 @@
 ---
 - name: restart fail2ban
+  become: yes
   service: name=fail2ban state=restarted
 
 - name: restart nginx
+  become: yes
   service: name=nginx state=restarted
 
 - name: reload nginx
+  become: yes
   service: name=nginx state=reloaded
 
 - name: restart mariadb
+  become: yes
   service: name=mysql state=restarted
 
 - name: restart littlesis
+  become: yes
   service: name=littlesis state=restarted
 
 - name: restart redis
+  become: yes
   service: name=redis state=restarted
