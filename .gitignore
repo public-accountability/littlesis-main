@@ -1,7 +1,6 @@
 littlesis-apps
 apps/
 rails/
-mysql-data/
 *.sql
 !/scripts/mysql_setup.sql
 ansible/*.retry
