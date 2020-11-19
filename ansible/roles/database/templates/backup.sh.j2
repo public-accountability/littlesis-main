@@ -4,17 +4,22 @@
 #  backup.sh wordpress
 #  backup.sh littlesis
 #  backup.sh littlesis --all
-
+#  backup.sh littlesis --table entity
 set -e
+
+error () {
+    echo "$1" 1>&2
+    exit 1
+}
 
 if [ $(id -u) -ne 0 ]
 then
-    echo "LittleSis database backup script must be run as root"
-    exit 1
+    error "LittleSis database backup script must be run as root"
 fi
 
 DATABASE=
 BACKUP_TYPE=
+BACKUP_TABLE=
 FILENAME=
 SUFFIX="sql.gz"
 COMPRESSION=gzip
@@ -37,8 +42,7 @@ then
      BACKUP_TYPE=all
      shift
 else
-    echo "Unknown database: $1"
-    exit 1
+    error "Unknown database: $1"
 fi
 
 # Some tables in the littlesis backup are skipped for the daily backups.
@@ -56,14 +60,30 @@ do
             BACKUP_TYPE=all
             shift
             ;;
+        --table)
+            BACKUP_TYPE=table
+            shift
+            test -z "$1" && error "Missing table"
+            BACKUP_TABLE="$1"
+            shift
+            ;;
         *)
-            echo "Unknown parameter passed: $1"
-            exit 1
+            error "Unknown parameter passed: $1"
             ;;
     esac
 done
 
-FILENAME="$BACKUP_DIR/$DATABASE-backup-$BACKUP_TYPE-$DATE.$SUFFIX"
+if [ $BACKUP_TYPE = table ]
+then
+    BACKUP_NAME=$BACKUP_TABLE
+else
+    BACKUP_NAME=$BACKUP_TYPE
+fi
+
+FILENAME="$BACKUP_DIR/$DATABASE-backup-$BACKUP_NAME-$DATE.$SUFFIX"
+
+# Don't run twice by accident
+test -u $FILENAME && error "$FILENAME exists"
 
 # Add the extra arguments to the mysqldump command when the backup type is "most"
 if test $BACKUP_TYPE = most && test $DATABASE = littlesis
@@ -71,15 +91,14 @@ then
     MYSQLDUMP="$MYSQLDUMP $LITTLESIS_IGNORE"
 fi
 
-# Don't run twice by accident
-if test -u $FILENAME
-then
-    echo "$FILENAME exists"
-    exit
+MYSQLDUMP="$MYSQLDUMP $DATABASE"
+
+if [ $BACKUP_TYPE = table ]; then
+    MYSQLDUMP="$MYSQLDUMP $BACKUP_TABLE"
 fi
 
 # run mysqldump
-$MYSQLDUMP $DATABASE | $COMPRESSION > $FILENAME
+$MYSQLDUMP | $COMPRESSION > $FILENAME
 # upload to digial ocean
 $RCLONE copy $FILENAME digitalocean:littlesis/backups/
 # upload to aws

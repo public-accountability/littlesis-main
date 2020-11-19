@@ -21,5 +21,5 @@
   become: true
   tags:
     - mysql-setup
-    - backup
+    - backup-script
   when: database_role == 'replicant'
