@@ -53,6 +53,11 @@ EOF
 
 web_app_exec="docker-compose exec app /bin/bash -l -c"
 
+fail() {
+    echo "$1" 1>&2
+    exit 1
+}
+
 short_help() {
     echo "Usage: ./littlesis [COMMAND]"
     echo "Helpful shortcuts to the LittleSis development environment"
@@ -64,8 +69,7 @@ nginx_logs() {
 	local log_file="/var/log/nginx/${1}.log"
 	docker-compose exec nginx /bin/bash -c "tail -f ${log_file}"
     else
-	echo 'There are only two nginx logs available: access and error'
-	exit 1
+	fail 'There are only two nginx logs available: access and error'
     fi
 }
 
@@ -86,8 +90,7 @@ rails_coverage() {
     elif [ -x "$(command -v firefox)" ];then
 	firefox --new-window $cov_file > /dev/null 2>&1
     else
-	echo 'Could not find firefox or chromium'
-	exit 1
+	fail 'Could not find firefox or chromium'
     fi
 }
 
@@ -96,8 +99,7 @@ travis_curl() {
     then
         travis_api_token=$(cat ./.travis_api_token)
     else
-        echo "Missing file '.travis_api_token'" 1>&2
-        exit 1
+        fail "Missing file '.travis_api_token'"
     fi
 
     curl -s -S -L -H "Travis-API-Version: 3" -H "Authorization: token $travis_api_token" "https://api.travis-ci.org/$1"
@@ -109,6 +111,11 @@ travis_build_log() {
     latest_job_id=$(travis_curl "build/$latest_build_id" | jq '.jobs[0].id')
     travis_curl "job/$latest_job_id/log.txt" > "littlesis-travis-log-$latest_job_id.txt"
     echo "log saved to: $(readlink -f littlesis-travis-log-$latest_job_id.txt)"
+}
+
+littlesis_fetch_pull_request() {
+    [ -z "$1" ] && fail "please provide a pull request number"
+    cd rails && git fetch origin pull/$1/head:pull-request-$1
 }
 
 littlesis_status() {
@@ -217,13 +224,16 @@ case $1 in
     travis-log)
 	travis_build_log
         ;;
+    pull-request)
+        shift
+        littlesis_fetch_pull_request $1
+        exit
+        ;;
     -h|help|--help)
 	show_help
 	;;
     ?*) # End of all options.
-	echo 'Invalid option'
-        echo 'all options: up, down, ps, logs, nginx, mysql, login, test, rspec, spec, cmd, console, rails-logs, rake, restart-rails, reset-test-db, search, spec-search, cov, help'
-        exit 1
+        fail "Invalid option"
 	;;
     *)
 	short_help
