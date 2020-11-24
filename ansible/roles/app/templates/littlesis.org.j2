@@ -64,11 +64,6 @@ server {
         rewrite ^/relationship/view/id/([0-9]+)$ /relationships/$1 last;
     }
 
-    location /news {
-        rewrite ^/news/(.*)$ https://news.littlesis.org/$1 redirect;
-        access_log off;
-    }
-
     ##
     # Static assets
     #
