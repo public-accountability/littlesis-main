@@ -1,0 +1,6 @@
+#!/bin/sh
+set -eu
+
+logrotate -f /etc/logrotate.d/nginx
+sudo -u maintainer /home/maintainer/scripts/rails-runner "SystemMailer.metrics_email.deliver_now"
+sudo -u maintainer /home/maintainer/scripts/rails-runner "WebRequest.nullify_identifying_data"

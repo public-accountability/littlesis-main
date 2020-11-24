@@ -90,10 +90,8 @@ Before starting the replication, mariabackup is used to make a copy of the prima
 - Run `mariabackup`
 
     ``` sh
-
-mariabackup --backup --user=root --socket=/var/run/mysqld/mysqld.sock --target-dir=/mnt/backup/mariabackup --binlog-info=ON
-mariabackup --prepare --target-dir=/mnt/backup/mariabackup
-
+    sudo mariabackup --backup --user=root --socket=/var/run/mysqld/mysqld.sock --target-dir=/mnt/backup/mariabackup --binlog-info=ON
+    sudo mariabackup --prepare --target-dir=/mnt/backup/mariabackup
     ```
 
 - When the backup is complete remove the drive mount ` umount /mnt/backup ` and detach the volume via DigitalOcean's dashboard.

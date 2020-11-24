@@ -56,3 +56,8 @@
 
 - import_tasks: logs.yml
   tags: logs
+
+- import_tasks: tasks.yml
+  tags:
+    - tasks
+    - cron

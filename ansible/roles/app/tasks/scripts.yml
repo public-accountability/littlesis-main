@@ -18,21 +18,3 @@
   with_fileglob:
     - ../templates/scripts/*.j2
   tags: scripts
-
-- name: Copy images backup script
-  become: true
-  copy:
-    src: backup-images
-    dest: /usr/local/bin/backup-images
-    owner: root
-    group: root
-    mode: 0755
-
-- name: LittleSis images backup job
-  become: true
-  cron:
-    name: "backup littlesis images"
-    minute: "0"
-    hour: "5"
-    job: "/usr/local/bin/backup-images"
-  tags: cron
