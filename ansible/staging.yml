@@ -15,8 +15,6 @@
     - import_role:
         name: common
     - import_role:
-        name: rclone
-    - import_role:
         name: app
     - import_role:
         name: database

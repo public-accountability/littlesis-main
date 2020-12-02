@@ -40,3 +40,7 @@
 - import_tasks: security.yml
   become: yes
   tags: security
+
+- import_tasks: rclone.yml
+  become: yes
+  tags: rclone
