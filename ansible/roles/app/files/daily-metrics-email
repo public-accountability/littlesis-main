@@ -1,6 +1,10 @@
 #!/bin/sh
 set -eu
 
+if ! test $USER = root;then
+    exit 1
+fi
+
 logrotate -f /etc/logrotate.d/nginx
-sudo -u maintainer /home/maintainer/scripts/rails-runner "SystemMailer.metrics_email.deliver_now"
-sudo -u maintainer /home/maintainer/scripts/rails-runner "WebRequest.nullify_identifying_data"
+runuser -u maintainer /home/maintainer/scripts/rails-runner -- "SystemMailer.metrics_email.deliver_now"
+runuser -u maintainer /home/maintainer/scripts/rails-runner -- "WebRequest.nullify_identifying_data"
