@@ -77,3 +77,4 @@
   tags:
     - rails-config
     - cron
+  when: littlesis_app_role == 'app'

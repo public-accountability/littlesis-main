@@ -3,6 +3,8 @@
   become: true
   vars_files:
     - "vars.yml"
+  vars:
+    littlesis_app_role: app
   handlers:
     - include: handlers/main.yml
   tasks:

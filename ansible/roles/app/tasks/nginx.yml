@@ -82,3 +82,13 @@
   tags: nginx-config
   notify: reload nginx
   when: "not 'staging' in group_names"
+
+- name: Copy nginx logrotate script
+  become: true
+  copy:
+    src: logrotate/nginx
+    dest: /etc/logrotate.d/nginx
+    owner: root
+    group: root
+    mode: 0640
+  tags: logrotate

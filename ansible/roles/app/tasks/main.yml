@@ -22,15 +22,18 @@
 
 - import_tasks: scripts.yml
   tags: scripts
+  when: littlesis_app_role == 'app'
 
 - import_tasks: redis.yml
   tags: redis
+  when: littlesis_app_role == 'app'
 
 - import_tasks: manticore.yml
   tags: manticore
+  when: littlesis_app_role == 'app'
 
-# - import_tasks: firefox.yml
-#   tags: firefox
+- import_tasks: firefox.yml
+  tags: firefox
 
 - import_tasks: ruby.yml
   tags: ruby
@@ -44,20 +47,21 @@
   tags:
     - server
     - nginx
+  when: littlesis_app_role == 'app'
 
 - import_tasks: puma.yml
   become: true
   tags:
     - server
     - puma
+  when: littlesis_app_role == 'app'
 
 - import_tasks: static.yml
   tags: static
-
-- import_tasks: logs.yml
-  tags: logs
+  when: littlesis_app_role == 'app'
 
 - import_tasks: tasks.yml
   tags:
     - tasks
     - cron
+  when: littlesis_app_role == 'app'
