@@ -2,7 +2,7 @@ version: '3'
 
 services:
   app:
-    image: littlesis/littlesis:1.1.10
+    image: littlesis/rails:latest
     stdin_open: true
     tty: true
     shm_size: '2gb'
@@ -10,12 +10,17 @@ services:
       - "127.0.0.1:8080:8080"
     volumes:
       - ./rails:/littlesis
+      - ./docker/config/lilsis.yml:/littlesis/config/lilsis.yml
+      - ./docker/config/database.yml:/littlesis/config/database.yml
       - ./docker/tmp:/littlesis/tmp
     depends_on:
       - redis
       - mysql
     environment:
+      - RAILS_ENV=development
       - LITTLESIS_BIND=tcp://0.0.0.0:8080
+      - RAILS_SERVE_STATIC_FILES=true
+      - WEB_CONCURRENCY=1
 
   redis:
     image: redis:6

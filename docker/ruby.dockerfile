@@ -1,10 +1,6 @@
 FROM ruby:2.7.2-buster
 LABEL maintainer="dev@littlesis.org"
 
-ENV RAILS_ENV=development
-ENV RAILS_SERVE_STATIC_FILES=true
-ENV WEB_CONCURRENCY=1
-
 RUN apt-get update && apt-get upgrade -y && \
 	apt-get -y install \
 	build-essential \
@@ -25,8 +21,7 @@ RUN apt-get update && apt-get upgrade -y && \
         libdbus-glib-1-dev \
         libsqlite3-dev
 
-# MariaDB client
-RUN apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xF1656F24C74CD1D8
+RUN apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc'
 RUN add-apt-repository 'deb [arch=amd64,i386,ppc64el] http://nyc2.mirrors.digitalocean.com/mariadb/repo/10.5/debian buster main'
 RUN apt-get update && apt-get -y install mariadb-client libmariadb-dev
 
@@ -35,7 +30,7 @@ RUN curl -sSL https://github.com/manticoresoftware/manticoresearch/releases/down
 RUN echo '2e0af4aaf7b96934c9c71bffb83db2a51999b50ce463fb0c624b722ad489f07e /tmp/manticore.deb' | sha256sum -c -
 RUN apt-get install -y /tmp/manticore.deb
 
-# NODE
+# Node
 RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
 RUN apt-get install -y nodejs
 
@@ -57,18 +52,3 @@ RUN printf "#!/bin/sh\nexec /opt/firefox/firefox \$@\n" > /usr/local/bin/firefox
 RUN curl -L "https://github.com/mozilla/geckodriver/releases/download/v0.28.0/geckodriver-v0.28.0-linux64.tar.gz" | tar xzf - -C /usr/local/bin
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-RUN gem install bundler
-
-RUN mkdir -p /littlesis
-WORKDIR /littlesis
-
-COPY ./rails/Gemfile /littlesis/Gemfile
-COPY ./rails/Gemfile.lock /littlesis/Gemfile.lock
-COPY ./rails/.ruby-version /littlesis/.ruby-version
-
-RUN bundle install --jobs=2 --retry=5
-
-EXPOSE 8080
-
-CMD ["bundle", "exec", "puma"]

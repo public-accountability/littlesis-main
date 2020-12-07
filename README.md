@@ -11,12 +11,9 @@ When complete you should have a folder structure that looks like this:
 ```
 /littlesis-main/
 	littlesis -> littlesis helper program
-	ls_dev.conf -> nginx configuration
-	config/ -> rails configuration
-	mysql-data/ -> mysql server data
+	docker/ -> docker configuration and data
 	rails/ -> root of the rails repo
-	ansible -> ansible playbook. ignore this unless running littlesis on prod
-
+	ansible/ -> ansible playbooks. Used for production only.
 ```
 
 ### Requirements:
@@ -52,19 +49,15 @@ Steps for a fully functional LittleSis Development environment:
 
 The rest of these commands assumes that your working directory is the root of this repository.
 
-2) Pull down the rails repo and configure it: ``` make setup```
+2) Clone the rails repo ` bin/clone.sh `
 
-3) Pull down the containers: ``` make docker-pull ```
+3) Build the docker images  ` bin/docker_build.sh `
 
-4) [optional] Edit the configuration files in ./config
+4) run app: ` ./littlesis up `
 
-5) Run ` make config `
+5) Setup the database:  `  bin/mysql_setup.sh `
 
-6) run app: ` ./littlesis up `
-
-7) Setup the database:  ` make db-setup `
-
-8) Load a copy of the development database
+6) Load a copy of the development database
 
 ```
 mysql -u littlesis -pthemanbehindthemanbehindthethrone -h 127.0.0.1 littlesis < /path/to/dev_db.sql
@@ -82,23 +75,9 @@ The first time you create the containers (and anytime you rebuild a container) y
 
 To start and index sphinx: ` littlesis rake ts:rebuild `
 
-### Docker images
-
-The dockerfile is named 'littlesis.docker'
-
-After updating the dockerfile or after adding a new gem:
-
-1) change the docker image version number in the top in the Makefile and docker-compose.yml
-
-2) if you just have minor changes, such as adding a gem, you can just commit your changes to the docker container (`docker ps` to get the container ID, then: `docker commit <ID> <image>`)
-
-3) or, for larger-scale changes to the container itself you can rebuild the docker images: ` make build-rails-docker `
-
-4) upload the new images to Docker Hub. See [here for dockerhub instructions](https://docs.docker.com/engine/getstarted/step_six/).
-
 ### Nginx configuration
 
-The file _ls_dev.conf_ contains the nginx configuration.
+The file _docker/config/nginx.conf_ contains the nginx configuration.
 The app is accessible at ``` localhost:8080 ``` and, additionally, if you add this lines to  ``` /etc/hosts ``` :
 
 ```
@@ -107,15 +86,12 @@ The app is accessible at ``` localhost:8080 ``` and, additionally, if you add th
 
 you can access the site at ``` littlesis.local:8080 ```
 
-### Useful logs
+### Monitor logs
 
-*Nginx logs*
-  - /var/log/nginx/access.log
-  - /var/log/nginx/error.log
 
-*Rails logs*:
-   - /home/app/lilsis/log/development.log
-   - /home/app/lilsis/log/test.log
+- `littlesis rails-logs`
+- `littlesis rails-test-logs`
+- `littlesis nginx access`
 
 ## Subsequent Runs
 

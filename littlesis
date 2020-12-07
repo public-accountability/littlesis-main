@@ -59,7 +59,7 @@ fail() {
 }
 
 short_help() {
-    echo "Usage: ./littlesis [COMMAND]"
+    echo "Usage: littlesis [COMMAND]"
     echo "Helpful shortcuts to the LittleSis development environment"
     echo "More information: littlesis help"
 }
@@ -147,6 +147,9 @@ case $1 in
 	;;
     pause|unpause|ps|top)
         docker-compose "$1"
+        ;;
+    attach)
+        docker attach littlesis-main_app_1
         ;;
     status)
         littlesis_status
