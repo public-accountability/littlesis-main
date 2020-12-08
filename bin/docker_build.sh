@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 
-DOCKER_TAG=2.0.0-beta
+DOCKER_TAG=2.0.0
 
 echo "Building littlesis/ruby:$DOCKER_TAG"
 docker build -t littlesis/ruby:$DOCKER_TAG - < ./docker/ruby.dockerfile
