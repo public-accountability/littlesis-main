@@ -1,0 +1,6 @@
+#!/bin/sh
+set -e
+
+bundle_path=/home/littlesis/.rbenv/shims/bundle
+
+sudo {{ scripts_directory }}/rails-command $bundle_path $@

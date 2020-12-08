@@ -1,3 +1,11 @@
 #!/bin/sh
 
-sudo -i --user=littlesis bash -l -c "export RAILS_ENV=production; cd /var/www/littlesis && $*"
+if ! test $USER = root
+then
+    echo "rails-command must be run as root" >&2
+    exit 1
+fi
+
+export RAILS_ENV=production
+cd /var/www/littlesis
+runuser --whitelist-environment=RAILS_ENV -u littlesis -- $@

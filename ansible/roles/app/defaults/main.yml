@@ -5,7 +5,7 @@ littlesis_app_packages:
   - sqlite3
   - libsqlite3-dev
 
-geckodriver_url: "https://github.com/mozilla/geckodriver/releases/download/v0.28.0/geckodriver-v0.28.0-linux64.tar.gz" "https://github.com/mozilla/geckodriver/releases/download/v0.26.0/geckodriver-v0.26.0-linux64.tar.gz"
+geckodriver_url: "https://github.com/mozilla/geckodriver/releases/download/v0.28.0/geckodriver-v0.28.0-linux64.tar.gz"
 geckodriver_checksum: "sha255:61bfc547a623d7305256611a81ecd24e6bf9dac555529ed6baeafcf8160900da"
 
 # Manticore
