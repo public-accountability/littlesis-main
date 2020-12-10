@@ -1,38 +1,26 @@
 # littlesis-main
 
-This repo contains instructions for running LittleSis in development with docker and an ansible playbook for running LittleSis in production.
+This repo contains instructions for running LittleSis in development and production. Docker is primarily used while developing, and Ansible is used to manage our production servers. The result is that we maintain two ways to install LittleSis and it's requirements.
 
-The source code for LittleSis's can be found here: [github.com/public-accountability/littlesis-rails](https://github.com/public-accountability/littlesis-rails)
+The source code for LittleSis can be found here: [github.com/public-accountability/littlesis-rails](https://github.com/public-accountability/littlesis-rails)
 
-## Installation
-
-When complete you should have a folder structure that looks like this:
-
-```
-/littlesis-main/
-	littlesis -> littlesis helper program
-	docker/ -> docker configuration and data
-	rails/ -> root of the rails repo
-	ansible/ -> ansible playbooks. Used for production only.
-```
-
-### Requirements:
+## Requirements
 
 * [Docker](https://www.docker.com/community-edition) and [docker-compose](https://docs.docker.com/compose/install/). See the [Debian installation guide](https://docs.docker.com/install/linux/docker-ce/debian/).
 
 * mysql/mariadb client. on debian get this via: ` sudo apt install mariadb-client `
 
-* A few common tools such as make, bash, and sed
+* A few common tools such as bash and git
 
 * A substantial amount of free disk space (> 20gb)
 
-### Helper program: ./littlesis
+## Helper program: ./littlesis
 
 There's a helper bash program that will let you easily interact with the docker containers to do common tasks such as starting the rails console, running tests, starting sphinx, and viewing logs without having to remember esoteric docker & bash commands.
 
 To see the script's features run: ``` ./littlesis help ```
 
-### Overview
+## Overview
 
 Steps for a fully functional LittleSis Development environment:
 
@@ -43,7 +31,7 @@ Steps for a fully functional LittleSis Development environment:
 * Setup javascript tests
 
 
-## Initial setup
+## Installation
 
 1) Clone this repo. `git clone https://github.com/public-accountability/littlesis-main`.
 
@@ -57,11 +45,7 @@ The rest of these commands assumes that your working directory is the root of th
 
 5) Setup the database:  `  bin/mysql_setup.sh `
 
-6) Load a copy of the development database
-
-```
-mysql -u littlesis -pthemanbehindthemanbehindthethrone -h 127.0.0.1 littlesis < /path/to/dev_db.sql
-```
+6) Load a copy of the development database `bin/load_database.sh /path/to/dev_db.sql`
 
 ### Setup rails tests
 
@@ -122,7 +106,7 @@ add this line to /etc/hosts to allow rspec to discover the docker database:
 127.0.0.1	mysql
 ```
 
-#### use the helper program from anywhere
+#### Use the helper program from anywhere
 
 Add this function to your bash configuration:
 
@@ -144,4 +128,13 @@ function littlesis
 	./littlesis $argv
 	popd
 end
+```
+
+or name this script "littlesis" and put it somewhere on your path:
+
+```
+#!/bin/sh
+cd /path/to/this/repo || exit 1
+./littlesis $@
+```
 ```
