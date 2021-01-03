@@ -24,7 +24,7 @@ FILENAME=
 SUFFIX="sql.gz"
 COMPRESSION=gzip
 DATE=$(date +%F)
-BACKUP_DIR=/srv/backup
+BACKUP_DIR=/mnt/volume_nyc3_07/backup
 MYSQLDUMP="/usr/bin/mysqldump --single-transaction --quick --routines"
 RCLONE="/usr/bin/rclone"
 LITTLESIS_IGNORE="--ignore-table=littlesis.os_donations --ignore-table=littlesis.versions --ignore-table=littlesis.ny_disclosures --ignore-table=littlesis.modification_field --ignore-table=littlesis.ny_disclosures --ignore-table=littlesis.external_data"

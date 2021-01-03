@@ -1,9 +1,9 @@
 # These tasks should only be run on the replicant database server
 
-- name: Create /srv/backup
+- name: Create /mnt/volume_nyc3_07/backup
   become: true
   file:
-    path: /srv/backup
+    path: /mnt/volume_nyc3_07/backup
     state: directory
     owner: root
     group: root
