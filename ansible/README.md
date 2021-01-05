@@ -146,4 +146,6 @@ Use `SHOW SLAVE STATUS\G` to see if it's running properly
 
 **Update maintainer scripts:**  `ansible-playbook app.yml --tags=scripts`
 
+**Upgrade Manticore:** `ansible-playbook app.yml --tags=manticore -e manticore_reinstall=yes`
+
 To **add additional maintainer ssh keys**, append the new public key to the list stored in the variable *maintainer_authorized_keys* and then run `ansible-playbook littlesis.yml --tags=user`

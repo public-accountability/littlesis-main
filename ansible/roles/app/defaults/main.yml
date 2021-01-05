@@ -9,8 +9,8 @@ geckodriver_url: "https://github.com/mozilla/geckodriver/releases/download/v0.28
 geckodriver_checksum: "sha255:61bfc547a623d7305256611a81ecd24e6bf9dac555529ed6baeafcf8160900da"
 
 # Manticore
-manticore_url: "https://github.com/manticoresoftware/manticoresearch/releases/download/3.4.2/manticore_3.4.2-200410-69033058-release.buster_amd64-bin.deb"
-manticore_checksum: "sha256:2e0af4aaf7b96934c9c71bffb83db2a51999b50ce463fb0c624b722ad489f07e"
+manticore_url: "https://repo.manticoresearch.com/repository/manticoresearch_buster/pool/m/manticore/manticore_3.5.4-201211-13f8d08d_amd64.deb"
+manticore_checksum: "sha256:cb7d8105067fa5822aa7e85d11ab4208db1f1976793c1f31b621f0b148b48ee8"
 manticore_reinstall: false
 
 scripts_directory: /home/maintainer/scripts

@@ -173,6 +173,10 @@ case $1 in
 	shift
 	$web_app_exec "RAILS_ENV=development bin/rails runner \"$*\""
 	;;
+    bundle)
+	shift
+	$web_app_exec "RAILS_ENV=development bundle $*"
+	;;
     console|c)
 	$web_app_exec 'RAILS_ENV=development bin/rails c'
 	;;
