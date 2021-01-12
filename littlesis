@@ -1,7 +1,8 @@
 #!/bin/bash
+set -e
 
-# default value
 rails_env="${RAILS_ENV:-development}"
+DOCKER_TAG=2.0.0
 
 show_help() {
     cat << EOF
@@ -28,6 +29,7 @@ The following rails helpers are available
            rails [...]     run rails
            runner [...]    run rails runner
            bundle [...]    run bundle exec
+           pumactl [...]   run pumactl
 
 Use --test, --production, --development to set RAILS_ENV
            littlesis --test rake db:migrate
@@ -95,6 +97,23 @@ littlesis_status() {
     echo "On Rails commit $rails_git_commit on branch $rails_git_branch"
 }
 
+littlesis_docker_build() {
+    echo "Building littlesis/ruby:$DOCKER_TAG"
+    docker build -t littlesis/ruby:$DOCKER_TAG - < ./docker/ruby.dockerfile
+    docker tag littlesis/ruby:$DOCKER_TAG littlesis/ruby:latest
+
+    echo "Building littlesis/rails:$DOCKER_TAG"
+    docker build -t littlesis/rails:$DOCKER_TAG -f ./docker/rails.dockerfile ./rails
+    docker tag littlesis/rails:$DOCKER_TAG littlesis/rails:latest
+}
+
+set_environment_to_test() {
+    if ! [ "$rails_env" == "test" ]; then
+        echo "Setting RAILS_ENV to test" 1>&2
+        rails_env="test"
+    fi
+}
+
 web_app_exec() {
     docker-compose exec app /bin/sh -c "RAILS_ENV=$rails_env $*"
 }
@@ -132,7 +151,7 @@ case $1 in
 	docker-compose down
 	;;
     build)
-        bin/docker_build.sh
+        littlesis_docker_build
         ;;
     pause|unpause|ps|top)
         docker-compose "$1"
@@ -140,19 +159,17 @@ case $1 in
     status)
         littlesis_status
         ;;
-    restart)
-        bundle_exec "pumactl -p tmp/puma.pid restart"
+    pumactl)
+        shift
+        bundle_exec "pumactl -p tmp/puma.pid $*"
         ;;
     mysql)
 	mysql_shell
 	;;
     test|rspec)
 	shift
-        if ! [ "$rails_env" == "test" ]; then
-            echo "Setting RAILS_ENV to test" 1>&2
-            rails_env="test"
-        fi
-	   bundle_exec "rspec $*"
+        set_environment_to_test
+	bundle_exec "rspec $*"
 	;;
     cmd)
 	shift
@@ -198,7 +215,8 @@ case $1 in
         esac
         ;;
     reset-test-db)
-	$web_app_exec 'RAILS_ENV=test bundle exec rake db:reset'
+        set_environment_to_test
+	bundle_exec 'rake db:reset'
 	;;
     search|rg)
 	shift
