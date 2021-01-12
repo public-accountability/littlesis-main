@@ -24,12 +24,13 @@ Commands
            coverage        open simplecov report
            redis           start redis cli
 
-The following rails helpers are available
-           rspec [...]     run rspec
-           rails [...]     run rails
-           runner [...]    run rails runner
-           bundle [...]    run bundle exec
-           pumactl [...]   run pumactl
+The following aliases are available
+           git
+           rspec
+           rails
+           runner
+           bundle
+           pumactl
 
 Use --test, --production, --development to set RAILS_ENV
            littlesis --test rake db:migrate
@@ -178,6 +179,10 @@ case $1 in
     bin)
         shift
         bundle_exec "bin/$*"
+        ;;
+    git)
+        cd rails
+        $@
         ;;
     bundle)
 	shift
