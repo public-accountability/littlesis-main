@@ -6,9 +6,8 @@
     notifempty
     create 0640 www-data adm
     prerotate
-        sudo -i --user=littlesis bash -l -c "export RAILS_ENV=production; cd /var/www/littlesis && bundle exec rails runner ./lib/scripts/logrotate $1"
+        /home/maintainer/scripts/rails-bundle exec rails runner ./lib/scripts/logrotate $1
     endscript
-    shred
     postrotate
 	kill -USR1 `cat /run/nginx.pid`
     endscript

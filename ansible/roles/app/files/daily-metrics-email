@@ -2,5 +2,5 @@
 set -e
 
 logrotate -f /etc/logrotate.d/nginx
-runuser -u maintainer /home/maintainer/scripts/rails-runner -- "SystemMailer.metrics_email.deliver_now"
-runuser -u maintainer /home/maintainer/scripts/rails-runner -- "WebRequest.nullify_identifying_data"
+runuser -u maintainer /home/maintainer/scripts/rails-runner "SystemMailer.metrics_email.deliver_now"
+runuser -u maintainer /home/maintainer/scripts/rails-runner "WebRequest.nullify_identifying_data"

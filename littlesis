@@ -2,51 +2,29 @@
 
 show_help() {
     cat << EOF
-Usage: ./littlesis <command>
+Usage: littlesis <command>
+
 Helpful shortcuts to the LittleSis development environment
 
-Start/pause/stop app:
-littlesis up/down/pause/unpause
-
-littlesis status
-
-littlesis docker [any-docker-compose-command]
-
-Rails console: littlesis c
-
-Mysql shell: littlesis mysql
-
-Information: littlesis ps, littlesis logs
-
-Login to the app container: littlesis login
-
-Testing:
-Run tests: littlesis test
-Run a single test: littlesis test path/to/specfile
-Open bash console in test environment: littlesis spec
-Reset the test database: littlesis reset-test-db
-
 Commands:
-Run a command: littlesis cmd [...]
-Run a command in the test environment: littlesis cmd-test [...]
-Run a rake command: littlesis rake [...]
-Run a rake command in the test environment: littlesis rake-test [...]
-Rails runner: littlesis runner [...]
+        up              start docker containers
+        down            stop docker containres
+        status          local status information
+        docker <cmd>    run any docker docker command (i.e  docker ps)
+        build           re-build docker images
+        mysql           mysql database shell
+        cmd <cmd>       run aribary shell commands in app docker
+        bin <file>      run any bin script by name
+        console         launch rails console
+        logs <LOG>      follow log
+        coverage        open simplecov report
+        redis           start redis cli
 
-Logging:
-Rails logs: littlesis rails-logs
-Rails test logs: littlesis rails-test-logs
-Nginx logs: littlesis nginx access|error
-
-Restart rails: littlesis restart-rails
-
-Search rails app: littlesis search <TERM>
-
-View rails coverage: littlesis coverage
-
-redis cli: littlesis redis
-
-download latest build log from travis: littlesis travis-log
+The following rails helpers are available.
+        rspec [...]     run rspec
+        rails [...]     run rails
+        runner [...]    run rails runner
+        bundle [...]    run bundle exec
 
 EOF
 }
@@ -102,9 +80,9 @@ littlesis_fetch_pull_request() {
 littlesis_status() {
     if [[ "$(docker-compose ps --services --filter "status=running" | wc -l)" = '4' ]]
     then
-        echo "Docker containers are running"
+        echo "Docker containers are running :)"
     else
-        echo "One more docker containers are not running"
+        echo "One more docker containers are not running :("
     fi
 
     local rails_git_commit=$(cd rails && git rev-parse --short HEAD)
@@ -113,10 +91,14 @@ littlesis_status() {
     echo "On Rails commit $rails_git_commit on branch $rails_git_branch"
 }
 
+bundle_exec() {
+    $web_app_exec "RAILS_ENV=development bundle exec $*"
+}
+
 case $1 in
     docker|docker-compose)
 	shift
-        docker-compose "$@"
+        docker-compose "$*"
 	;;
     up)
 	docker-compose up -d
@@ -130,79 +112,76 @@ case $1 in
     pause|unpause|ps|top)
         docker-compose "$1"
         ;;
-    attach)
-        docker attach littlesis-main_app_1
-        ;;
     status)
         littlesis_status
         ;;
-    logs)
-	shift
-	docker-compose logs $@
-	;;
-    nginx)
-	shift
-        if test -z "$1"; then
-	    nginx_logs access
-        else
-            nginx_logs "$1"
-        fi
-	;;
+    restart)
+	$web_app_exec "bundle exec pumactl -p tmp/puma.pid restart"
+        ;;
     mysql)
 	mysql_shell
 	;;
-    login)
+    docker-login)
 	docker-compose exec app /bin/bash --login
 	;;
-    test)
+    test|rspec)
 	shift
-	$web_app_exec "RAILS_ENV=test bundle exec rspec ${@}"
-	;;
-    spec)
-	$web_app_exec "RAILS_ENV=test /bin/bash --login"
+	$web_app_exec "RAILS_ENV=test bundle exec rspec $*"
 	;;
     cmd)
 	shift
-	$web_app_exec "${@}"
+	$web_app_exec "$*"
 	;;
     cmd-test)
 	shift
-	$web_app_exec "RAILS_ENV=test ${@}"
+	$web_app_exec "RAILS_ENV=test $*"
 	;;
-    runner)
-	shift
-	$web_app_exec "RAILS_ENV=development bin/rails runner \"$*\""
-	;;
+    bin)
+        shift
+        $web_app_exec "RAILS_ENV=development bundle exec ./bin/$*"
+        ;;
     bundle)
 	shift
-	$web_app_exec "RAILS_ENV=development bundle $*"
+	bundle_exec $*
 	;;
-    console|c)
-	$web_app_exec 'RAILS_ENV=development bin/rails c'
-	;;
-    rails-logs)
-	tail -f rails/log/development.log | grep -v '/assets/'
-	;;
-    rails-test-logs)
-	tail -f rails/log/test.log
-	;;
-    rake)
-	shift
-	$web_app_exec "RAILS_ENV=development bundle exec rake ${@}"
-	;;
+    console|c|rails|rake|rspec)
+        bundle_exec $*
+        ;;
     rake-test)
 	shift
-	$web_app_exec "RAILS_ENV=test bundle exec rake ${@}"
+	$web_app_exec "RAILS_ENV=test bundle exec rake $*"
 	;;
-    restart-rails)
-	$web_app_exec "bundle exec pumactl -p tmp/puma.pid restart"
-	;;
+    logs)
+        shift
+        case $1 in
+            development)
+                tail -f rails/log/development.log
+                ;;
+            test)
+                tail -f rails/log/test.log
+                ;;
+            nginx)
+                if test -z "$2"; then
+	            nginx_logs access
+                else
+                    nginx_logs "$2"
+                fi
+	        ;;
+            docker)
+                docker-compose logs --follow
+                ;;
+            *)
+                fail "invalid log: $1"
+                exit
+                ;;
+        esac
+        ;;
     reset-test-db)
 	$web_app_exec 'RAILS_ENV=test bundle exec rake db:reset'
 	;;
     search|rg)
 	shift
-	cd rails && rg "$@"
+	cd rails && rg "$*"
 	;;
     cov|coverage)
 	rails_coverage
