@@ -1,35 +1,39 @@
 #!/bin/bash
 
+# default value
+rails_env="${RAILS_ENV:-development}"
+
 show_help() {
     cat << EOF
 Usage: littlesis <command>
 
 Helpful shortcuts to the LittleSis development environment
 
-Commands:
-        up              start docker containers
-        down            stop docker containres
-        status          local status information
-        docker <cmd>    run any docker docker command (i.e  docker ps)
-        build           re-build docker images
-        mysql           mysql database shell
-        cmd <cmd>       run aribary shell commands in app docker
-        bin <file>      run any bin script by name
-        console         launch rails console
-        logs <LOG>      follow log
-        coverage        open simplecov report
-        redis           start redis cli
+Commands
+           up              start docker containers
+           down            stop docker containres
+           status          local status information
+           docker <cmd>    run any docker docker command (i.e  docker ps)
+           build           re-build docker images
+           mysql           mysql database shell
+           cmd <cmd>       run aribary shell commands in app docker
+           bin <file>      run any bin script by name
+           console         launch rails console
+           logs <LOG>      follow log
+           coverage        open simplecov report
+           redis           start redis cli
 
-The following rails helpers are available.
-        rspec [...]     run rspec
-        rails [...]     run rails
-        runner [...]    run rails runner
-        bundle [...]    run bundle exec
+The following rails helpers are available
+           rspec [...]     run rspec
+           rails [...]     run rails
+           runner [...]    run rails runner
+           bundle [...]    run bundle exec
+
+Use --test, --production, --development to set RAILS_ENV
+           littlesis --test rake db:migrate
 
 EOF
 }
-
-web_app_exec="docker-compose exec app /bin/bash -l -c"
 
 fail() {
     echo "$1" 1>&2
@@ -91,9 +95,30 @@ littlesis_status() {
     echo "On Rails commit $rails_git_commit on branch $rails_git_branch"
 }
 
-bundle_exec() {
-    $web_app_exec "RAILS_ENV=development bundle exec $*"
+web_app_exec() {
+    docker-compose exec app /bin/sh -c "RAILS_ENV=$rails_env $*"
 }
+
+bundle_exec() {
+    web_app_exec "bundle exec $*"
+}
+
+
+case $1 in
+    --test|-t)
+        shift
+        rails_env="test"
+        ;;
+    --development|-d)
+        shift
+        rails_env="development"
+        ;;
+    --production|-P)
+        shift
+        rails_env="development"
+    ;;
+esac
+
 
 case $1 in
     docker|docker-compose)
@@ -116,41 +141,37 @@ case $1 in
         littlesis_status
         ;;
     restart)
-	$web_app_exec "bundle exec pumactl -p tmp/puma.pid restart"
+        bundle_exec "pumactl -p tmp/puma.pid restart"
         ;;
     mysql)
 	mysql_shell
 	;;
-    docker-login)
-	docker-compose exec app /bin/bash --login
-	;;
     test|rspec)
 	shift
-	$web_app_exec "RAILS_ENV=test bundle exec rspec $*"
+        if ! [ "$rails_env" == "test" ]; then
+            echo "Setting RAILS_ENV to test" 1>&2
+            rails_env="test"
+        fi
+	   bundle_exec "rspec $*"
 	;;
     cmd)
 	shift
-	$web_app_exec "$*"
-	;;
-    cmd-test)
-	shift
-	$web_app_exec "RAILS_ENV=test $*"
+	web_app_exec "$*"
 	;;
     bin)
         shift
-        $web_app_exec "RAILS_ENV=development bundle exec ./bin/$*"
+        bundle_exec "bin/$*"
         ;;
     bundle)
 	shift
 	bundle_exec $*
 	;;
-    console|c|rails|rake|rspec)
+    console|c)
+        bundle_exec rails c
+        ;;
+    rails|rake|rspec)
         bundle_exec $*
         ;;
-    rake-test)
-	shift
-	$web_app_exec "RAILS_ENV=test bundle exec rake $*"
-	;;
     logs)
         shift
         case $1 in
