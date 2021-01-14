@@ -31,6 +31,7 @@ The following aliases are available
            runner
            bundle
            pumactl
+           yarn
 
 Use --test, --production, --development to set RAILS_ENV
            littlesis --test rake db:migrate
@@ -135,7 +136,7 @@ case $1 in
         ;;
     --production|-P)
         shift
-        rails_env="development"
+        rails_env="production"
     ;;
 esac
 
@@ -174,19 +175,21 @@ case $1 in
 	;;
     cmd)
 	shift
-	web_app_exec "$*"
 	;;
+    yarn)
+        shift
+        bundle_exec "bin/yarn $*"
+        ;;
     bin)
         shift
         bundle_exec "bin/$*"
         ;;
     git)
         cd rails
-        $@
+        "$@"
         ;;
     bundle)
-	shift
-	bundle_exec $*
+	web_app_exec "$*"
 	;;
     console|c)
         bundle_exec rails c
