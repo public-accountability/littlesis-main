@@ -1,4 +1,13 @@
 #!/bin/bash
+# Helpful shortcuts to the LittleSis development environment
+#
+# This will only work correctly if the working directory
+# is set to the root of the littlesis-main repo. To use from anywhere
+# create a wrapping script and place it on your path.
+#    #!/bin/sh
+#    cd /path/to/this/repo || exit 1
+#    ./littlesis $@
+#
 set -e
 
 rails_env="${RAILS_ENV:-development}"
@@ -8,8 +17,6 @@ show_help() {
     cat << EOF
 Usage: littlesis <command>
 
-Helpful shortcuts to the LittleSis development environment
-
 Commands
            up              start docker containers
            down            stop docker containres
@@ -18,11 +25,16 @@ Commands
            build           re-build docker images
            mysql           mysql database shell
            cmd <cmd>       run aribary shell commands in app docker
-           bin <file>      run any bin script by name
+           bin <file>      run any bin/script by name
+           script <file>   run any lib/scripts by name
            console         launch rails console
            logs <LOG>      follow log
            coverage        open simplecov report
            redis           start redis cli
+           setup-clone     clones littlesis-rails
+           setup-database  creates rails app mysql databases
+           run-sql <file>  execute sqlite file with user & db = littlesis
+           reset-test-db   drops and re-creates littlesis_test
 
 The following aliases are available
            git
@@ -49,6 +61,48 @@ short_help() {
     echo "Helpful shortcuts to the LittleSis development environment"
     echo "More information: littlesis help"
 }
+
+
+clone_repo() {
+    mkdir -p rails
+
+    test -e rails/.git && return 0
+
+    if ssh -o StrictHostKeyChecking=no -T git@github.com 2>&1 | grep -q 'successfully authenticated';then
+        URL="git@github.com:public-accountability/littlesis-rails.git"
+    else
+        URL="https://github.com/public-accountability/littlesis-rails.git"
+    fi
+
+    git clone $URL ./rails
+}
+
+setup_database() {
+    mysql -h 127.0.0.1 -u root -proot <<SQL
+create database littlesis;
+grant all privileges on littlesis.* to 'root'@'%' identified by 'root';
+grant all privileges on littlesis.* to 'littlesis'@'%' identified by '' with grant option;
+GRANT FILE ON *.* TO 'littlesis'@'%' identified by 'themanbehindthemanbehindthethrone';
+create database littlesis_test;
+grant all privileges on littlesis_test.* to 'littlesis'@'%' identified by 'themanbehindthemanbehindthethrone';
+flush privileges;
+SQL
+
+    mysql -u littlesis -pthemanbehindthemanbehindthethrone -h 127.0.0.1 littlesis -e '\q'
+}
+
+exec_sql_file() {
+    sql_file="$1"
+
+    if ! test -f "$sql_file"
+    then
+        echo "$sql_file is not a file"
+        return 1
+    fi
+
+    mysql -u littlesis -pthemanbehindthemanbehindthethrone -h 127.0.0.1 littlesis < "$sql_file"
+}
+
 
 nginx_logs() {
     if [[ "$1" == access || "$1" == error ]]; then
@@ -184,6 +238,10 @@ case $1 in
         shift
         bundle_exec "bin/$*"
         ;;
+    script)
+        shift
+        web_app_exec "lib/scripts/$*"
+        ;;
     git)
         cd rails
         "$@"
@@ -240,6 +298,16 @@ case $1 in
         shift
         littlesis_fetch_pull_request "$1"
         exit
+        ;;
+    setup-clone)
+        clone_repo
+        ;;
+    setup-database)
+        setup_database
+        ;;
+    run-sql)
+        shift
+        exec_sql_file "$1"
         ;;
     -h|help|--help)
 	show_help
