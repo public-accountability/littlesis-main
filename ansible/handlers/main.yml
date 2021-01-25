@@ -22,3 +22,7 @@
 - name: restart redis
   become: yes
   service: name=redis state=restarted
+
+- name: systemd daemon reload
+  become: yes
+  systemd: daemon_reload=yes

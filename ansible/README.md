@@ -49,7 +49,7 @@ littlesis:
         x.x.x.x:
     replicant:
       hosts:
-        x.x.x.x::
+        x.x.x.x:
     wordpress:
       hosts:
         x.x.x.x:

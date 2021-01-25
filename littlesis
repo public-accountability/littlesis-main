@@ -35,6 +35,8 @@ Commands
            setup-database  creates rails app mysql databases
            run-sql <file>  execute sqlite file with user & db = littlesis
            reset-test-db   drops and re-creates littlesis_test
+           data            ETL utilities for external data
+           fec             runs FEC data cli
 
 The following aliases are available
            git
@@ -255,6 +257,10 @@ case $1 in
     rails|rake|rspec)
         bundle_exec $*
         ;;
+    runner)
+        shift
+        bundle_exec rails runner "$*"
+        ;;
     logs)
         shift
         case $1 in
@@ -284,6 +290,10 @@ case $1 in
         set_environment_to_test
 	bundle_exec 'rake db:reset'
 	;;
+    data)
+        shift
+        bundle_exec rails runner lib/scripts/data.rb "$@"
+        ;;
     search|rg)
 	shift
 	cd rails && rg "$*"
@@ -293,7 +303,11 @@ case $1 in
 	;;
     redis)
 	 docker-compose exec app /usr/bin/redis-cli -h redis
-	;;
+	 ;;
+    fec)
+        shift
+        bundle_exec rails runner lib/scripts/fec "$@"
+        ;;
     pull-request)
         shift
         littlesis_fetch_pull_request "$1"
