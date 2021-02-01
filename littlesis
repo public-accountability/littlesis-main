@@ -20,6 +20,7 @@ Usage: littlesis <command>
 Commands
            up              start docker containers
            down            stop docker containres
+           login           access the app container's shell
            status          local status information
            docker <cmd>    run any docker docker command (i.e  docker ps)
            build           re-build docker images
@@ -208,6 +209,9 @@ case $1 in
     down)
 	docker-compose down
 	;;
+    login)
+        docker-compose exec app /bin/bash
+        ;;
     build)
         littlesis_docker_build
         ;;
@@ -264,24 +268,21 @@ case $1 in
     logs)
         shift
         case $1 in
-            development)
-                tail -f rails/log/development.log
-                ;;
-            test)
-                tail -f rails/log/test.log
+            rails)
+                tail -f "rails/log/$rails_env.log"
                 ;;
             nginx)
-                if test -z "$2"; then
-	            nginx_logs access
+                if test "$2" = "error"; then
+	            nginx_logs error
                 else
-                    nginx_logs "$2"
+                    nginx_logs access
                 fi
 	        ;;
             docker)
                 docker-compose logs --follow
                 ;;
             *)
-                fail "invalid log: $1"
+                fail "invalid log: $1. options: rails, nginx, docker"
                 exit
                 ;;
         esac
