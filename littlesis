@@ -201,7 +201,7 @@ esac
 case $1 in
     docker|docker-compose)
 	shift
-        docker-compose "$*"
+        docker-compose "$@"
 	;;
     up)
 	docker-compose up -d

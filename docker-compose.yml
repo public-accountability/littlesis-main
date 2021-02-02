@@ -31,7 +31,7 @@ services:
     image: mariadb:10.5
     volumes:
       - ./docker/data/mysql:/var/lib/mysql
-      - ./docker/config/mariadb.conf:/etc/mysql/mariadb.conf
+      - ./docker/config/mariadb.cnf:/etc/mysql/conf.d/mariadb.cnf
     ports:
       - '127.0.0.1:3306:3306'
     environment:
