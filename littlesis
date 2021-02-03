@@ -1,17 +1,40 @@
 #!/bin/bash
-# Helpful shortcuts to the LittleSis development environment
-#
-# This will only work correctly if the working directory
-# is set to the root of the littlesis-main repo. To use from anywhere
-# create a wrapping script and place it on your path.
-#    #!/bin/sh
-#    cd /path/to/this/repo || exit 1
-#    ./littlesis $@
-#
 set -e
 
+littlesis_main_root="$(dirname $(readlink -f "$0"))"
+rails_repo="$littlesis_main_root/rails"
 rails_env="${RAILS_ENV:-development}"
-DOCKER_TAG=2.0.0
+docker_tag="${LITTLESIS_DOCKER_TAG:-2.0.0}"
+docker_compose="docker-compose --file=$littlesis_main_root/docker-compose.yml"
+bundle_path="bundle"
+
+case $1 in
+    --test|-t)
+        shift
+        rails_env="test"
+        ;;
+    --development|-d)
+        shift
+        rails_env="development"
+        ;;
+    --production|-P)
+        shift
+        rails_env="production"
+    ;;
+esac
+
+export RAILS_ENV=$rails_env
+
+if [ -n "$LITTLESIS_RAILS_REPO" ];then
+    rails_repo="$LITTLESIS_RAILS_REPO"
+elif [ "$rails_env" == "production" ];then
+    rails_repo="/var/www/littlesis"
+fi
+
+if [ "$rails_env" == "production" ];then
+    bundle_path="/home/littlesis/.rbenv/shims/bundle"
+fi
+
 
 show_help() {
     cat << EOF
@@ -20,7 +43,6 @@ Usage: littlesis <command>
 Commands
            up              start docker containers
            down            stop docker containres
-           login           access the app container's shell
            status          local status information
            docker <cmd>    run any docker docker command (i.e  docker ps)
            build           re-build docker images
@@ -67,9 +89,9 @@ short_help() {
 
 
 clone_repo() {
-    mkdir -p rails
+    mkdir -p $rails_repo
 
-    test -e rails/.git && return 0
+    test -e $rails_repo/.git && return 0
 
     if ssh -o StrictHostKeyChecking=no -T git@github.com 2>&1 | grep -q 'successfully authenticated';then
         URL="git@github.com:public-accountability/littlesis-rails.git"
@@ -77,12 +99,12 @@ clone_repo() {
         URL="https://github.com/public-accountability/littlesis-rails.git"
     fi
 
-    git clone $URL ./rails
+    git clone $URL $rails_repo
 }
 
 setup_database() {
     mysql -h 127.0.0.1 -u root -proot <<SQL
-create database littlesis;
+CREATE DATABASE littlesis;
 grant all privileges on littlesis.* to 'root'@'%' identified by 'root';
 grant all privileges on littlesis.* to 'littlesis'@'%' identified by '' with grant option;
 GRANT FILE ON *.* TO 'littlesis'@'%' identified by 'themanbehindthemanbehindthethrone';
@@ -108,9 +130,9 @@ exec_sql_file() {
 
 
 nginx_logs() {
-    if [[ "$1" == access || "$1" == error ]]; then
+    if [ "$1" == "access" ] || [ "$1" == "error" ]; then
 	local log_file="/var/log/nginx/${1}.log"
-	docker-compose exec nginx /bin/bash -c "tail -f ${log_file}"
+	$docker_compose exec nginx /bin/sh -c "tail -f ${log_file}"
     else
 	fail 'There are only two nginx logs available: access and error'
     fi
@@ -126,7 +148,7 @@ mysql_shell() {
 }
 
 rails_coverage() {
-    local cov_file=file://$(pwd)/rails/coverage/index.html
+    local cov_file=file://$rails_repo/coverage/index.html
 
     if [ -x "$(command -v chromium)" ];then
 	chromium --new-window $cov_file > /dev/null 2>&1
@@ -139,31 +161,34 @@ rails_coverage() {
 
 littlesis_fetch_pull_request() {
     [ -z "$1" ] && fail "please provide a pull request number"
-    cd rails && git fetch origin pull/$1/head:pull-request-$1
+    bash -c "cd $rails_repo && git fetch origin pull/$1/head:pull-request-$1"
 }
 
 littlesis_status() {
-    if [[ "$(docker-compose ps --services --filter "status=running" | wc -l)" = '4' ]]
-    then
-        echo "Docker containers are running :)"
-    else
-        echo "One more docker containers are not running :("
+    if ! [ "$rails_env" == "production" ];then
+        local services_running="$($docker_compose ps --services --filter "status=running" | sed '/^$/d' | wc -l)"
+
+        if [ "$services_running" == '4' ];then
+            echo "Docker containers are running :)"
+        else
+            echo "$services_running / 4 docker containers are running :("
+        fi
     fi
 
-    local rails_git_commit=$(cd rails && git rev-parse --short HEAD)
-    local rails_git_branch=$(cd rails && git rev-parse --abbrev-ref HEAD)
+    local rails_git_commit=$(cd $rails_repo && git rev-parse --short HEAD)
+    local rails_git_branch=$(cd $rails_repo && git rev-parse --abbrev-ref HEAD)
 
     echo "On Rails commit $rails_git_commit on branch $rails_git_branch"
 }
 
 littlesis_docker_build() {
-    echo "Building littlesis/ruby:$DOCKER_TAG"
-    docker build -t littlesis/ruby:$DOCKER_TAG - < ./docker/ruby.dockerfile
-    docker tag littlesis/ruby:$DOCKER_TAG littlesis/ruby:latest
+    echo "Building littlesis/ruby:$docker_tag"
+    docker build -t littlesis/ruby:$docker_tag -f "$littlesis_main_root/docker/ruby.dockerfile" "$rails_repo"
+    docker tag littlesis/ruby:$docker_tag littlesis/ruby:latest
 
-    echo "Building littlesis/rails:$DOCKER_TAG"
-    docker build -t littlesis/rails:$DOCKER_TAG -f ./docker/rails.dockerfile ./rails
-    docker tag littlesis/rails:$DOCKER_TAG littlesis/rails:latest
+    echo "Building littlesis/rails:$docker_tag"
+    docker build -t littlesis/rails:$docker_tag -f "$littlesis_main_root/docker/rails.dockerfile" "$rails_repo"
+    docker tag littlesis/rails:$docker_tag littlesis/rails:latest
 }
 
 set_environment_to_test() {
@@ -173,50 +198,45 @@ set_environment_to_test() {
     fi
 }
 
+app_exec_docker() {
+    $docker_compose exec app /bin/sh -c "RAILS_ENV=$rails_env $*"
+}
+
+
+app_exec_production() {
+    sh -c "cd $rails_repo && $*"
+}
+
 web_app_exec() {
-    docker-compose exec app /bin/sh -c "RAILS_ENV=$rails_env $*"
+    if [ "$rails_env" == "production" ]
+    then
+        app_exec_production "$@"
+    else
+        app_exec_docker "$@"
+    fi
+
 }
 
 bundle_exec() {
-    web_app_exec "bundle exec $*"
+    web_app_exec "$bundle_path exec $*"
 }
 
-
 case $1 in
-    --test|-t)
-        shift
-        rails_env="test"
-        ;;
-    --development|-d)
-        shift
-        rails_env="development"
-        ;;
-    --production|-P)
-        shift
-        rails_env="production"
-    ;;
-esac
-
-
-case $1 in
-    docker|docker-compose)
+    docker|docker_compose|docker-compose)
 	shift
-        docker-compose "$@"
+        $docker_compose "$@"
 	;;
     up)
-	docker-compose up -d
+	$docker_compose up -d
 	;;
     down)
-	docker-compose down
+	$docker_compose down
 	;;
-    login)
-        docker-compose exec app /bin/bash
-        ;;
     build)
         littlesis_docker_build
         ;;
     pause|unpause|ps|top)
-        docker-compose "$1"
+        $docker_compose "$1"
         ;;
     status)
         littlesis_status
@@ -235,6 +255,7 @@ case $1 in
 	;;
     cmd)
 	shift
+        web_app_exec "$@"
 	;;
     yarn)
         shift
@@ -249,7 +270,7 @@ case $1 in
         web_app_exec "lib/scripts/$*"
         ;;
     git)
-        cd rails
+        export GIT_DIR=$rails_repo/.git
         "$@"
         ;;
     bundle)
@@ -269,7 +290,7 @@ case $1 in
         shift
         case $1 in
             rails)
-                tail -f "rails/log/$rails_env.log"
+                tail -f "$rails_repo/log/$rails_env.log"
                 ;;
             nginx)
                 if test "$2" = "error"; then
@@ -279,11 +300,10 @@ case $1 in
                 fi
 	        ;;
             docker)
-                docker-compose logs --follow
+                $docker_compose logs --follow
                 ;;
             *)
                 fail "invalid log: $1. options: rails, nginx, docker"
-                exit
                 ;;
         esac
         ;;
