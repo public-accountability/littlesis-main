@@ -63,10 +63,16 @@ innodb_log_buffer_size = 64M
 #
 # * Query Cache Configuration
 #
+{% if database_role == 'main' %}
+query_cache_limit		= 12M
+query_cache_size		= 512M
+{% else %}
 query_cache_limit		= 6M
 query_cache_size		= 256M
-# for more write intensive setups, set to DEMAND or OFF
+{% endif %}
+
 query_cache_type		= ON
+
 
 # * Logging and Replication
 ## Both location gets rotated by the cronjob.
