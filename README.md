@@ -17,14 +17,7 @@ There's a helper bash program that will let you easily interact with the docker 
 
 To see the script's features run: ```./littlesis help ```
 
-Although not necessary, it is suggested to create a launcher script it. You can place it in ~/bin, /usr/local/bin or any suitable location on your path.
-
-    ``` sh
-    #!/bin/sh
-    cd /path/to/this/repo || exit 1
-    ./littlesis $@
-    ```
-
+Although not necessary, it is suggested to create symlink for `littlesis`: `sudo ln -s ./littlesis /usr/local/bin/littlesis`
 
 ## Installation Steps
 
@@ -48,17 +41,26 @@ Although not necessary, it is suggested to create a launcher script it. You can 
 
 The app is accessible at `localhost:8080` and `localhost:8081`. 8080 to directly to puma. 8081 is nginx.
 
+
+The configurations for nginx and mariadb are in the  folder _docker/config_.
+
 ## Subsequent runs
 
 Start app: `littlesis up`
 
-Start manticore: `littlesis rake ts:start`
-
-Reconfigure and re-index manticore: `littlesis rake ts:rebuild`
-
 Open rails console: `littlesis console`
 
-The file _docker/config/nginx.conf_ contains the nginx configuration.
+*Manticore*
+    - status: `littlesis rake ts:status`
+    - start: `littlesis rake ts:start`
+    - index: `littlesis rake ts:index`
+    - reconfigure: `littlesis rake ts:rebuild`
+
+Clear logs:  `littlesis rake log:clear`
+
+Start DelayedJob: `littlesis delayed_job start`
+
+
 
 Login as system user:
 

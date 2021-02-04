@@ -7,6 +7,7 @@ rails_env="${RAILS_ENV:-development}"
 docker_tag="${LITTLESIS_DOCKER_TAG:-2.0.0}"
 docker_compose="docker-compose --file=$littlesis_main_root/docker-compose.yml"
 bundle_path="bundle"
+delayed_job="bin/delayed_job"
 
 case $1 in
     --test|-t)
@@ -25,41 +26,40 @@ esac
 
 export RAILS_ENV=$rails_env
 
-if [ -n "$LITTLESIS_RAILS_REPO" ];then
-    rails_repo="$LITTLESIS_RAILS_REPO"
-elif [ "$rails_env" == "production" ];then
+# set values for production
+
+if [ "$rails_env" == "production" ]
+then
     rails_repo="/var/www/littlesis"
-fi
-
-if [ "$rails_env" == "production" ];then
     bundle_path="/home/littlesis/.rbenv/shims/bundle"
+    delayed_job="bin/delayed_job -n 2"
 fi
-
 
 show_help() {
     cat << EOF
 Usage: littlesis <command>
 
 Commands
-           up              start docker containers
-           down            stop docker containres
-           status          local status information
-           docker <cmd>    run any docker docker command (i.e  docker ps)
-           build           re-build docker images
-           mysql           mysql database shell
-           cmd <cmd>       run aribary shell commands in app docker
-           bin <file>      run any bin/script by name
-           script <file>   run any lib/scripts by name
-           console         launch rails console
-           logs <LOG>      follow log
-           coverage        open simplecov report
-           redis           start redis cli
-           setup-clone     clones littlesis-rails
-           setup-database  creates rails app mysql databases
-           run-sql <file>  execute sqlite file with user & db = littlesis
-           reset-test-db   drops and re-creates littlesis_test
-           data            ETL utilities for external data
-           fec             runs FEC data cli
+           up                start docker containers
+           down              stop docker containres
+           status            local status information
+           docker <cmd>      run any docker docker command (i.e  docker ps)
+           build             re-build docker images
+           mysql             mysql database shell
+           cmd <cmd>         run aribary shell commands in app docker
+           bin <file>        run any bin/script by name
+           script <file>     run any lib/scripts by name
+           console           launch rails console
+           logs <LOG>        follow log
+           coverage          open simplecov report
+           redis             start redis cli
+           setup-clone       clones littlesis-rails
+           setup-database    creates rails app mysql databases
+           run-sql <file>    execute sqlite file with user & db = littlesis
+           reset-test-db     drops and re-creates littlesis_test
+           data              ETL utilities for external data
+           fec               runs FEC data cli
+           delayed_job <cmd> run delayed_job commands
 
 The following aliases are available
            git
@@ -112,7 +112,6 @@ create database littlesis_test;
 grant all privileges on littlesis_test.* to 'littlesis'@'%' identified by 'themanbehindthemanbehindthethrone';
 flush privileges;
 SQL
-
     mysql -u littlesis -pthemanbehindthemanbehindthethrone -h 127.0.0.1 littlesis -e '\q'
 }
 
@@ -159,6 +158,15 @@ rails_coverage() {
     fi
 }
 
+redis_cli() {
+    if [ "$rails_env" == "production" ]
+    then
+        /usr/bin/redis-cli
+    else
+        $docker_compose exec app /usr/bin/redis-cli -h redis
+    fi
+}
+
 littlesis_fetch_pull_request() {
     [ -z "$1" ] && fail "please provide a pull request number"
     bash -c "cd $rails_repo && git fetch origin pull/$1/head:pull-request-$1"
@@ -202,9 +210,8 @@ app_exec_docker() {
     $docker_compose exec app /bin/sh -c "RAILS_ENV=$rails_env $*"
 }
 
-
 app_exec_production() {
-    sh -c "cd $rails_repo && $*"
+    sudo runuser -u littlesis -- /bin/bash -c "export RAILS_ENV=production; cd $rails_repo; $*"
 }
 
 web_app_exec() {
@@ -220,6 +227,8 @@ web_app_exec() {
 bundle_exec() {
     web_app_exec "$bundle_path exec $*"
 }
+
+
 
 case $1 in
     docker|docker_compose|docker-compose)
@@ -263,7 +272,7 @@ case $1 in
         ;;
     bin)
         shift
-        bundle_exec "bin/$*"
+        web_app_exec "bin/$*"
         ;;
     script)
         shift
@@ -285,6 +294,10 @@ case $1 in
     runner)
         shift
         bundle_exec rails runner "$*"
+        ;;
+    delayed_job|dj)
+        shift
+        bundle_exec "$delayed_job $*"
         ;;
     logs)
         shift
@@ -323,7 +336,7 @@ case $1 in
 	rails_coverage
 	;;
     redis)
-	 docker-compose exec app /usr/bin/redis-cli -h redis
+        redis_cli
 	 ;;
     fec)
         shift
