@@ -2,5 +2,8 @@
 set -e
 
 logrotate -f /etc/logrotate.d/nginx
-runuser -u maintainer /home/maintainer/scripts/rails-runner "SystemMailer.metrics_email.deliver_now"
-runuser -u maintainer /home/maintainer/scripts/rails-runner "WebRequest.nullify_identifying_data"
+bundle=/home/littlesis/.rbenv/shims/bundle
+export RAILS_ENV=production
+cd /var/www/littlesis
+runuser --whitelist-environment=RAILS_ENV -u littlesis -- $bundle exec rails runner "SystemMailer.metrics_email.deliver_now"
+runuser --whitelist-environment=RAILS_ENV -u littlesis -- $bundle exec rails runner "WebRequest.nullify_identifying_data"

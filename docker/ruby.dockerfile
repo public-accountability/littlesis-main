@@ -5,7 +5,8 @@ RUN apt-get update && apt-get upgrade -y && \
 	apt-get -y install \
 	build-essential \
 	coreutils \
-	curl \
+        curl \
+        csvkit \
 	git \
 	gnupg \
 	grep \
@@ -26,13 +27,12 @@ RUN add-apt-repository 'deb [arch=amd64,i386,ppc64el] http://nyc2.mirrors.digita
 RUN apt-get update && apt-get -y install mariadb-client libmariadb-dev
 
 # Manticore
-RUN curl -sSL https://repo.manticoresearch.com/GPG-KEY-manticore > /etc/apt/trusted.gpg.d/manticore.gpg
 RUN curl -sSL https://repo.manticoresearch.com/repository/manticoresearch_buster/pool/m/manticore/manticore_3.5.4-201211-13f8d08d_amd64.deb > /tmp/manticore.deb
 RUN echo 'cb7d8105067fa5822aa7e85d11ab4208db1f1976793c1f31b621f0b148b48ee8  /tmp/manticore.deb' | sha256sum -c -
 RUN apt-get install -y /tmp/manticore.deb
 
 # Node
-RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
+RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
 RUN apt-get install -y nodejs
 
 # YARN
