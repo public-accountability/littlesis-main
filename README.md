@@ -1,10 +1,33 @@
 # littlesis-main
 
-This repo contains instructions for running LittleSis in development and production. Docker used for development and Ansible is used to manage our production servers. The result is that we maintain two ways to install LittleSis and it's requirements. Using docker the quickest way to get started on LittleSis development.
+Welcome to the LittleSis project! LittleSis has been tracking powerful people and organizations since 2009. The repo [littlesis-main](https://github.com/public-accountability/littlesis-main) contains instructions for setting up a development environment for LittleSis.org.
 
-The source code for LittleSis can be found here: [github.com/public-accountability/littlesis-rails](https://github.com/public-accountability/littlesis-rails)
+Our code can be found under the github organization [public-accountability](https://github.com/public-accountability). [littlesis-rails](https://github.com/public-accountability/littlesis-rails) is the central rails repository for the project. [oligrapher](https://github.com/public-accountability/oligrapher) is our javascript/react mapping tool. [littlesis-browser-addon](https://github.com/public-accountability/littlesis-browser-addon) is a chrome browser extension to add relationships to the database. [pai-core-functionality](https://github.com/public-accountability/pai-core-functionality), [pai-packages](https://github.com/public-accountability/pai-packages), [pai](https://github.com/public-accountability/pai), [littlesis-packages](https://github.com/public-accountability/littlesis-packages), [littlesis-news-theme](https://github.com/public-accountability/littlesis-news-theme), and [littlesis-core-functionality](https://github.com/public-accountability/littlesis-core-functionality) are the themes and functionality for our two wordpress sites: [news.littlesis.org](https://news.littlesis.org) and [public-accountability.org](https://public-accountability.org/).
 
-## Requirements
+Our code is all open source, licensed with the General Public License version 3.0.
+
+## Project History
+
+Matthew Skomarovsky co-founded LittleSis and was the initial developer behind the project. When it started in 2009, LittleSis was a PHP [see here](https://github.com/littlesis-org/littlesis) for the original PHP application). The port to Ruby on Rails began in 2013 and finished in 2017.
+
+Ziggy ([@aepyornis](https://github.com/aepyornis)) joined in 2016 and currently maintains the project.
+
+Along the way, Austin ([@aguestuser](https://github.com/aguestuser)) and on oligrapher and the rails codebase. Liz ([@lizstarin](https://github.com/lizstarin)) helped port PHP code to rails and
+developed the chrome extension. Pea ([@misfist](https://github.com/misfist)) coded our wordpress sites. Since 2020, Rob [@robjlucas](https://github.com/robjlucas) has contributed to the rails application.
+
+LittleSis is a project of [The Public Accountability Initiative](https://public-accountability.org/), a non-profit public interest research organization focused on corporate and government accountability.
+
+## Software Overview
+
+Application: Ruby on Rails
+Database: MariaDB
+Web Server: Puma, Nginx
+Search: Manticore
+Cache: Redis
+Blog: Wordpress
+OS: Debian
+
+Development requirements:
 
 * docker, docker-compose, mariadb client, bash, git
 * A substantial amount of free disk space (> 20gb)
@@ -39,8 +62,7 @@ Although not necessary, it is suggested to create symlink for `littlesis`: `sudo
 
 9) Run the tests: ` littlesis test `
 
-The app is accessible at `localhost:8080` and `localhost:8081`. 8080 to directly to puma. 8081 is nginx.
-
+The app is accessible at `localhost:8080` and `localhost:8081`. 8080 goes to directly to puma. 8081 is nginx.
 
 The configurations for nginx and mariadb are in the  folder _docker/config_.
 
@@ -58,9 +80,9 @@ Open rails console: `littlesis console`
 
 Clear logs:  `littlesis rake log:clear`
 
+Clear cache: `littlesis runner Rails.cache.clear`
+
 Start DelayedJob: `littlesis delayed_job start`
-
-
 
 Login as system user:
 
@@ -69,3 +91,7 @@ Login as system user:
 
 
 Create new user: `littlesis script create_example_user.rb`
+
+Reset user password:  `User.find_by(email: <EMAIL>).send_reset_password_instructions`
+
+Update Network Map Collections: `littlesis rake maps:update_all_entity_map_collections`
