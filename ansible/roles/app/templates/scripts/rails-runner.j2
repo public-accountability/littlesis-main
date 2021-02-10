@@ -1,9 +1,0 @@
-#!/bin/sh
-set -e
-
-if [ -z "$1" ]; then
-    echo "Usage: rails runner <FILE-OR-CODE>"
-    exit 1
-fi
-
-{{ scripts_directory }}/rails-bundle exec rails runner $@

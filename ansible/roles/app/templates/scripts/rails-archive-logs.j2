@@ -1,5 +1,0 @@
-#!/bin/sh
-
-mkdir -p ~/logs
-cat /var/www/littlesis/log/production.log | gzip > ~/logs/production-$(date -u +%F-%T).log.gz
-{{ scripts_directory }}/rails-clear-logs
