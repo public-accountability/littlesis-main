@@ -95,3 +95,12 @@ Create new user: `littlesis script create_example_user.rb`
 Reset user password:  `User.find_by(email: <EMAIL>).send_reset_password_instructions`
 
 Update Network Map Collections: `littlesis rake maps:update_all_entity_map_collections`
+
+
+To give youself easy database access:
+
+``` sql
+create role <your-name> login;
+grant all privileges on database littlesis to <your-name>;
+alter role <your-name> IN DATABASE littlesis set search_path = littlesis,public;
+```

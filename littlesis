@@ -45,7 +45,8 @@ Commands
            status            local status information
            docker <cmd>      run any docker docker command (i.e  docker ps)
            build             re-build docker images
-           mysql             mysql database shell
+           psql              interative postgres database shell
+           bash              interative bash shell
            cmd <cmd>         run aribary shell commands in app docker
            bin <file>        run any bin/script by name
            script <file>     run any lib/scripts by name
@@ -103,6 +104,16 @@ clone_repo() {
 }
 
 setup_database() {
+
+    psql "postgresql://littlesis:themanbehindthemanbehindthethrone@127.0.01/littlesis" <<SQL
+create database littlesis_test;
+grant all privileges on database littlesis_test to littlesis;
+grant all privileges on database littlesis to littlesis;
+SQL
+
+}
+
+setup_database_mysql() {
     mysql -h 127.0.0.1 -u root -proot <<SQL
 CREATE DATABASE littlesis;
 grant all privileges on littlesis.* to 'root'@'%' identified by 'root';
@@ -229,6 +240,15 @@ bundle_exec() {
 }
 
 
+deploy() {
+    if [ "$rails_env" == "production" ]
+    then
+        app_exec_production "bin/deploy"
+    else
+        fail "deploy can only be run in production"
+    fi
+}
+
 
 case $1 in
     docker|docker_compose|docker-compose)
@@ -323,10 +343,12 @@ case $1 in
     reset-test-db)
         set_environment_to_test
 	bundle_exec 'rake db:reset'
+        psql "postgresql://littlesis:themanbehindthemanbehindthethrone@127.0.01/littlesis_test" < $rails_repo/lib/sql/network_map_link.sql
+        psql "postgresql://littlesis:themanbehindthemanbehindthethrone@127.0.01/littlesis_test" < $rails_repo/lib/sql/recent_entity_edits.sql
 	;;
     data)
         shift
-        bundle_exec rails runner lib/scripts/data.rb "$@"
+        bundle_exec rails runner lib/scripts/data.rb -- "$@"
         ;;
     search|rg)
 	shift
@@ -356,6 +378,12 @@ case $1 in
     run-sql)
         shift
         exec_sql_file "$1"
+        ;;
+    psql)
+        psql "postgresql://littlesis:themanbehindthemanbehindthethrone@127.0.01/littlesis"
+        ;;
+    bash)
+        web_app_exec "/bin/bash --login"
         ;;
     -h|help|--help)
 	show_help

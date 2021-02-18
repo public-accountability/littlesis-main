@@ -1,5 +1,8 @@
 version: '3'
 
+volumes:
+  postgres-data:
+
 services:
   app:
     image: littlesis/rails:latest
@@ -15,7 +18,7 @@ services:
       - ./docker/tmp:/littlesis/tmp
     depends_on:
       - redis
-      - mysql
+      - postgres
     environment:
       - RAILS_ENV=development
       - LITTLESIS_BIND=tcp://0.0.0.0:8080
@@ -36,6 +39,21 @@ services:
       - '127.0.0.1:3306:3306'
     environment:
       - MYSQL_ROOT_PASSWORD=root
+
+  postgres:
+    image: postgres:13
+    command: ["postgres", "-c", "config_file=/etc/postgresql.conf"]
+    shm_size: '2gb'
+    volumes:
+      - ./docker/config/postgresql.conf:/etc/postgresql.conf
+      - postgres-data:/var/lib/postgresql/data
+
+    ports:
+      - '127.0.0.1:5432:5432'
+    environment:
+      POSTGRES_PASSWORD: themanbehindthemanbehindthethrone
+      POSTGRES_USER: littlesis
+
 
   nginx:
     image: nginx:latest
