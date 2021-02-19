@@ -9,6 +9,11 @@ docker_compose="docker-compose --file=$littlesis_main_root/docker-compose.yml"
 bundle_path="bundle"
 delayed_job="bin/delayed_job"
 
+database_name="littlesis"
+database_user="littlesis"
+database_password="themanbehindthemanbehindthethrone"
+database_host="127.0.01"
+
 case $1 in
     --test|-t)
         shift
@@ -34,6 +39,13 @@ then
     bundle_path="/home/littlesis/.rbenv/shims/bundle"
     delayed_job="bin/delayed_job -n 2"
 fi
+
+if [ "$rails_env" == "test" ]
+then
+    database_name="littlesis_test"
+fi
+
+database_connection="postgresql://$database_user:$database_password@$database_host/$database_name"
 
 show_help() {
     cat << EOF
@@ -88,7 +100,6 @@ short_help() {
     echo "More information: littlesis help"
 }
 
-
 clone_repo() {
     mkdir -p $rails_repo
 
@@ -104,26 +115,18 @@ clone_repo() {
 }
 
 setup_database() {
+    if [ "$rails_env" == "development" ];then
+        echo "The current rails environment is $rails_env"
+        echo "This will delete the entire database"
+        read -r -n 1 -p "are you sure (y/n)? " answer
 
-    psql "postgresql://littlesis:themanbehindthemanbehindthethrone@127.0.01/littlesis" <<SQL
-create database littlesis_test;
-grant all privileges on database littlesis_test to littlesis;
-grant all privileges on database littlesis to littlesis;
-SQL
-
-}
-
-setup_database_mysql() {
-    mysql -h 127.0.0.1 -u root -proot <<SQL
-CREATE DATABASE littlesis;
-grant all privileges on littlesis.* to 'root'@'%' identified by 'root';
-grant all privileges on littlesis.* to 'littlesis'@'%' identified by '' with grant option;
-GRANT FILE ON *.* TO 'littlesis'@'%' identified by 'themanbehindthemanbehindthethrone';
-create database littlesis_test;
-grant all privileges on littlesis_test.* to 'littlesis'@'%' identified by 'themanbehindthemanbehindthethrone';
-flush privileges;
-SQL
-    mysql -u littlesis -pthemanbehindthemanbehindthethrone -h 127.0.0.1 littlesis -e '\q'
+        if [[ "$answer" =~ ^[Yy]$ ]]
+        then
+            bundle_exec rake db:reset
+            psql "$database_connection" < $rails_repo/lib/sql/network_map_link.sql
+            psql "$database_connection" < $rails_repo/lib/sql/recent_entity_edits.sql
+        fi
+    fi
 }
 
 exec_sql_file() {
@@ -135,7 +138,7 @@ exec_sql_file() {
         return 1
     fi
 
-    mysql -u littlesis -pthemanbehindthemanbehindthethrone -h 127.0.0.1 littlesis < "$sql_file"
+    psql $database_connection < "$sql_file"
 }
 
 
@@ -146,15 +149,6 @@ nginx_logs() {
     else
 	fail 'There are only two nginx logs available: access and error'
     fi
-}
-
-mysql_shell() {
-    if [ -x "$(command -v mycli)" ];then
-	local MYSQL=mycli
-    else
-	local MYSQL=mysql
-    fi
-    $MYSQL -u littlesis -pthemanbehindthemanbehindthethrone -h 127.0.0.1 littlesis
 }
 
 rails_coverage() {
@@ -214,6 +208,7 @@ set_environment_to_test() {
     if ! [ "$rails_env" == "test" ]; then
         echo "Setting RAILS_ENV to test" 1>&2
         rails_env="test"
+        database="littlesis_test"
     fi
 }
 
@@ -274,9 +269,6 @@ case $1 in
         shift
         bundle_exec "pumactl -p tmp/puma.pid $*"
         ;;
-    mysql)
-	mysql_shell
-	;;
     test|rspec)
 	shift
         set_environment_to_test
@@ -342,9 +334,9 @@ case $1 in
         ;;
     reset-test-db)
         set_environment_to_test
-	bundle_exec 'rake db:reset'
-        psql "postgresql://littlesis:themanbehindthemanbehindthethrone@127.0.01/littlesis_test" < $rails_repo/lib/sql/network_map_link.sql
-        psql "postgresql://littlesis:themanbehindthemanbehindthethrone@127.0.01/littlesis_test" < $rails_repo/lib/sql/recent_entity_edits.sql
+	bundle_exec rake db:reset
+        psql $database_connection < $rails_repo/lib/sql/network_map_link.sql
+        psql $database_connection < $rails_repo/lib/sql/recent_entity_edits.sql
 	;;
     data)
         shift
@@ -380,7 +372,8 @@ case $1 in
         exec_sql_file "$1"
         ;;
     psql)
-        psql "postgresql://littlesis:themanbehindthemanbehindthethrone@127.0.01/littlesis"
+        shift
+        psql "$database_connection" "$@"
         ;;
     bash)
         web_app_exec "/bin/bash --login"
