@@ -97,10 +97,9 @@ Reset user password:  `User.find_by(email: <EMAIL>).send_reset_password_instruct
 Update Network Map Collections: `littlesis rake maps:update_all_entity_map_collections`
 
 
-To give youself easy database access:
+To give yourself easy database access:
 
 ``` sql
 create role <your-name> login;
 grant all privileges on database littlesis to <your-name>;
-alter role <your-name> IN DATABASE littlesis set search_path = littlesis,public;
 ```
