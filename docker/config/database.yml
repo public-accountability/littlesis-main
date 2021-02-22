@@ -1,15 +1,12 @@
 development:
   adapter: postgresql
-  encoding: unicode
   database: littlesis
-  pool: 10
   username: littlesis
   password: themanbehindthemanbehindthethrone
   host: postgres
 
 test:
   adapter: postgresql
-  encoding: unicode
   database: littlesis_test
   username: littlesis
   password: themanbehindthemanbehindthethrone
