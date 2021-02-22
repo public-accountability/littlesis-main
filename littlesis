@@ -53,7 +53,8 @@ Usage: littlesis <command>
 
 Commands
            up                start docker containers
-           down              stop docker containres
+           down              stop docker containers
+           delete            deletes database by removing docker volumes
            status            local status information
            docker <cmd>      run any docker docker command (i.e  docker ps)
            build             re-build docker images
@@ -256,6 +257,9 @@ case $1 in
     down)
 	$docker_compose down
 	;;
+    delete)
+        $docker_compose down -v
+        ;;
     build)
         littlesis_docker_build
         ;;

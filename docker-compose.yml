@@ -30,16 +30,6 @@ services:
   redis:
     image: redis:6
 
-  mysql:
-    image: mariadb:10.5
-    volumes:
-      - ./docker/data/mysql:/var/lib/mysql
-      - ./docker/config/mariadb.cnf:/etc/mysql/conf.d/mariadb.cnf
-    ports:
-      - '127.0.0.1:3306:3306'
-    environment:
-      - MYSQL_ROOT_PASSWORD=root
-
   postgres:
     image: postgres:13
     command: ["postgres", "-c", "config_file=/etc/postgresql.conf"]
