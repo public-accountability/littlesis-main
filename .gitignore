@@ -2,6 +2,7 @@ littlesis-apps
 apps/
 rails/
 *.sql
+!schema.sql
 !/scripts/mysql_setup.sql
 ansible/*.retry
 ansible/fact_cache

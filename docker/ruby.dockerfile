@@ -11,20 +11,16 @@ RUN apt-get update && apt-get upgrade -y && \
 	gnupg \
 	grep \
 	imagemagick \
-	iproute2 \
 	libmagickwand-dev \
 	lsof \
 	redis-tools \
-	software-properties-common \
-	sqlite3 \
+        sqlite3 \
+        libsqlite3-dev \
 	unzip \
 	zip \
         libdbus-glib-1-dev \
-        libsqlite3-dev
-
-RUN apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc'
-RUN add-apt-repository 'deb [arch=amd64,i386,ppc64el] http://nyc2.mirrors.digitalocean.com/mariadb/repo/10.5/debian buster main'
-RUN apt-get update && apt-get -y install mariadb-client libmariadb-dev
+        postgresql-client \
+        pgloader
 
 # Manticore
 RUN curl -sSL https://repo.manticoresearch.com/repository/manticoresearch_buster/pool/m/manticore/manticore_3.5.4-201211-13f8d08d_amd64.deb > /tmp/manticore.deb
@@ -34,11 +30,7 @@ RUN apt-get install -y /tmp/manticore.deb
 # Node
 RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
 RUN apt-get install -y nodejs
-
-# YARN
-RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
-RUN add-apt-repository "deb https://dl.yarnpkg.com/debian/ stable main"
-RUN apt-get update && apt-get -y install yarn
+RUN npm --global install yarn
 
 # Chrome and Chrome Driver
 RUN curl -L "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb" > /tmp/chrome.deb
@@ -52,4 +44,4 @@ RUN curl -L "https://download.mozilla.org/?product=firefox-latest-ssl&os=linux64
 RUN printf "#!/bin/sh\nexec /opt/firefox/firefox \$@\n" > /usr/local/bin/firefox && chmod +x /usr/local/bin/firefox && firefox -version
 RUN curl -L "https://github.com/mozilla/geckodriver/releases/download/v0.28.0/geckodriver-v0.28.0-linux64.tar.gz" | tar xzf - -C /usr/local/bin
 
-RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+RUN apt-get clean && rm -rf /tmp/*

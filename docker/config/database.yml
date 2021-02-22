@@ -1,29 +1,13 @@
 development:
-  adapter: mysql2
-  encoding: utf8
+  adapter: postgresql
   database: littlesis
-  pool: 5
   username: littlesis
   password: themanbehindthemanbehindthethrone
-  host: mysql
-  reconnect: true
+  host: postgres
 
 test:
-  adapter: mysql2
-  encoding: utf8
+  adapter: postgresql
   database: littlesis_test
-  pool: 5
   username: littlesis
   password: themanbehindthemanbehindthethrone
-  host: mysql
-  reconnect: true
-
-production:
-  adapter: mysql2
-  encoding: utf8
-  database: littlesis
-  pool: 10
-  username: littlesis
-  password: themanbehindthemanbehindthethrone
-  host: mysql
-  reconnect: true
+  host: postgres

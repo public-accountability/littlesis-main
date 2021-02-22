@@ -9,6 +9,11 @@ docker_compose="docker-compose --file=$littlesis_main_root/docker-compose.yml"
 bundle_path="bundle"
 delayed_job="bin/delayed_job"
 
+database_name="littlesis"
+database_user="littlesis"
+database_password="themanbehindthemanbehindthethrone"
+database_host="127.0.01"
+
 case $1 in
     --test|-t)
         shift
@@ -35,17 +40,26 @@ then
     delayed_job="bin/delayed_job -n 2"
 fi
 
+if [ "$rails_env" == "test" ]
+then
+    database_name="littlesis_test"
+fi
+
+database_connection="postgresql://$database_user:$database_password@$database_host/$database_name"
+
 show_help() {
     cat << EOF
 Usage: littlesis <command>
 
 Commands
            up                start docker containers
-           down              stop docker containres
+           down              stop docker containers
+           delete            deletes database by removing docker volumes
            status            local status information
            docker <cmd>      run any docker docker command (i.e  docker ps)
            build             re-build docker images
-           mysql             mysql database shell
+           psql              interative postgres database shell
+           bash              interative bash shell
            cmd <cmd>         run aribary shell commands in app docker
            bin <file>        run any bin/script by name
            script <file>     run any lib/scripts by name
@@ -87,7 +101,6 @@ short_help() {
     echo "More information: littlesis help"
 }
 
-
 clone_repo() {
     mkdir -p $rails_repo
 
@@ -103,16 +116,18 @@ clone_repo() {
 }
 
 setup_database() {
-    mysql -h 127.0.0.1 -u root -proot <<SQL
-CREATE DATABASE littlesis;
-grant all privileges on littlesis.* to 'root'@'%' identified by 'root';
-grant all privileges on littlesis.* to 'littlesis'@'%' identified by '' with grant option;
-GRANT FILE ON *.* TO 'littlesis'@'%' identified by 'themanbehindthemanbehindthethrone';
-create database littlesis_test;
-grant all privileges on littlesis_test.* to 'littlesis'@'%' identified by 'themanbehindthemanbehindthethrone';
-flush privileges;
-SQL
-    mysql -u littlesis -pthemanbehindthemanbehindthethrone -h 127.0.0.1 littlesis -e '\q'
+    if [ "$rails_env" == "development" ];then
+        echo "The current rails environment is $rails_env"
+        echo "This will delete the entire database"
+        read -r -n 1 -p "are you sure (y/n)? " answer
+
+        if [[ "$answer" =~ ^[Yy]$ ]]
+        then
+            bundle_exec rake db:reset
+            psql "$database_connection" < $rails_repo/lib/sql/network_map_link.sql
+            psql "$database_connection" < $rails_repo/lib/sql/recent_entity_edits.sql
+        fi
+    fi
 }
 
 exec_sql_file() {
@@ -124,7 +139,7 @@ exec_sql_file() {
         return 1
     fi
 
-    mysql -u littlesis -pthemanbehindthemanbehindthethrone -h 127.0.0.1 littlesis < "$sql_file"
+    psql $database_connection < "$sql_file"
 }
 
 
@@ -135,15 +150,6 @@ nginx_logs() {
     else
 	fail 'There are only two nginx logs available: access and error'
     fi
-}
-
-mysql_shell() {
-    if [ -x "$(command -v mycli)" ];then
-	local MYSQL=mycli
-    else
-	local MYSQL=mysql
-    fi
-    $MYSQL -u littlesis -pthemanbehindthemanbehindthethrone -h 127.0.0.1 littlesis
 }
 
 rails_coverage() {
@@ -203,6 +209,7 @@ set_environment_to_test() {
     if ! [ "$rails_env" == "test" ]; then
         echo "Setting RAILS_ENV to test" 1>&2
         rails_env="test"
+        database="littlesis_test"
     fi
 }
 
@@ -229,6 +236,15 @@ bundle_exec() {
 }
 
 
+deploy() {
+    if [ "$rails_env" == "production" ]
+    then
+        app_exec_production "bin/deploy"
+    else
+        fail "deploy can only be run in production"
+    fi
+}
+
 
 case $1 in
     docker|docker_compose|docker-compose)
@@ -241,6 +257,9 @@ case $1 in
     down)
 	$docker_compose down
 	;;
+    delete)
+        $docker_compose down -v
+        ;;
     build)
         littlesis_docker_build
         ;;
@@ -254,9 +273,6 @@ case $1 in
         shift
         bundle_exec "pumactl -p tmp/puma.pid $*"
         ;;
-    mysql)
-	mysql_shell
-	;;
     test|rspec)
 	shift
         set_environment_to_test
@@ -322,11 +338,13 @@ case $1 in
         ;;
     reset-test-db)
         set_environment_to_test
-	bundle_exec 'rake db:reset'
+	bundle_exec rake db:reset
+        psql $database_connection < $rails_repo/lib/sql/network_map_link.sql
+        psql $database_connection < $rails_repo/lib/sql/recent_entity_edits.sql
 	;;
     data)
         shift
-        bundle_exec rails runner lib/scripts/data.rb "$@"
+        bundle_exec rails runner lib/scripts/data.rb -- "$@"
         ;;
     search|rg)
 	shift
@@ -356,6 +374,13 @@ case $1 in
     run-sql)
         shift
         exec_sql_file "$1"
+        ;;
+    psql)
+        shift
+        psql "$database_connection" "$@"
+        ;;
+    bash)
+        web_app_exec "/bin/bash --login"
         ;;
     -h|help|--help)
 	show_help
