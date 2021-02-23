@@ -19,13 +19,15 @@ LittleSis is a project of [The Public Accountability Initiative](https://public-
 
 ## Software Overview
 
-Application: Ruby on Rails
-Database: MariaDB
-Web Server: Puma, Nginx
-Search: Manticore
-Cache: Redis
-Blog: Wordpress
-OS: Debian
+|             |               |
+|:-----------:|:-------------:|
+| Application | Ruby on Rails |
+| Database    | Postgresql    |
+| Web Server  | Puma, Nginx   |
+| Search      | Manticore     |
+| Cache       | Redis         |
+| Blog        | Wordpress     |
+| OS          | Debian        |
 
 Development requirements:
 

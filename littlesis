@@ -58,22 +58,17 @@ Commands
            status            local status information
            docker <cmd>      run any docker docker command (i.e  docker ps)
            build             re-build docker images
-           psql              interative postgres database shell
            bash              interative bash shell
            cmd <cmd>         run aribary shell commands in app docker
            bin <file>        run any bin/script by name
            script <file>     run any lib/scripts by name
            console           launch rails console
            logs <LOG>        follow log
-           coverage          open simplecov report
            redis             start redis cli
-           setup-clone       clones littlesis-rails
-           setup-database    creates rails app mysql databases
+           delayed_job <cmd> run delayed_job commands
            run-sql <file>    execute sqlite file with user & db = littlesis
-           reset-test-db     drops and re-creates littlesis_test
            data              ETL utilities for external data
            fec               runs FEC data cli
-           delayed_job <cmd> run delayed_job commands
 
 The following aliases are available
            git
@@ -83,6 +78,18 @@ The following aliases are available
            bundle
            pumactl
            yarn
+           psql | pg_dump | pg_restore
+
+
+Setup helpers:
+           setup-clone       clones littlesis-rails
+           setup-database    recreates littlesis database
+           reset-test-db     drops and re-creates littlesis_test
+
+Testing:
+           test              run test suite
+           coverage          open simplecov report
+
 
 Use --test, --production, --development to set RAILS_ENV
            littlesis --test rake db:migrate
@@ -231,6 +238,10 @@ web_app_exec() {
 
 }
 
+run_postgres_cmd() {
+    $docker_compose run -e PGUSER="$database_user" -e PGPASSWORD="$database_password" -e PGHOST="postgres" --rm postgres "$@"
+}
+
 bundle_exec() {
     web_app_exec "$bundle_path exec $*"
 }
@@ -375,9 +386,8 @@ case $1 in
         shift
         exec_sql_file "$1"
         ;;
-    psql)
-        shift
-        psql "$database_connection" "$@"
+    psql|pg_dump|pg_restore)
+        run_postgres_cmd "$@"
         ;;
     bash)
         web_app_exec "/bin/bash --login"
