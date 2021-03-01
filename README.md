@@ -56,7 +56,7 @@ Although not necessary, it is suggested to create symlink for `littlesis`: `sudo
 
 5) Setup the database:  `littlesis setup-database`
 
-6) Load a copy of the development database `littlesis run-sql /path/to/dev_db.sql`
+6) Load a copy of the development database `zcat littlesis_developemnt_db.sql.gz | littlesis psql`
 
 7) Setup the testing database: `littlesis reset-test-db`
 

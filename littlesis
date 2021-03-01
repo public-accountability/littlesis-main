@@ -45,7 +45,18 @@ then
     database_name="littlesis_test"
 fi
 
+
 database_connection="postgresql://$database_user:$database_password@$database_host/$database_name"
+
+set_environment_to_test() {
+    if ! [ "$rails_env" == "test" ]; then
+        echo "Setting RAILS_ENV to test" 1>&2
+        rails_env="test"
+        database_name="littlesis_test"
+        database_connection="postgresql://$database_user:$database_password@$database_host/$database_name"
+    fi
+}
+
 
 show_help() {
     cat << EOF
@@ -119,7 +130,8 @@ clone_repo() {
         URL="https://github.com/public-accountability/littlesis-rails.git"
     fi
 
-    git clone $URL $rails_repo
+    git clone $URL $rails_reop
+    sh -c "cd $rails_repo && bin/setup.sh"
 }
 
 setup_database() {
@@ -203,29 +215,16 @@ littlesis_status() {
 }
 
 littlesis_docker_build() {
-    echo "Building littlesis/ruby:$docker_tag"
-    docker build -t littlesis/ruby:$docker_tag -f "$littlesis_main_root/docker/ruby.dockerfile" "$rails_repo"
-    docker tag littlesis/ruby:$docker_tag littlesis/ruby:latest
-
-    echo "Building littlesis/rails:$docker_tag"
-    docker build -t littlesis/rails:$docker_tag -f "$littlesis_main_root/docker/rails.dockerfile" "$rails_repo"
-    docker tag littlesis/rails:$docker_tag littlesis/rails:latest
-}
-
-set_environment_to_test() {
-    if ! [ "$rails_env" == "test" ]; then
-        echo "Setting RAILS_ENV to test" 1>&2
-        rails_env="test"
-        database="littlesis_test"
-    fi
+    docker build -t littlesis/ruby:latest -f "$littlesis_main_root/docker/ruby.dockerfile" "$rails_repo"
+    docker build -t littlesis/rails:latest -f "$littlesis_main_root/docker/rails.dockerfile" "$rails_repo"
 }
 
 app_exec_docker() {
-    $docker_compose exec app /bin/sh -c "RAILS_ENV=$rails_env $*"
+    $docker_compose exec -e "RAILS_ENV=$rails_env" app "$@"
 }
 
 app_exec_production() {
-    sudo runuser -u littlesis -- /bin/bash -c "export RAILS_ENV=production; cd $rails_repo; $*"
+    sudo -u littlesis /bin/sh -c "export RAILS_ENV=production; cd $rails_repo; $*"
 }
 
 web_app_exec() {
@@ -239,11 +238,12 @@ web_app_exec() {
 }
 
 run_postgres_cmd() {
-    $docker_compose run -e PGUSER="$database_user" -e PGPASSWORD="$database_password" -e PGHOST="postgres" --rm postgres "$@"
+    $docker_compose run -e PGUSER="$database_user" -e PGPASSWORD="$database_password" -e PGHOST="postgres" -e PGDATABASE="$database_name" --rm postgres "$@"
+
 }
 
 bundle_exec() {
-    web_app_exec "$bundle_path exec $*"
+    web_app_exec $bundle_path exec "$@"
 }
 
 
@@ -350,8 +350,8 @@ case $1 in
     reset-test-db)
         set_environment_to_test
 	bundle_exec rake db:reset
-        psql $database_connection < $rails_repo/lib/sql/network_map_link.sql
-        psql $database_connection < $rails_repo/lib/sql/recent_entity_edits.sql
+        run_postgres_cmd psql < $rails_repo/lib/sql/network_map_link.sql
+        run_postgres_cmd psql < $rails_repo/lib/sql/recent_entity_edits.sql
 	;;
     data)
         shift
