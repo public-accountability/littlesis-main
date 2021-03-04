@@ -130,7 +130,7 @@ clone_repo() {
         URL="https://github.com/public-accountability/littlesis-rails.git"
     fi
 
-    git clone $URL $rails_reop
+    git clone $URL $rails_repo
     sh -c "cd $rails_repo && bin/setup.sh"
 }
 
