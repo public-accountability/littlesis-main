@@ -390,7 +390,7 @@ case $1 in
         run_postgres_cmd "$@"
         ;;
     bash)
-        web_app_exec "/bin/bash --login"
+        web_app_exec /bin/bash --login
         ;;
     -h|help|--help)
 	show_help
