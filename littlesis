@@ -4,7 +4,6 @@ set -e
 littlesis_main_root="$(dirname $(readlink -f "$0"))"
 rails_repo="$littlesis_main_root/rails"
 rails_env="${RAILS_ENV:-development}"
-docker_tag="${LITTLESIS_DOCKER_TAG:-2.0.0}"
 docker_compose="docker-compose --file=$littlesis_main_root/docker-compose.yml"
 bundle_path="bundle"
 delayed_job="bin/delayed_job"
@@ -45,7 +44,6 @@ then
     database_name="littlesis_test"
 fi
 
-
 database_connection="postgresql://$database_user:$database_password@$database_host/$database_name"
 
 set_environment_to_test() {
@@ -57,7 +55,6 @@ set_environment_to_test() {
     fi
 }
 
-
 show_help() {
     cat << EOF
 Usage: littlesis <command>
@@ -68,16 +65,16 @@ Commands
            delete            deletes database by removing docker volumes
            status            local status information
            docker <cmd>      run any docker docker command (i.e  docker ps)
-           build             re-build docker images
+           build             build docker images
            bash              interative bash shell
            cmd <cmd>         run aribary shell commands in app docker
-           bin <file>        run any bin/script by name
-           script <file>     run any lib/scripts by name
+           bin <file>        execute file in bin/ by name
+           script <file>     execute file in lib/scripts by name
            console           launch rails console
-           logs <LOG>        follow log
+           logs <LOG>        follow log. options: rails, nginx, docker
            redis             start redis cli
            delayed_job <cmd> run delayed_job commands
-           run-sql <file>    execute sqlite file with user & db = littlesis
+           run-sql <file>    execute sql file with user & db = littlesis
            data              ETL utilities for external data
            fec               runs FEC data cli
 
@@ -239,7 +236,6 @@ web_app_exec() {
 
 run_postgres_cmd() {
     $docker_compose run -e PGUSER="$database_user" -e PGPASSWORD="$database_password" -e PGHOST="postgres" -e PGDATABASE="$database_name" --rm postgres "$@"
-
 }
 
 bundle_exec() {
@@ -282,12 +278,12 @@ case $1 in
         ;;
     pumactl)
         shift
-        bundle_exec "pumactl -p tmp/puma.pid $*"
+        bundle_exec pumactl -p tmp/puma.pid "$@"
         ;;
     test|rspec)
 	shift
         set_environment_to_test
-	bundle_exec "rspec $*"
+	bundle_exec rspec "$@"
 	;;
     cmd)
 	shift
@@ -299,32 +295,46 @@ case $1 in
         ;;
     bin)
         shift
-        web_app_exec "bin/$*"
+        scriptpath="/littlesis/bin/$1"
+        shift
+
+        if [ "$rails_env" == "production" ];then
+            scriptpath="/var/www/$scriptpath"
+        fi
+
+        web_app_exec "$scriptpath" "$@"
         ;;
     script)
         shift
-        web_app_exec "lib/scripts/$*"
+        scriptpath="/littlesis/lib/scripts/$1"
+        shift
+
+        if [ "$rails_env" == "production" ];then
+            scriptpath="/var/www/$scriptpath"
+        fi
+
+        web_app_exec "$scriptpath" "$@"
         ;;
     git)
         export GIT_DIR=$rails_repo/.git
         "$@"
         ;;
     bundle)
-	web_app_exec "$*"
+	web_app_exec "$@"
 	;;
     console|c)
         bundle_exec rails c
         ;;
     rails|rake|rspec)
-        bundle_exec $*
+        bundle_exec "$@"
         ;;
     runner)
         shift
-        bundle_exec rails runner "$*"
+        bundle_exec rails runner "$@"
         ;;
-    delayed_job|dj)
+    delayed_job|delayed-job|dj)
         shift
-        bundle_exec "$delayed_job $*"
+        bundle_exec "$delayed_job" "$@"
         ;;
     logs)
         shift
