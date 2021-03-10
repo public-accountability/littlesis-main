@@ -132,31 +132,16 @@ clone_repo() {
 }
 
 setup_database() {
-    if [ "$rails_env" == "development" ];then
-        echo "The current rails environment is $rails_env"
-        echo "This will delete the entire database"
-        read -r -n 1 -p "are you sure (y/n)? " answer
+    echo "The current rails environment is $rails_env"
+    echo "This will delete the entire database"
+    read -r -n 1 -p "are you sure (y/n)? " answer
 
-        if [[ "$answer" =~ ^[Yy]$ ]]
-        then
-            bundle_exec rake db:reset
-            psql "$database_connection" < $rails_repo/lib/sql/network_map_link.sql
-            psql "$database_connection" < $rails_repo/lib/sql/recent_entity_edits.sql
-        fi
+    if [[ "$answer" =~ ^[Yy]$ ]];then
+        bundle_exec rake db:reset
     fi
 }
 
-exec_sql_file() {
-    sql_file="$1"
 
-    if ! test -f "$sql_file"
-    then
-        echo "$sql_file is not a file"
-        return 1
-    fi
-
-    psql $database_connection < "$sql_file"
-}
 
 
 nginx_logs() {
@@ -234,14 +219,25 @@ web_app_exec() {
 
 }
 
-run_postgres_cmd() {
-    $docker_compose run -e PGUSER="$database_user" -e PGPASSWORD="$database_password" -e PGHOST="postgres" -e PGDATABASE="$database_name" --rm postgres "$@"
-}
-
 bundle_exec() {
     web_app_exec $bundle_path exec "$@"
 }
 
+run_postgres_cmd() {
+    $docker_compose run -e PGUSER="$database_user" -e PGPASSWORD="$database_password" -e PGHOST="postgres" -e PGDATABASE="$database_name" --rm postgres "$@"
+}
+
+exec_sql_file() {
+    sql_file="$1"
+
+    if ! test -f "$sql_file"
+    then
+        echo "$sql_file is not a file"
+        return 1
+    fi
+
+    run_postgres_cmd psql $database_connection < "$sql_file"
+}
 
 deploy() {
     if [ "$rails_env" == "production" ]
@@ -251,7 +247,6 @@ deploy() {
         fail "deploy can only be run in production"
     fi
 }
-
 
 case $1 in
     docker|docker_compose|docker-compose)
@@ -289,9 +284,12 @@ case $1 in
 	shift
         web_app_exec "$@"
 	;;
+    bundle)
+	web_app_exec "$@"
+	;;
     yarn)
         shift
-        bundle_exec "bin/yarn $*"
+        bundle_exec bin/yarn "$@"
         ;;
     bin)
         shift
@@ -319,9 +317,6 @@ case $1 in
         export GIT_DIR=$rails_repo/.git
         "$@"
         ;;
-    bundle)
-	web_app_exec "$@"
-	;;
     console|c)
         bundle_exec rails c
         ;;
@@ -360,8 +355,6 @@ case $1 in
     reset-test-db)
         set_environment_to_test
 	bundle_exec rake db:reset
-        run_postgres_cmd psql < $rails_repo/lib/sql/network_map_link.sql
-        run_postgres_cmd psql < $rails_repo/lib/sql/recent_entity_edits.sql
 	;;
     data)
         shift
