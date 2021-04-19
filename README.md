@@ -12,7 +12,7 @@ Matthew Skomarovsky co-founded LittleSis and was the initial developer behind th
 
 Ziggy ([@aepyornis](https://github.com/aepyornis)) joined in 2016 and currently maintains the project.
 
-Along the way, Austin ([@aguestuser](https://github.com/aguestuser)) and on oligrapher and the rails codebase. Liz ([@lizstarin](https://github.com/lizstarin)) helped port PHP code to rails and
+Along the way, Austin ([@aguestuser](https://github.com/aguestuser)) worked on on oligrapher and the rails codebase. Liz ([@lizstarin](https://github.com/lizstarin)) helped port PHP code to rails and
 developed the chrome extension. Pea ([@misfist](https://github.com/misfist)) coded our wordpress sites. Since 2020, Rob [@robjlucas](https://github.com/robjlucas) has contributed to the rails application.
 
 LittleSis is a project of [The Public Accountability Initiative](https://public-accountability.org/), a non-profit public interest research organization focused on corporate and government accountability.
@@ -31,10 +31,10 @@ LittleSis is a project of [The Public Accountability Initiative](https://public-
 
 Development requirements:
 
-* docker, docker-compose, mariadb client, bash, git
-* A substantial amount of free disk space (> 20gb)
+* docker, docker-compose, bash, git, gzip
+* free disk space (> 20gb)
 
-To install these requirements with debian use: `apt install bash git docker.io docker-compose mariadb-client`
+To install these requirements on debian use: `apt install bash git docker.io docker-compose gzip`
 
 ## Helper program: ./littlesis
 
@@ -90,7 +90,6 @@ Login as system user:
 
 * username: `user1@email.com`
 * password: `password`
-
 
 Create new user: `littlesis script create_example_user.rb`
 
