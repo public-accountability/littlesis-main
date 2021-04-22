@@ -1,4 +1,4 @@
-FROM ruby:2.7.2-buster
+FROM ruby:3.0.1-buster
 LABEL maintainer="dev@littlesis.org"
 
 RUN apt-get update && apt-get upgrade -y && \
