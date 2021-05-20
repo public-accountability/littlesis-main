@@ -27,8 +27,8 @@ RUN echo "deb [signed-by=/usr/share/keyrings/ACCC4CF8.asc] http://apt.postgresql
 RUN apt-get update && apt-get install -y postgresql-client-13 libpq-dev
 
 # Manticore
-RUN curl -sSL https://repo.manticoresearch.com/repository/manticoresearch_buster/pool/m/manticore/manticore_3.5.4-201211-13f8d08d_amd64.deb > /tmp/manticore.deb
-RUN echo 'cb7d8105067fa5822aa7e85d11ab4208db1f1976793c1f31b621f0b148b48ee8  /tmp/manticore.deb' | sha256sum -c -
+RUN curl -sSL https://repo.manticoresearch.com/repository/manticoresearch_buster/pool/m/manticore/manticore_3.6.0-210504-96d61d8bf_amd64.deb  > /tmp/manticore.deb
+RUN echo 'a9a3e20b67fa47e569a18a6742a6eba44f9c1531b138e8da8c8a9422120cf378 /tmp/manticore.deb' | sha256sum -c -
 RUN apt-get install -y /tmp/manticore.deb
 
 # Node
