@@ -87,16 +87,17 @@ The following aliases are available
            pumactl
            yarn
            psql | pg_dump | pg_restore
-
-
-Setup helpers:
-           setup-clone       clones littlesis-rails
-           setup-database    recreates littlesis database
-           reset-test-db     drops and re-creates littlesis_test
+           rg
 
 Testing:
            test              run test suite
            coverage          open simplecov report
+Development:
+           setup-clone       clones littlesis-rails
+           setup-database    recreates littlesis database
+           reset-test-db     drops and re-creates littlesis_test
+Production:
+           deploy           deploys to latest commit on main
 
 
 Use --test, --production, --development to set RAILS_ENV
@@ -141,14 +142,15 @@ setup_database() {
     fi
 }
 
-
 nginx_logs() {
-    if [ "$1" == "access" ] || [ "$1" == "error" ]; then
-        local log_file="/var/log/nginx/${1}.log"
-        $docker_compose exec nginx /bin/sh -c "tail -f ${log_file}"
-    else
-fail 'There are only two nginx logs available: access and error'
-    fi
+    local log_file="/var/log/nginx/${1:-access}.log"
+    echo "$1"
+    echo "$log_file"
+    # if [ "$rails_env" == "production" ];then
+    #     sh -c "tail -f ${log_file}"
+    # else
+    #     $docker_compose exec nginx /bin/sh -c "tail -f ${log_file}"
+    # fi
 }
 
 rails_coverage() {
@@ -199,8 +201,6 @@ littlesis_status() {
             echo "$services_running / 4 docker containers are running :("
         fi
     fi
-
-
 }
 
 littlesis_docker_build() {
@@ -243,7 +243,7 @@ exec_sql_file() {
         return 1
     fi
 
-    run_postgres_cmd psql $database_connection < "$sql_file"
+    run_postgres_cmd psql "$database_connection" < "$sql_file"
 }
 
 deploy() {
@@ -293,7 +293,7 @@ case $1 in
         ;;
     bundle)
         shift
-        bundle_exec "$@"
+        web_app_exec "$bundle_path" "$@"
         ;;
     yarn)
         shift
@@ -346,11 +346,7 @@ case $1 in
                 tail -f "$rails_repo/log/$rails_env.log"
                 ;;
             nginx)
-                if test "$2" = "error"; then
-                    nginx_logs error
-                else
-                    nginx_logs access
-                fi
+                nginx_logs "$2"
                 ;;
             docker)
                 $docker_compose logs --follow
@@ -362,15 +358,15 @@ case $1 in
         ;;
     reset-test-db)
         set_environment_to_test
-        bundle_exec rake db:reset
+        bundle_exec rnake db:reset
         ;;
     data)
         shift
         bundle_exec rails runner lib/scripts/data.rb -- "$@"
         ;;
-    search|rg)
+    rg)
         shift
-        cd rails && rg "$*"
+        sh -c "cd $rails_repo && rg $*"
         ;;
     cov|coverage)
         rails_coverage
@@ -398,6 +394,9 @@ case $1 in
     run-sql)
         shift
         exec_sql_file "$1"
+        ;;
+    deploy)
+        deploy
         ;;
     psql|pg_dump|pg_restore)
         run_postgres_cmd "$@"
