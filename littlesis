@@ -28,9 +28,6 @@ case $1 in
         ;;
 esac
 
-export RAILS_ENV=$rails_env
-export GIT_DIR=$rails_repo/.git
-
 # set values for production
 
 if [ "$rails_env" == "production" ]
@@ -55,6 +52,9 @@ set_environment_to_test() {
         database_connection="postgresql://$database_user:$database_password@$database_host/$database_name"
     fi
 }
+
+export RAILS_ENV=$rails_env
+export GIT_DIR=$rails_repo/.git
 
 show_help() {
     cat << EOF
