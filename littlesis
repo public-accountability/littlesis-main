@@ -29,6 +29,7 @@ case $1 in
 esac
 
 export RAILS_ENV=$rails_env
+export GIT_DIR=$rails_repo/.git
 
 # set values for production
 
@@ -246,13 +247,66 @@ exec_sql_file() {
     run_postgres_cmd psql "$database_connection" < "$sql_file"
 }
 
+git_files_changed () {
+    git diff --name-only "$remote_commit" "$local_commit" | grep -q "$1"
+}
+
 deploy() {
-    if [ "$rails_env" == "production" ]
+    git remote update
+    read -p 'Which branch? ' -e -i 'main' branch
+    remote_commit=$(git rev-parse "origin/${branch}")
+    local_commit=$(git rev-parse @)
+
+    if test "$remote_commit" = "$local_commit"
     then
-        app_exec_production "bin/deploy"
-    else
-        fail "deploy can only be run in production"
+        echo "No upstream changes"
+        return 0
     fi
+
+    local
+
+    git_subject=$(git log --format=%s -n 1 "$remote_commit")
+
+    echo "Deploying $remote_commit on $branch: $git_subject"
+
+    git checkout "$remote_commit"
+
+    if git_files_changed "db/migrate";then
+        cat << EOF
++-----------------------------------------------------------+
+  These changes likely require a database update,
+  which will NOT happen automatically by this script.
+  To perform a migration run: "bundle exec rake db:migrate"
++-----------------------------------------------------------+
+EOF
+    fi
+
+    if git_files_changed "Gemfile";then
+        echo "Installing new gems"
+        web_app_exec "$bundle_path" install
+    fi
+
+    if git_files_changed 'yarn.lock';then
+        echo 'Updating javascripting packages'
+        bin/yarn
+    fi
+
+    if git_files_changed "oligrapher.rb";then
+        bundle_exec rails runner 'OligrapherAssetsService.new.run'
+    fi
+
+
+    if git_files_changed 'assets' || git_files_changed 'packs' || git_files_changed 'yarn.lock' || git_files_changed 'javascript'
+    then
+        echo "Precompiling assets"
+        bundle_exec rake assets:precompile
+    fi
+
+    echo "Restarting delayed job"
+    bundle_exec "$delayed_job" restart
+
+    echo "Restarting LittleSis"
+    bundle_exec pumactl -p tmp/puma.pid restart
 }
 
 case $1 in
@@ -396,7 +450,11 @@ case $1 in
         exec_sql_file "$1"
         ;;
     deploy)
-        deploy
+        if [ "$rails_env" == "production" ];then
+            deploy
+        else
+            fail "deploy can only be run in production"
+        fi
         ;;
     psql|pg_dump|pg_restore)
         run_postgres_cmd "$@"
