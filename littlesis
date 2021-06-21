@@ -358,7 +358,7 @@ case $1 in
         ;;
     reset-test-db)
         set_environment_to_test
-        bundle_exec rnake db:reset
+        bundle_exec rake db:reset
         ;;
     data)
         shift
