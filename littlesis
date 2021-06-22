@@ -145,13 +145,12 @@ setup_database() {
 
 nginx_logs() {
     local log_file="/var/log/nginx/${1:-access}.log"
-    echo "$1"
-    echo "$log_file"
-    # if [ "$rails_env" == "production" ];then
-    #     sh -c "tail -f ${log_file}"
-    # else
-    #     $docker_compose exec nginx /bin/sh -c "tail -f ${log_file}"
-    # fi
+
+    if [ "$rails_env" == "production" ];then
+        tail -f "$log_file"
+    else
+        $docker_compose exec nginx /bin/sh -c "tail -f $log_file"
+    fi
 }
 
 rails_coverage() {
