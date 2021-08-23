@@ -231,7 +231,12 @@ bundle_exec() {
 }
 
 run_postgres_cmd() {
-    $docker_compose run -e PGUSER="$database_user" -e PGPASSWORD="$database_password" -e PGHOST="postgres" -e PGDATABASE="$database_name" --rm postgres "$@"
+    if [ "$rails_env" == "production" ]
+    then
+       PGUSER="$database_user" PGPASSWORD="$database_password" PGHOST="$database_host" PGDATABASE="$database_name" "$@"
+    else
+        $docker_compose run -e PGUSER="$database_user" -e PGPASSWORD="$database_password" -e PGHOST="postgres" -e PGDATABASE="$database_name" --rm postgres "$@"
+    fi
 }
 
 exec_sql_file() {
