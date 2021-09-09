@@ -379,6 +379,10 @@ case $1 in
 
         web_app_exec "$scriptpath" "$@"
         ;;
+    search)
+        shift
+        rg -e "$1" "$rails_repo"
+        ;;
     git)
         export GIT_DIR=$rails_repo/.git
         "$@"
@@ -421,10 +425,6 @@ case $1 in
     data)
         shift
         bundle_exec rails runner lib/scripts/data.rb -- "$@"
-        ;;
-    rg)
-        shift
-        sh -c "cd $rails_repo && rg $*"
         ;;
     cov|coverage)
         rails_coverage
