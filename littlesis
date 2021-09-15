@@ -272,6 +272,8 @@ git_files_changed () {
 deploy() {
     git remote update
     read -p 'Which branch? ' -e -i 'main' branch
+    git fetch origin $branch
+
     remote_commit=$(git rev-parse "origin/${branch}")
     local_commit=$(git rev-parse @)
 
@@ -281,13 +283,11 @@ deploy() {
         return 0
     fi
 
-    local
-
     git_subject=$(git log --format=%s -n 1 "$remote_commit")
 
     echo "Deploying $remote_commit on $branch: $git_subject"
 
-    git checkout "$remote_commit"
+    git checkout origin/"$branch"
 
     if git_files_changed "db/migrate";then
         cat << EOF
