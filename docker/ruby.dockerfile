@@ -4,22 +4,23 @@ LABEL maintainer="dev@littlesis.org"
 RUN apt-get update && apt-get upgrade -y && apt-get -y install \
     build-essential \
     coreutils \
-    curl \
+    cron \
     csvkit \
+    curl \
     git \
     gnupg \
     grep \
     imagemagick \
+    libdbus-glib-1-dev \
+    libgtk-3-0 \
     libmagickwand-dev \
+    libsqlite3-dev \
+    libx11-xcb1 \
     lsof \
     redis-tools \
     sqlite3 \
-    libsqlite3-dev \
     unzip \
-    zip \
-    libdbus-glib-1-dev \
-    libgtk-3-0 \
-    libx11-xcb1
+    zip
 
 # Postgres
 RUN curl "https://www.postgresql.org/media/keys/ACCC4CF8.asc" > /usr/share/keyrings/ACCC4CF8.asc

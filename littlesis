@@ -78,6 +78,7 @@ Commands
            run-sql <file>    execute sql file with user & db = littlesis
            data              ETL utilities for external data
            fec               runs FEC data cli
+           update-crontab    cron tasks are in schedule.rb
 
 The following aliases are available
            git
@@ -88,7 +89,6 @@ The following aliases are available
            pumactl
            yarn
            psql | pg_dump | pg_restore
-           rg
 
 Testing:
            test              run test suite
@@ -97,6 +97,9 @@ Development:
            setup-clone       clones littlesis-rails
            setup-database    recreates littlesis database
            reset-test-db     drops and re-creates littlesis_test
+           search            searches rails files
+           pull-request      fetch pull request by number
+
 Production:
            deploy           deploys to latest commit on main
 
@@ -463,6 +466,9 @@ case $1 in
     run-sql)
         shift
         exec_sql_file "$1"
+        ;;
+    update-crontab)
+        bundle_exec whenever --update-crontab
         ;;
     deploy)
         if [ "$rails_env" == "production" ];then
