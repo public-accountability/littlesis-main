@@ -270,8 +270,20 @@ git_files_changed () {
 }
 
 deploy() {
+    if [ ! "$(git ls-files -m | wc -l)" = '0' ]
+    then
+        echo "The following files have been modified: "
+        git ls-files -m
+        read -p "Are you sure you want to deploy? (y/n)" -n 1 -r
+        echo
+        if [[ ! $REPLY =~ ^[Yy]$ ]]
+        then
+            return 1
+        fi
+    fi
+
+    read -p 'Which commit? ' -e -i 'main' branch
     git remote update
-    read -p 'Which branch? ' -e -i 'main' branch
     git fetch origin $branch
 
     remote_commit=$(git rev-parse "origin/${branch}")
@@ -287,7 +299,9 @@ deploy() {
 
     echo "Deploying $remote_commit on $branch: $git_subject"
 
-    git checkout origin/"$branch"
+    git checkout $branch
+    git pull
+
 
     if git_files_changed "db/migrate";then
         cat << EOF
